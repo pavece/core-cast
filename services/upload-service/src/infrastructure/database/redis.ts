@@ -14,9 +14,11 @@ export class RedisClient {
 
 		this.client.on('connect', () => console.log('Redis client connected'));
 		this.client.on('error', err => console.log('Redis connection error', err));
+
+		RedisClient._instance = this;
 	}
 
 	public getClient() {
-		return this.client;
+		return this.client as Redis;
 	}
 }

@@ -6,7 +6,7 @@ export class UploadRoutes {
 		const router = Router();
 		const uploadController = new UploadController();
 
-		router.put('/chunk', uploadController.uploadChunk);
+		router.post('/init-upload', uploadController.initChunkedUpload);
 
 		return router;
 	}

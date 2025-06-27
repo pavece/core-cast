@@ -21,6 +21,8 @@ export class ObjectStore {
 		});
 
 		this.createBuckets();
+
+		ObjectStore._instance = this;
 	}
 
 	private async createBuckets() {
@@ -42,6 +44,6 @@ export class ObjectStore {
 	}
 
 	public getClient() {
-		return this.client;
+		return this.client as S3Client;
 	}
 }
