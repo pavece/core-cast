@@ -37,7 +37,7 @@ export class UploadController {
 				parsedHeaders.data['x-coreupload-chunk-number'],
 				req.file.buffer
 			)
-			.then(() => res.status(200).json({ message: 'Chunk uploaded succesfully' }))
+			.then(r => res.status(200).json(r))
 			.catch(e => handleApiError(e, res));
 	};
 }
