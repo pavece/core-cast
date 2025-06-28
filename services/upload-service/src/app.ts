@@ -1,3 +1,4 @@
+import { Prisma } from './infrastructure/database/prisma';
 import { RedisClient } from './infrastructure/database/redis';
 import { ObjectStore } from './infrastructure/object-store/object-store';
 import { ServiceRoutes } from './presentation/routes';
@@ -10,6 +11,7 @@ function main() {
 
 	new RedisClient();
 	new ObjectStore();
+	new Prisma();
 
 	const server = new Server(serverPort, serviceRoutes);
 	server.start();

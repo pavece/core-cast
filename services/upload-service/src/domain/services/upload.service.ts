@@ -11,19 +11,22 @@ import { RedisClient } from '../../infrastructure/database/redis';
 import { ObjectStore } from '../../infrastructure/object-store/object-store';
 import { ApiError } from '../errors/api-error';
 import { ChunkData, RedisUploadRecord } from '../interfaces/upload-interfaces';
+import { Prisma } from '../../infrastructure/database/prisma';
+import { PrismaClient } from '../../generated/prisma';
 
 export class UploadService {
 	private redisClient: Redis;
 	private objectStoreClient: S3Client;
+	private prismaClient: PrismaClient;
 
 	constructor() {
 		this.redisClient = new RedisClient().getClient();
+		this.prismaClient = new Prisma().getClient();
 		this.objectStoreClient = new ObjectStore().getClient();
 	}
 
 	public async initializeChunkedUpload(originalObjectName: string, totalChunks: number) {
 		//TODO: Check auth before initiating the upload
-		//TODO: Insert a new pending upload record relating to the multipart key (for resumable uploads)
 
 		const objectName = crypto.randomUUID() + '-' + originalObjectName;
 
@@ -35,7 +38,8 @@ export class UploadService {
 				throw new Error('Upload id is undefined');
 			}
 
-			this.redisClient.hset(UploadId, { startedAt: new Date().toISOString(), totalChunks, objectName });
+			await this.redisClient.hset(UploadId, { startedAt: new Date().toISOString(), totalChunks, objectName });
+			await this.prismaClient.upload.create({ data: { multipartId: UploadId, user: 'TEMP USER' } });
 
 			return UploadId;
 		} catch (error) {
@@ -71,7 +75,7 @@ export class UploadService {
 			return {
 				message: `Chunk ${chunkNumber} uploaded`,
 				uploaded: parts.length,
-				total: redisUploadRecord.totalChunks,
+				total: Number(redisUploadRecord.totalChunks),
 			};
 		} catch (error) {
 			if (error instanceof ApiError) {
@@ -111,6 +115,8 @@ export class UploadService {
 
 			await this.redisClient.del(uploadId);
 			await this.redisClient.del(`parts:${uploadId}`);
+
+			await this.prismaClient.upload.delete({ where: { multipartId: uploadId } });
 		} catch (error) {
 			if (error instanceof ApiError) {
 				throw error;
