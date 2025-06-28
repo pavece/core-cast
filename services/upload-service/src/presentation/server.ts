@@ -10,7 +10,7 @@ export class Server {
 		this.app.use(express.json());
 		this.app.use(express.urlencoded({ extended: true }));
 
-		this.app.use(cors({ origin: '*', methods: ['PUT', 'POST'] })); //TODO: Add to configuration / improve
+		this.app.use(cors({ origin: '*', methods: ['PUT', 'POST', 'GET'] })); //TODO: Add to configuration / improve
 
 		this.app.use('/api', this.routes);
 	}

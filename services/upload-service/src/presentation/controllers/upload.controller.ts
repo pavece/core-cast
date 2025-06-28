@@ -10,6 +10,7 @@ import { handleApiError } from '../../domain/errors/api-error';
 export class UploadController {
 	private uploadService = new UploadService();
 
+	//TODO: Requires auth
 	public initChunkedUpload = (req: Request, res: Response) => {
 		const parsedBody = initUploadRequestValidator.safeParse(req.body);
 		if (parsedBody.error) {
@@ -24,6 +25,7 @@ export class UploadController {
 			.catch(e => handleApiError(e, res));
 	};
 
+	//TODO: Requires auth ?
 	public uploadChunk = (req: Request, res: Response) => {
 		const parsedHeaders = uploadChunkHeadersValidator.safeParse(req.headers);
 		if (parsedHeaders.error) {
@@ -46,6 +48,7 @@ export class UploadController {
 			.catch(e => handleApiError(e, res));
 	};
 
+	//TODO: requires auth
 	public finishUpload = (req: Request, res: Response) => {
 		const parsedBody = finishUploadValidator.safeParse(req.body);
 		if (parsedBody.error) {
@@ -56,6 +59,14 @@ export class UploadController {
 		this.uploadService
 			.finishChunkedUpload(parsedBody.data.uploadId)
 			.then(() => res.status(200).json({ message: 'Upload finished' }))
+			.catch(e => handleApiError(e, res));
+	};
+
+	//TODO: requires auth
+	public getPendingUploads = (req: Request, res: Response) => {
+		this.uploadService
+			.getPendingUploads('TEST USER')
+			.then(r => res.status(200).json(r))
 			.catch(e => handleApiError(e, res));
 	};
 }

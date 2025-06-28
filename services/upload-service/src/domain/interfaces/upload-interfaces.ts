@@ -8,3 +8,8 @@ export interface RedisUploadRecord {
 	totalChunks: number;
 	objectName: string;
 }
+
+export interface PendingUpload {
+	uploadId: string;
+	uploadedChunks: number[];
+}

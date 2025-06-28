@@ -1,16 +1,11 @@
-import {
-	CompleteMultipartUploadCommand,
-	CreateMultipartUploadCommand,
-	S3Client,
-	UploadPartCommand,
-} from '@aws-sdk/client-s3';
+import { CompleteMultipartUploadCommand, CreateMultipartUploadCommand, S3Client, UploadPartCommand } from '@aws-sdk/client-s3';
 import Redis from 'ioredis';
 import 'dotenv/config';
 
 import { RedisClient } from '../../infrastructure/database/redis';
 import { ObjectStore } from '../../infrastructure/object-store/object-store';
 import { ApiError } from '../errors/api-error';
-import { ChunkData, RedisUploadRecord } from '../interfaces/upload-interfaces';
+import { ChunkData, PendingUpload, RedisUploadRecord } from '../interfaces/upload-interfaces';
 import { Prisma } from '../../infrastructure/database/prisma';
 import { PrismaClient } from '../../generated/prisma';
 
@@ -26,8 +21,6 @@ export class UploadService {
 	}
 
 	public async initializeChunkedUpload(originalObjectName: string, totalChunks: number) {
-		//TODO: Check auth before initiating the upload
-
 		const objectName = crypto.randomUUID() + '-' + originalObjectName;
 
 		try {
@@ -125,7 +118,33 @@ export class UploadService {
 			console.error(`Upload completion failed for upload: ${uploadId}`, error);
 			throw new ApiError(500, 'Failed to upload chunk');
 		}
+	}
 
-		//TODO: remove postgres records
+	public async getPendingUploads(userId: string) {
+		try {
+			const pendingUploads = await this.prismaClient.upload.findMany();
+			const modifiedPendingUploads: PendingUpload[] = [];
+
+			//Chunks can arrive at any order, client must be aware of all the uploaded chunks so he can skip them
+			for (const upload of pendingUploads) {
+				const uploadedChunks = (await this.redisClient.lrange(`parts:${upload.multipartId}`, 0, -1)).map(p =>
+					Number(p.split(':')[1])
+				);
+
+				modifiedPendingUploads.push({
+					uploadedChunks: uploadedChunks,
+					uploadId: upload.multipartId,
+				});
+			}
+
+			return modifiedPendingUploads;
+		} catch (error) {
+			if (error instanceof ApiError) {
+				throw error;
+			}
+
+			console.error(`Failed to retrieve pending uploads for user: ${userId} `, error);
+			throw new ApiError(500, 'Failed to retrieve pending uploads');
+		}
 	}
 }

@@ -11,6 +11,7 @@ export class UploadRoutes {
 		router.post('/init-upload', uploadController.initChunkedUpload);
 		router.put('/upload-chunk', upload.single('chunk'), uploadController.uploadChunk);
 		router.post('/finish-upload', uploadController.finishUpload);
+		router.get('/pending', uploadController.getPendingUploads);
 
 		return router;
 	}
