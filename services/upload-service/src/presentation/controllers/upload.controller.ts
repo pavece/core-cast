@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
 import { UploadService } from '../../domain/services/upload.service';
-import { initUploadRequestValidator, uploadChunkHeadersValidator } from '../../domain/validation/upload-validators';
+import {
+	finishUploadValidator,
+	initUploadRequestValidator,
+	uploadChunkHeadersValidator,
+} from '../../domain/validation/upload-validators';
 import { handleApiError } from '../../domain/errors/api-error';
 
 export class UploadController {
@@ -9,6 +13,7 @@ export class UploadController {
 	public initChunkedUpload = (req: Request, res: Response) => {
 		const parsedBody = initUploadRequestValidator.safeParse(req.body);
 		if (parsedBody.error) {
+			console.log(parsedBody.error);
 			res.status(400).json(parsedBody.error);
 			return;
 		}
@@ -38,6 +43,19 @@ export class UploadController {
 				req.file.buffer
 			)
 			.then(r => res.status(200).json(r))
+			.catch(e => handleApiError(e, res));
+	};
+
+	public finishUpload = (req: Request, res: Response) => {
+		const parsedBody = finishUploadValidator.safeParse(req.body);
+		if (parsedBody.error) {
+			res.status(400).json(parsedBody.error);
+			return;
+		}
+
+		this.uploadService
+			.finishChunkedUpload(parsedBody.data.uploadId)
+			.then(() => res.status(200).json({ message: 'Upload finished' }))
 			.catch(e => handleApiError(e, res));
 	};
 }

@@ -35,7 +35,7 @@ export class UploadService {
 				throw new Error('Upload id is undefined');
 			}
 
-			this.redisClient.hset(UploadId, { startedAt: new Date().toISOString(), lastChunk: 0, totalChunks, objectName });
+			this.redisClient.hset(UploadId, { startedAt: new Date().toISOString(), totalChunks, objectName });
 
 			return UploadId;
 		} catch (error) {
@@ -44,13 +44,14 @@ export class UploadService {
 		}
 	}
 
-	public async uploadChunk( uploadId: string, chunkNumber: number, chunk: Buffer ): Promise<{ complete: boolean; message: string, current: number, total: number }> {
+	public async uploadChunk(uploadId: string, chunkNumber: number, chunk: Buffer) {
 		try {
 			const redisUploadRecord = (await this.redisClient.hgetall(uploadId)) as unknown as RedisUploadRecord;
 			if (!redisUploadRecord.objectName || !chunkNumber) {
 				throw new ApiError(404, 'Upload not found, the upload may be outdated');
 			}
 
+			//Upload the chunk to the bucket
 			const { ETag } = await this.objectStoreClient.send(
 				new UploadPartCommand({
 					Bucket: process.env.OBJECT_STORE_PRIVATE_BUCKET,
@@ -61,19 +62,17 @@ export class UploadService {
 				})
 			);
 
-			const parts = (await this.redisClient.lrange(`parts:${uploadId}`, 0, -1)).map(p => JSON.parse(p));
-			if (!parts.find(p => p.PartNumber == chunkNumber || p.ETag == ETag)) {
-				this.redisClient.rpush(`parts:${uploadId}`, JSON.stringify({ ETag, PartNumber: chunkNumber } as ChunkData));
+			//Prevent same chunk / part reuploading
+			const parts = await this.redisClient.lrange(`parts:${uploadId}`, 0, -1);
+			if (!parts.find(p => Number(p.split(':')[1]) == chunkNumber || p.split(':')[0] == ETag)) {
+				this.redisClient.rpush(`parts:${uploadId}`, `${ETag}:${chunkNumber}`);
 			}
 
-			this.redisClient.hset(uploadId, { lastChunk: chunkNumber }); //Used for resuming the upload
-
-			if (redisUploadRecord.totalChunks == chunkNumber && parts.length + 1 == redisUploadRecord.totalChunks) {
-				await this.finishChunkedUpload(uploadId);
-				return { complete: true, message: 'Upload completed', current: chunkNumber, total: redisUploadRecord.totalChunks };
-			}
-
-			return { complete: false, message: `Chunk ${chunkNumber} uploaded succesfully`, current: chunkNumber, total: redisUploadRecord.totalChunks };
+			return {
+				message: `Chunk ${chunkNumber} uploaded`,
+				uploaded: parts.length,
+				total: redisUploadRecord.totalChunks,
+			};
 		} catch (error) {
 			if (error instanceof ApiError) {
 				throw error;
@@ -84,27 +83,42 @@ export class UploadService {
 		}
 	}
 
-	private async finishChunkedUpload(uploadId: string) {
-		const redisUploadRecord = (await this.redisClient.hgetall(uploadId)) as unknown as RedisUploadRecord;
-		if (!redisUploadRecord) {
-			throw new ApiError(404, 'Upload not found, the upload may be outdated');
+	public async finishChunkedUpload(uploadId: string) {
+		try {
+			const redisUploadRecord = (await this.redisClient.hgetall(uploadId)) as unknown as RedisUploadRecord;
+			if (!redisUploadRecord) {
+				throw new ApiError(404, 'Upload not found, the upload may be outdated');
+			}
+
+			const parts = (await this.redisClient.lrange(`parts:${uploadId}`, 0, -1))
+				.map(p => ({ ETag: p.split(':')[0], PartNumber: Number(p.split(':')[1]) } as ChunkData))
+				.sort((a, b) => a.PartNumber - b.PartNumber);
+
+			if (parts.length != redisUploadRecord.totalChunks) {
+				throw new ApiError(400, 'Upload all the chunks before completing the upload');
+			}
+
+			await this.objectStoreClient.send(
+				new CompleteMultipartUploadCommand({
+					Bucket: process.env.OBJECT_STORE_PRIVATE_BUCKET,
+					Key: redisUploadRecord.objectName,
+					UploadId: uploadId,
+					MultipartUpload: {
+						Parts: parts,
+					},
+				})
+			);
+
+			await this.redisClient.del(uploadId);
+			await this.redisClient.del(`parts:${uploadId}`);
+		} catch (error) {
+			if (error instanceof ApiError) {
+				throw error;
+			}
+
+			console.error(`Upload completion failed for upload: ${uploadId}`, error);
+			throw new ApiError(500, 'Failed to upload chunk');
 		}
-
-		const parts = (await this.redisClient.lrange(`parts:${uploadId}`, 0, -1)).map(p => JSON.parse(p));
-
-		await this.objectStoreClient.send(
-			new CompleteMultipartUploadCommand({
-				Bucket: process.env.OBJECT_STORE_PRIVATE_BUCKET,
-				Key: redisUploadRecord.objectName,
-				UploadId: uploadId,
-				MultipartUpload: {
-					Parts: parts,
-				},
-			})
-		);
-
-		await this.redisClient.del(uploadId);
-		await this.redisClient.del(`parts:${uploadId}`);
 
 		//TODO: remove postgres records
 	}
