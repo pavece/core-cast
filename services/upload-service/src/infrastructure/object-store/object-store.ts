@@ -1,8 +1,10 @@
 import { CreateBucketCommand, ListBucketsCommand, S3Client } from '@aws-sdk/client-s3';
 import 'dotenv/config';
+import { Logger } from '../../domain/logging/logger';
 
 export class ObjectStore {
 	private static _instance: ObjectStore;
+	private logger = new Logger().getLogger();
 	private client;
 
 	constructor() {
@@ -27,20 +29,22 @@ export class ObjectStore {
 
 	private async createBuckets() {
 		if (process.env.OBJECT_STORE_PRIVATE_BUCKET == '') {
-			console.log('Please include a private buycket name (OBJECT_STORE_PRIVATE_BUCKET) as env var');
+			console.log('Please include a private buekcet name (OBJECT_STORE_PRIVATE_BUCKET) as env var');
 			return;
 		}
 
 		try {
 			const buckets = await this.client!.send(new ListBucketsCommand());
 			if (buckets.Buckets?.find(b => b.Name == process.env.OBJECT_STORE_PRIVATE_BUCKET)) {
-				console.log(`Bucket ${process.env.OBJECT_STORE_PRIVATE_BUCKET} already exists, skipping creation`);
+				this.logger.info(`Bucket "${process.env.OBJECT_STORE_PRIVATE_BUCKET}" already exists, skipping creation`);
 				return;
 			}
 
 			await this.client!.send(new CreateBucketCommand({ Bucket: process.env.OBJECT_STORE_PRIVATE_BUCKET }));
-			console.log(`Created bucket ${process.env.OBJECT_STORE_PRIVATE_BUCKET}`);
-		} catch (error) {}
+			this.logger.info(`Created bucket "${process.env.OBJECT_STORE_PRIVATE_BUCKET}"`);
+		} catch (error) {
+			this.logger.error({ message: 'Failed to connect to object store / retrieve bucket information', error });
+		}
 	}
 
 	public getClient() {

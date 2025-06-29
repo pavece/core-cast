@@ -1,7 +1,9 @@
+import { Logger } from '../../domain/logging/logger';
 import { PrismaClient } from '../../generated/prisma';
 
 export class Prisma {
 	private static _instance: Prisma;
+	private logger = new Logger().getLogger();
 	public client: PrismaClient | undefined;
 
 	constructor() {
@@ -11,9 +13,9 @@ export class Prisma {
 
 		try {
 			this.client = new PrismaClient();
-			console.log('Connected to postgreSQL');
+			this.logger.info('Connected to postgreSQL');
 		} catch (error) {
-			console.log('Error connecting to postgreSQL', error);
+			this.logger.error({ message: 'Failed to connect to postgreSQL', error });
 		}
 
 		Prisma._instance = this;

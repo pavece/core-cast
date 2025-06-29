@@ -1,4 +1,9 @@
-import { CompleteMultipartUploadCommand, CreateMultipartUploadCommand, S3Client, UploadPartCommand } from '@aws-sdk/client-s3';
+import {
+	CompleteMultipartUploadCommand,
+	CreateMultipartUploadCommand,
+	S3Client,
+	UploadPartCommand,
+} from '@aws-sdk/client-s3';
 import Redis from 'ioredis';
 import 'dotenv/config';
 
@@ -8,16 +13,20 @@ import { ApiError } from '../errors/api-error';
 import { ChunkData, PendingUpload, RedisUploadRecord } from '../interfaces/upload-interfaces';
 import { Prisma } from '../../infrastructure/database/prisma';
 import { PrismaClient } from '../../generated/prisma';
+import { Logger } from '../logging/logger';
+import { BaseLogger } from 'pino';
 
 export class UploadService {
 	private redisClient: Redis;
 	private objectStoreClient: S3Client;
 	private prismaClient: PrismaClient;
+	private logger: BaseLogger;
 
 	constructor() {
 		this.redisClient = new RedisClient().getClient();
 		this.prismaClient = new Prisma().getClient();
 		this.objectStoreClient = new ObjectStore().getClient();
+		this.logger = new Logger().getLogger();
 	}
 
 	public async initializeChunkedUpload(originalObjectName: string, totalChunks: number) {
@@ -34,9 +43,11 @@ export class UploadService {
 			await this.redisClient.hset(UploadId, { startedAt: new Date().toISOString(), totalChunks, objectName });
 			await this.prismaClient.upload.create({ data: { multipartId: UploadId, user: 'TEMP USER' } });
 
+			this.logger.info({ message: 'New multupart upload init', partialUploadId: UploadId.slice(0, 20) + '(...)' });
+
 			return UploadId;
 		} catch (error) {
-			console.error(`Failed to initialize multipart upload for object ${objectName}`, error);
+			this.logger.error({ message: `Failed to initialize multipart upload for object ${objectName}`, error });
 			throw new ApiError(500, 'Failed to start multipart upload');
 		}
 	}
@@ -75,7 +86,7 @@ export class UploadService {
 				throw error;
 			}
 
-			console.error(`Chunk upload failed  for upload ${uploadId} chunk ${chunkNumber}`, error);
+			this.logger.error({ message: `Chunk upload failed  for upload ${uploadId} chunk ${chunkNumber}`, error });
 			throw new ApiError(500, 'Failed to upload chunk');
 		}
 	}
@@ -115,7 +126,7 @@ export class UploadService {
 				throw error;
 			}
 
-			console.error(`Upload completion failed for upload: ${uploadId}`, error);
+			this.logger.error({ message: `Upload completion failed for upload: ${uploadId}`, error });
 			throw new ApiError(500, 'Failed to upload chunk');
 		}
 	}
@@ -143,7 +154,7 @@ export class UploadService {
 				throw error;
 			}
 
-			console.error(`Failed to retrieve pending uploads for user: ${userId} `, error);
+			this.logger.error({ message: `Failed to retrieve pending uploads for user: ${userId}`, error });
 			throw new ApiError(500, 'Failed to retrieve pending uploads');
 		}
 	}
