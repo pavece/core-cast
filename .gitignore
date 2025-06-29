@@ -4,3 +4,4 @@ node_modules
 # Docker dev mount points
 redis-data
 minio-data
+pg-data

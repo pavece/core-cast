@@ -18,3 +18,28 @@ services:
       - 9002:6379
     volumes:
       - ./redis-data:/data
+
+  postgres:
+    image: postgres:17
+    ports:
+      - 5431:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: core-cast
+    networks:
+      - admin
+    volumes:
+      - ./pg-data:/var/lib/postgresql/data
+
+  # Dev tools
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 9090:8080
+    networks:
+      - admin
+
+networks:
+  admin:
