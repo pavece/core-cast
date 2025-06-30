@@ -15,18 +15,23 @@ import { Prisma } from '../../infrastructure/database/prisma';
 import { PrismaClient } from '../../generated/prisma';
 import { Logger } from '../logging/logger';
 import { BaseLogger } from 'pino';
+import { Counter } from 'prom-client';
+import client from 'prom-client';
+import { Prometheus } from '../logging/prometheus';
 
 export class UploadService {
 	private redisClient: Redis;
 	private objectStoreClient: S3Client;
 	private prismaClient: PrismaClient;
 	private logger: BaseLogger;
+	private prometheus: Prometheus;
 
 	constructor() {
 		this.redisClient = new RedisClient().getClient();
 		this.prismaClient = new Prisma().getClient();
 		this.objectStoreClient = new ObjectStore().getClient();
 		this.logger = new Logger().getLogger();
+		this.prometheus = new Prometheus();
 	}
 
 	public async initializeChunkedUpload(originalObjectName: string, totalChunks: number) {
@@ -76,9 +81,12 @@ export class UploadService {
 				this.redisClient.rpush(`parts:${uploadId}`, `${ETag}:${chunkNumber}`);
 			}
 
+			this.prometheus.uploadBytesCounter?.inc(chunk.byteLength);
+			this.prometheus.uploadChunksCounter?.inc();
+
 			return {
 				message: `Chunk ${chunkNumber} uploaded`,
-				uploaded: parts.length,
+				uploaded: parts.length + 1,
 				total: Number(redisUploadRecord.totalChunks),
 			};
 		} catch (error) {
@@ -119,6 +127,8 @@ export class UploadService {
 
 			await this.redisClient.del(uploadId);
 			await this.redisClient.del(`parts:${uploadId}`);
+
+			this.prometheus.uploadFilesCounter?.inc();
 
 			await this.prismaClient.upload.delete({ where: { multipartId: uploadId } });
 		} catch (error) {
