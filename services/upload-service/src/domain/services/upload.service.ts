@@ -10,14 +10,13 @@ import 'dotenv/config';
 import { RedisClient } from '../../infrastructure/database/redis';
 import { ObjectStore } from '../../infrastructure/object-store/object-store';
 import { ApiError } from '../errors/api-error';
-import { ChunkData, PendingUpload, RedisUploadRecord } from '../interfaces/upload-interfaces';
+import { ChunkData, PendingUpload, RedisUploadRecord, VideoProcessingTask } from '../interfaces/upload-interfaces';
 import { Prisma } from '../../infrastructure/database/prisma';
 import { PrismaClient } from '../../generated/prisma';
 import { Logger } from '../logging/logger';
 import { BaseLogger } from 'pino';
-import { Counter } from 'prom-client';
-import client from 'prom-client';
 import { Prometheus } from '../logging/prometheus';
+import { RabbitMQ } from '../../infrastructure/rabbitmq/rabbitmq';
 
 export class UploadService {
 	private redisClient: Redis;
@@ -25,6 +24,7 @@ export class UploadService {
 	private prismaClient: PrismaClient;
 	private logger: BaseLogger;
 	private prometheus: Prometheus;
+	private rabbitMQ: RabbitMQ;
 
 	constructor() {
 		this.redisClient = new RedisClient().getClient();
@@ -32,6 +32,7 @@ export class UploadService {
 		this.objectStoreClient = new ObjectStore().getClient();
 		this.logger = new Logger().getLogger();
 		this.prometheus = new Prometheus();
+		this.rabbitMQ = new RabbitMQ();
 	}
 
 	public async initializeChunkedUpload(originalObjectName: string, totalChunks: number) {
@@ -131,6 +132,14 @@ export class UploadService {
 			this.prometheus.uploadFilesCounter?.inc();
 
 			await this.prismaClient.upload.delete({ where: { multipartId: uploadId } });
+
+			//Add video processing task to the queue
+			const videoProcessingTask: VideoProcessingTask = { videoName: redisUploadRecord.objectName }; //Should also provide a reference to the created video record (so it can add the processed video & media later)
+
+			this.rabbitMQ.videoProcessingChannel?.sendToQueue(
+				this.rabbitMQ.videoProcessingQueueName,
+				Buffer.from(JSON.stringify(videoProcessingTask))
+			);
 		} catch (error) {
 			if (error instanceof ApiError) {
 				throw error;
