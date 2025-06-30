@@ -1,6 +1,7 @@
 import pino, { BaseLogger } from 'pino';
 import fs from 'fs';
 import path from 'path';
+import 'dotenv/config';
 
 export class Logger {
 	public static _instance: Logger;
@@ -11,7 +12,7 @@ export class Logger {
 			return Logger._instance;
 		}
 
-		const logDir = path.join(__dirname, '../../../logs');
+		const logDir = process.env.LOGS_DIR || path.join(__dirname, '../../../logs');
 
 		if (!fs.existsSync(logDir)) {
 			fs.mkdirSync(logDir);

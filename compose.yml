@@ -32,7 +32,7 @@ services:
     volumes:
       - ./pg-data:/var/lib/postgresql/data
 
-  # Dev tools
+  # OPTIONAL: Explorer for postgreSQL
   adminer:
     image: adminer
     restart: always
