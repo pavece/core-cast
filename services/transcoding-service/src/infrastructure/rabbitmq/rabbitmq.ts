@@ -12,14 +12,17 @@ export class RabbitMQ {
 	public videoProcessingChannel: Channel | undefined;
 	public videoProcessingQueueName: string = 'video-processing';
 
-	constructor() {
-		if (RabbitMQ._instance) return RabbitMQ._instance;
-
+	private constructor() {
 		this.logger = new Logger().getLogger();
+	}
 
-		this.connect();
+	public static async getInstance() {
+		if (!RabbitMQ._instance) {
+			RabbitMQ._instance = new RabbitMQ();
+			await RabbitMQ._instance.connect();
+		}
 
-		RabbitMQ._instance = this;
+		return RabbitMQ._instance;
 	}
 
 	private async connect() {
@@ -27,7 +30,7 @@ export class RabbitMQ {
 			this.client = await amqp.connect(process.env.RABBITMQ_CON_URL || 'amqp://localhost');
 			this.videoProcessingChannel = await this.client.createChannel();
 
-			this.videoProcessingChannel.assertQueue('video-processing', { durable: true });
+			await this.videoProcessingChannel.assertQueue('video-processing', { durable: true });
 
 			this.logger?.info('Connected to RabbitMQ broker');
 		} catch (error) {

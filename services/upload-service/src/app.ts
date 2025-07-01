@@ -13,7 +13,7 @@ async function main() {
 	new RedisClient();
 	new ObjectStore();
 	new Prisma();
-	await new RabbitMQ().getInstance();
+	await RabbitMQ.getInstance();
 
 	const server = new Server(serverPort, serviceRoutes);
 	server.start();
