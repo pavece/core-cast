@@ -1,0 +1,15 @@
+{
+	"name": "@core-cast/object-store",
+	"version": "1.0.0",
+	"main": "index.ts",
+	"types": "index.d.ts",
+	"exports": {
+		".": {
+			"require": "./index.ts",
+			"import": "./index.ts"
+		}
+	},
+	"dependencies": {
+		"@aws-sdk/client-s3": "^3.840.0"
+	}
+}

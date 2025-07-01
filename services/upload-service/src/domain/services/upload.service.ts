@@ -8,7 +8,7 @@ import Redis from 'ioredis';
 import 'dotenv/config';
 
 import { RedisClient } from '../../infrastructure/database/redis';
-import { ObjectStore } from '../../infrastructure/object-store/object-store';
+import { ObjectStore } from '@core-cast/object-store';
 import { ApiError } from '../errors/api-error';
 import { ChunkData, PendingUpload, RedisUploadRecord, VideoProcessingTask } from '../interfaces/upload-interfaces';
 import { Prisma, PrismaClient } from '@core-cast/prisma';
@@ -28,7 +28,8 @@ export class UploadService {
 	constructor() {
 		this.redisClient = new RedisClient().getClient();
 		this.prismaClient = Prisma.getInstance().prismaClient;
-		this.objectStoreClient = new ObjectStore().getClient();
+		this.objectStoreClient = ObjectStore.getInstance().s3Client;
+
 		this.logger = new Logger().getLogger();
 		this.prometheus = new Prometheus();
 	}
@@ -40,6 +41,7 @@ export class UploadService {
 			const { UploadId } = await this.objectStoreClient.send(
 				new CreateMultipartUploadCommand({ Bucket: process.env.OBJECT_STORE_PRIVATE_BUCKET || '', Key: objectName })
 			);
+
 			if (!UploadId) {
 				throw new Error('Upload id is undefined');
 			}

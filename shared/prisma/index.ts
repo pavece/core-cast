@@ -18,10 +18,6 @@ export class Prisma {
 		this.client.$connect();
 	}
 
-	public get instance() {
-		return Prisma._instance;
-	}
-
 	public get prismaClient() {
 		return this.client as PrismaClient;
 	}

@@ -18,25 +18,36 @@ export class TaskManager {
 	public async start() {
 		this.rabbitMQ = await RabbitMQ.getInstance();
 
-		this.rabbitMQ.videoProcessingChannel?.consume(this.rabbitMQ.videoProcessingQueueName, msg => {
+		this.rabbitMQ.videoProcessingChannel?.consume(this.rabbitMQ.videoProcessingQueueName, async msg => {
 			if (!msg) return;
 
 			console.log(msg.content.toString());
 
 			if (this.runningTasks < this.maxRunningTasks) {
 				this.rabbitMQ!.videoProcessingChannel?.ack(msg);
-				this.runTask();
+				await this.runTask();
 			} else {
-				this.rabbitMQ!.videoProcessingChannel?.nack(msg, true, true); //TODO: Wait a few seconds before nack
+				this.wait(20).then(() => {
+					this.logger.warn('Execution limit hit, requeuing task');
+					this.rabbitMQ!.videoProcessingChannel?.nack(msg, true, true);
+				});
 			}
 		});
 	}
 
-	private runTask() {
+	private async runTask() {
 		this.runningTasks++;
 
-		//TODO: Execute video processing tasks
+		await this.wait(120);
 
 		this.runningTasks--;
+	}
+
+	private wait(seconds: number) {
+		return new Promise(resolve => {
+			setTimeout(() => {
+				resolve(true);
+			}, seconds * 1000);
+		});
 	}
 }

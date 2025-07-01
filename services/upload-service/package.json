@@ -20,6 +20,7 @@
 	},
 	"dependencies": {
 		"@core-cast/prisma": "1.0.0",
+		"@core-cast/object-store": "1.0.0",
 
 		"@aws-sdk/client-s3": "^3.837.0",
 		"@types/express": "^5.0.3",

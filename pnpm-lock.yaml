@@ -44,6 +44,9 @@ importers:
       '@aws-sdk/client-s3':
         specifier: ^3.837.0
         version: 3.840.0
+      '@core-cast/object-store':
+        specifier: 1.0.0
+        version: link:../../shared/object-store
       '@core-cast/prisma':
         specifier: 1.0.0
         version: link:../../shared/prisma
@@ -99,6 +102,12 @@ importers:
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
+
+  shared/object-store:
+    dependencies:
+      '@aws-sdk/client-s3':
+        specifier: ^3.840.0
+        version: 3.840.0
 
   shared/prisma:
     dependencies:
