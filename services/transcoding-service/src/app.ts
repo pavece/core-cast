@@ -1,16 +1,41 @@
 import { Logger } from './domain/logging/logger';
 import { TaskManager } from './domain/task-manager/task-manager';
-import { ObjectStore } from './infrastructure/object-store/object-store';
-import { RabbitMQ } from './infrastructure/rabbitmq/rabbitmq';
+import { RabbitMQ } from '@core-cast/rabbitmq';
+import { ObjectStore, ObjectStoreConfigurationOptions } from '@core-cast/object-store';
 
 async function main() {
 	console.log('Transcoding service');
 
-	new Logger();
-	new ObjectStore();
+	await setupServices();
 
-	await RabbitMQ.getInstance();
 	await new TaskManager().start();
+}
+
+async function setupServices() {
+	const logger = new Logger().getLogger();
+
+	const objectStoreConfig: ObjectStoreConfigurationOptions = {
+		region: process.env.OBJECT_STORE_REGION || 'minio',
+		endpoint: process.env.OBJECT_STORE_ENDPOINT || '',
+		accesKeyId: process.env.OBJECT_STORE_KEY_ID || '',
+		secretAccessKey: process.env.OBJECT_STORE_SECRET || '',
+		privateBucket: process.env.OBJECT_STORE_PRIVATE_BUCKET || 'uploads',
+		publicBucket: process.env.OBJECT_STORE_PUBLIC_BUCKET || 'cdn',
+	};
+
+	try {
+		ObjectStore.getInstance().connect(objectStoreConfig);
+		logger.info('Connected to object store');
+	} catch (error) {
+		logger.error({ message: 'Failed to connect to object store', error });
+	}
+
+	try {
+		await RabbitMQ.getInstance().connect(process.env.RABBITMQ_CON_URL || 'amqp://localhost');
+		logger.info('Connected to rabbitMQ message broker');
+	} catch (error) {
+		logger.error({ message: 'Failed to connect to rabbitMQ message broker', error });
+	}
 }
 
 main();

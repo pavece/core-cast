@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { RabbitMQ } from '../../infrastructure/rabbitmq/rabbitmq';
+import { RabbitMQ } from '@core-cast/rabbitmq';
 import { Logger } from '../logging/logger';
 import { BaseLogger } from 'pino';
 
@@ -12,11 +12,12 @@ export class TaskManager {
 	constructor() {
 		this.runningTasks = 0;
 		this.maxRunningTasks = Number(process.env.MAX_CONCURRENT_TASKS) | 2;
+
 		this.logger = new Logger().getLogger();
 	}
 
 	public async start() {
-		this.rabbitMQ = await RabbitMQ.getInstance();
+		this.rabbitMQ = RabbitMQ.getInstance();
 
 		this.rabbitMQ.videoProcessingChannel?.consume(this.rabbitMQ.videoProcessingQueueName, async msg => {
 			if (!msg) return;
