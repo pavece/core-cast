@@ -1,0 +1,18 @@
+{
+	"name": "@core-cast/rabbitmq",
+	"version": "1.0.0",
+	"main": "index.ts",
+	"types": "index.d.ts",
+	"exports": {
+		".": {
+			"require": "./index.ts",
+			"import": "./index.ts"
+		}
+	},
+	"dependencies": {
+		"amqplib": "^0.10.8"
+	},
+	"devDependencies": {
+		"@types/amqplib": "^0.10.7"
+	}
+}

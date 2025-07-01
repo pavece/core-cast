@@ -7,15 +7,17 @@ import {
 import Redis from 'ioredis';
 import 'dotenv/config';
 
-import { RedisClient } from '../../infrastructure/database/redis';
-import { ObjectStore } from '@core-cast/object-store';
 import { ApiError } from '../errors/api-error';
 import { ChunkData, PendingUpload, RedisUploadRecord, VideoProcessingTask } from '../interfaces/upload-interfaces';
-import { Prisma, PrismaClient } from '@core-cast/prisma';
-import { Logger } from '../logging/logger';
 import { BaseLogger } from 'pino';
+
+import { Logger } from '../logging/logger';
 import { Prometheus } from '../logging/prometheus';
-import { RabbitMQ } from '../../infrastructure/rabbitmq/rabbitmq';
+import { RedisClient } from '../../infrastructure/database/redis';
+
+import { RabbitMQ } from '@core-cast/rabbitmq';
+import { ObjectStore } from '@core-cast/object-store';
+import { Prisma, PrismaClient } from '@core-cast/prisma';
 
 export class UploadService {
 	private redisClient: Redis;
@@ -29,6 +31,7 @@ export class UploadService {
 		this.redisClient = new RedisClient().getClient();
 		this.prismaClient = Prisma.getInstance().prismaClient;
 		this.objectStoreClient = ObjectStore.getInstance().s3Client;
+		this.rabbitMQ = RabbitMQ.getInstance();
 
 		this.logger = new Logger().getLogger();
 		this.prometheus = new Prometheus();
@@ -133,13 +136,10 @@ export class UploadService {
 
 			await this.prismaClient.upload.delete({ where: { multipartId: uploadId } });
 
-			//Add video processing task to the queue
-			this.rabbitMQ = await RabbitMQ.getInstance();
-
 			//TODO: Create video processing task record in DB and send ID via rabbitMQ (objectName, videoId, startTime, status[pending / processing])
 			const videoProcessingTask: VideoProcessingTask = { videoName: redisUploadRecord.objectName };
 
-			this.rabbitMQ.videoProcessingChannel?.sendToQueue(
+			this.rabbitMQ?.videoProcessingChannel?.sendToQueue(
 				this.rabbitMQ.videoProcessingQueueName,
 				Buffer.from(JSON.stringify(videoProcessingTask))
 			);

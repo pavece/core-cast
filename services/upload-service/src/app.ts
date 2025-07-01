@@ -1,7 +1,7 @@
 import { Prisma } from '@core-cast/prisma';
 import { RedisClient } from './infrastructure/database/redis';
 import { ObjectStore, ObjectStoreConfigurationOptions } from '@core-cast/object-store';
-import { RabbitMQ } from './infrastructure/rabbitmq/rabbitmq';
+import { RabbitMQ } from '@core-cast/rabbitmq';
 import { ServiceRoutes } from './presentation/routes';
 import { Server } from './presentation/server';
 import 'dotenv/config';
@@ -46,7 +46,12 @@ async function setupServices() {
 		logger.error({ message: 'Failed to connect to posgreSQL', error });
 	}
 
-	await RabbitMQ.getInstance();
+	try {
+		await RabbitMQ.getInstance().connect(process.env.RABBITMQ_CON_URL || 'amqp://localhost');
+		logger.info('Connected to rabbitMQ message broker');
+	} catch (error) {
+		logger.error({ message: 'Failed to connect to rabbitMQ message broker', error });
+	}
 }
 
 main();
