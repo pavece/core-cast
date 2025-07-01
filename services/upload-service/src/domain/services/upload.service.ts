@@ -11,8 +11,7 @@ import { RedisClient } from '../../infrastructure/database/redis';
 import { ObjectStore } from '../../infrastructure/object-store/object-store';
 import { ApiError } from '../errors/api-error';
 import { ChunkData, PendingUpload, RedisUploadRecord, VideoProcessingTask } from '../interfaces/upload-interfaces';
-import { Prisma } from '../../infrastructure/database/prisma';
-import { PrismaClient } from '../../generated/prisma';
+import { Prisma, PrismaClient } from '@core-cast/prisma';
 import { Logger } from '../logging/logger';
 import { BaseLogger } from 'pino';
 import { Prometheus } from '../logging/prometheus';
@@ -28,7 +27,7 @@ export class UploadService {
 
 	constructor() {
 		this.redisClient = new RedisClient().getClient();
-		this.prismaClient = new Prisma().getClient();
+		this.prismaClient = Prisma.getInstance().prismaClient;
 		this.objectStoreClient = new ObjectStore().getClient();
 		this.logger = new Logger().getLogger();
 		this.prometheus = new Prometheus();

@@ -1,0 +1,16 @@
+{
+	"name": "@core-cast/prisma",
+	"version": "1.0.0",
+	"main": "index.ts",
+	"types": "index.d.ts",
+	"exports": {
+		".": {
+			"require": "./index.ts",
+			"import": "./index.ts"
+		}
+	},
+	"dependencies": {
+		"@prisma/client": "6.11.0",
+		"prisma": "^6.11.0"
+	}
+}
