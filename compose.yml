@@ -36,7 +36,7 @@ services:
     image: rabbitmq:4-management
     ports:
       - 5672:5672   # Do NOT expose without authenticatiuon properly configured
-      - 15672:15672 # Do NOT expose (.)
+      - 9091:15672 # Do NOT expose (.)
 
   # OPTIONAL: Explorer for postgreSQL
   adminer:

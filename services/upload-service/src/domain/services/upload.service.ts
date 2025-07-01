@@ -134,7 +134,9 @@ export class UploadService {
 			await this.prismaClient.upload.delete({ where: { multipartId: uploadId } });
 
 			//Add video processing task to the queue
-			const videoProcessingTask: VideoProcessingTask = { videoName: redisUploadRecord.objectName }; //Should also provide a reference to the created video record (so it can add the processed video & media later)
+
+			//TODO: Create video processing task record in DB and send ID via rabbitMQ (objectName, videoId, startTime, status[pending / processing])
+			const videoProcessingTask: VideoProcessingTask = { videoName: redisUploadRecord.objectName };
 
 			this.rabbitMQ.videoProcessingChannel?.sendToQueue(
 				this.rabbitMQ.videoProcessingQueueName,
