@@ -24,7 +24,7 @@ export class UploadService {
 	private prismaClient: PrismaClient;
 	private logger: BaseLogger;
 	private prometheus: Prometheus;
-	private rabbitMQ: RabbitMQ;
+	private rabbitMQ: RabbitMQ | undefined;
 
 	constructor() {
 		this.redisClient = new RedisClient().getClient();
@@ -32,7 +32,6 @@ export class UploadService {
 		this.objectStoreClient = new ObjectStore().getClient();
 		this.logger = new Logger().getLogger();
 		this.prometheus = new Prometheus();
-		this.rabbitMQ = new RabbitMQ();
 	}
 
 	public async initializeChunkedUpload(originalObjectName: string, totalChunks: number) {
@@ -134,6 +133,7 @@ export class UploadService {
 			await this.prismaClient.upload.delete({ where: { multipartId: uploadId } });
 
 			//Add video processing task to the queue
+			this.rabbitMQ = await new RabbitMQ().getInstance();
 
 			//TODO: Create video processing task record in DB and send ID via rabbitMQ (objectName, videoId, startTime, status[pending / processing])
 			const videoProcessingTask: VideoProcessingTask = { videoName: redisUploadRecord.objectName };

@@ -1,8 +1,7 @@
 import amqp, { Channel } from 'amqplib';
-import { BaseLogger } from 'pino';
 import 'dotenv/config';
-
 import { Logger } from '../../domain/logging/logger';
+import { BaseLogger } from 'pino';
 
 export class RabbitMQ {
 	private static _instance: RabbitMQ;
@@ -14,13 +13,16 @@ export class RabbitMQ {
 	public videoProcessingQueueName: string = 'video-processing';
 
 	constructor() {
-		if (RabbitMQ._instance) return RabbitMQ._instance;
-
 		this.logger = new Logger().getLogger();
+	}
 
-		this.connect();
+	public async getInstance() {
+		if (!RabbitMQ._instance) {
+			RabbitMQ._instance = new RabbitMQ();
+			await this.connect();
+		}
 
-		RabbitMQ._instance = this;
+		return RabbitMQ._instance;
 	}
 
 	private async connect() {
