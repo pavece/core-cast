@@ -8,7 +8,7 @@ import Redis from 'ioredis';
 import 'dotenv/config';
 
 import { ApiError } from '../errors/api-error';
-import { ChunkData, PendingUpload, RedisUploadRecord, VideoProcessingTask } from '../interfaces/upload-interfaces';
+import { Upload } from '@core-cast/types';
 import { BaseLogger } from 'pino';
 
 import { Logger } from '../logging/logger';
@@ -63,7 +63,7 @@ export class UploadService {
 
 	public async uploadChunk(uploadId: string, chunkNumber: number, chunk: Buffer) {
 		try {
-			const redisUploadRecord = (await this.redisClient.hgetall(uploadId)) as unknown as RedisUploadRecord;
+			const redisUploadRecord = (await this.redisClient.hgetall(uploadId)) as unknown as Upload.RedisUploadRecord;
 			if (!redisUploadRecord.objectName || !chunkNumber) {
 				throw new ApiError(404, 'Upload not found, the upload may be outdated');
 			}
@@ -105,13 +105,13 @@ export class UploadService {
 
 	public async finishChunkedUpload(uploadId: string) {
 		try {
-			const redisUploadRecord = (await this.redisClient.hgetall(uploadId)) as unknown as RedisUploadRecord;
+			const redisUploadRecord = (await this.redisClient.hgetall(uploadId)) as unknown as Upload.RedisUploadRecord;
 			if (!redisUploadRecord) {
 				throw new ApiError(404, 'Upload not found, the upload may be outdated');
 			}
 
 			const parts = (await this.redisClient.lrange(`parts:${uploadId}`, 0, -1))
-				.map(p => ({ ETag: p.split(':')[0], PartNumber: Number(p.split(':')[1]) } as ChunkData))
+				.map(p => ({ ETag: p.split(':')[0], PartNumber: Number(p.split(':')[1]) } as Upload.ChunkData))
 				.sort((a, b) => a.PartNumber - b.PartNumber);
 
 			if (parts.length != redisUploadRecord.totalChunks) {
@@ -137,7 +137,7 @@ export class UploadService {
 			await this.prismaClient.upload.delete({ where: { multipartId: uploadId } });
 
 			//TODO: Create video processing task record in DB and send ID via rabbitMQ (objectName, videoId, startTime, status[pending / processing])
-			const videoProcessingTask: VideoProcessingTask = { videoName: redisUploadRecord.objectName };
+			const videoProcessingTask: Upload.VideoProcessingTask = { videoName: redisUploadRecord.objectName };
 
 			this.rabbitMQ?.videoProcessingChannel?.sendToQueue(
 				this.rabbitMQ.videoProcessingQueueName,
@@ -156,7 +156,7 @@ export class UploadService {
 	public async getPendingUploads(userId: string) {
 		try {
 			const pendingUploads = await this.prismaClient.upload.findMany();
-			const modifiedPendingUploads: PendingUpload[] = [];
+			const modifiedPendingUploads: Upload.PendingUpload[] = [];
 
 			//Chunks can arrive at any order, client must be aware of all the uploaded chunks so he can skip them
 			for (const upload of pendingUploads) {

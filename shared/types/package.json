@@ -1,0 +1,12 @@
+{
+	"name": "@core-cast/types",
+	"version": "1.0.0",
+	"main": "index.ts",
+	"types": "index.d.ts",
+	"exports": {
+		".": {
+			"require": "./index.ts",
+			"import": "./index.ts"
+		}
+	}
+}

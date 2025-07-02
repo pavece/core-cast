@@ -22,6 +22,7 @@
 		"@core-cast/prisma": "1.0.0",
 		"@core-cast/object-store": "1.0.0",
 		"@core-cast/rabbitmq": "1.0.0",
+		"@core-cast/types": "1.0.0",
 		"@aws-sdk/client-s3": "^3.837.0",
 		"cors": "^2.8.5",
 		"dotenv": "^16.5.0",
