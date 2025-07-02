@@ -8,6 +8,7 @@ import 'dotenv/config';
 import { Logger } from './domain/logging/logger';
 
 async function main() {
+	printWelcomeMessage();
 	await setupServices();
 
 	const serverPort = Number(process.env.PORT) || 8081;
@@ -52,6 +53,13 @@ async function setupServices() {
 	} catch (error) {
 		logger.error({ message: 'Failed to connect to rabbitMQ message broker', error });
 	}
+}
+
+function printWelcomeMessage() {
+	console.log(
+		"   ____               _   _       _                 _ \n  / ___|___  _ __ ___| | | |_ __ | | ___   __ _  __| |\n | |   / _ \\| '__/ _ \\ | | | '_ \\| |/ _ \\ / _` |/ _` |\n | |__| (_) | | |  __/ |_| | |_) | | (_) | (_| | (_| |\n  \\____\\___/|_|  \\___|\\___/| .__/|_|\\___/ \\__,_|\\__,_|\n                           |_|"
+	);
+	console.log('Chunked media uploads service - CoreCast, welcome!\n\n');
 }
 
 main();

@@ -4,7 +4,7 @@ import { RabbitMQ } from '@core-cast/rabbitmq';
 import { ObjectStore, ObjectStoreConfigurationOptions } from '@core-cast/object-store';
 
 async function main() {
-	console.log('Transcoding service');
+	printWelcomeMessage();
 
 	await setupServices();
 
@@ -36,6 +36,14 @@ async function setupServices() {
 	} catch (error) {
 		logger.error({ message: 'Failed to connect to rabbitMQ message broker', error });
 	}
+}
+
+function printWelcomeMessage() {
+	console.log(
+		"   ____                ____          _      \n  / ___|___  _ __ ___ / ___|___   __| | ___ \n | |   / _ \\| '__/ _ \\ |   / _ \\ / _` |/ _ \\\n | |__| (_) | | |  __/ |__| (_) | (_| |  __/\n  \\____\\___/|_|  \\___|\\____\\___/ \\__,_|\\___|"
+	);
+
+	console.log('Video transcoding & processing service - CoreCast, welcome!\n\n');
 }
 
 main();
