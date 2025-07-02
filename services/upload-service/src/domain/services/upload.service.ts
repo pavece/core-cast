@@ -131,17 +131,19 @@ export class UploadService {
 
 			await this.redisClient.del(uploadId);
 			await this.redisClient.del(`parts:${uploadId}`);
+			await this.prismaClient.upload.delete({ where: { multipartId: uploadId } });
 
 			this.prometheus.uploadFilesCounter?.inc();
 
-			await this.prismaClient.upload.delete({ where: { multipartId: uploadId } });
-
-			//TODO: Create video processing task record in DB and send ID via rabbitMQ (objectName, videoId, startTime, status[pending / processing])
-			const videoProcessingTask: Upload.VideoProcessingTask = { videoName: redisUploadRecord.objectName };
+			//Create video processing task & send to queue
+			const videoProcessingTask = await this.prismaClient.videoProcessingTask.create({
+				data: { objectName: redisUploadRecord.objectName, videoId: 'TEMP' },
+			});
+			const videoProcessingMessage: Upload.VideoProcessingTaskMessage = { processingTaskId: videoProcessingTask.id };
 
 			this.rabbitMQ?.videoProcessingChannel?.sendToQueue(
 				this.rabbitMQ.videoProcessingQueueName,
-				Buffer.from(JSON.stringify(videoProcessingTask))
+				Buffer.from(JSON.stringify(videoProcessingMessage))
 			);
 		} catch (error) {
 			if (error instanceof ApiError) {

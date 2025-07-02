@@ -14,7 +14,6 @@ export interface PendingUpload {
 	uploadedChunks: number[];
 }
 
-export interface VideoProcessingTask {
-	videoName: string;
-	// videoId: string //TODO: remove when implemented
+export interface VideoProcessingTaskMessage {
+	processingTaskId: string;
 }
