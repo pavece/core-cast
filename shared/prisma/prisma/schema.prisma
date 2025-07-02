@@ -5,12 +5,27 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = ""
+  url      = env("POSTGRESQL_CON_URL")
+}
+
+enum VideoProcessingStatus {
+  PENDING
+  PROCESSING
 }
 
 model upload {
   id          String   @id @default(uuid())
-  user        String
+  user        String //TODO: Must be a relation with user (change when auth is in place)
   multipartId String   @unique
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+}
+
+model videoProcessingTask {
+  id         String                @id @default(uuid())
+  objectName String
+  videoId    String //TODO: Must be a relation with video (change when video records are in place)
+  status     VideoProcessingStatus @default(PENDING)
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @default(now())
 }
