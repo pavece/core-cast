@@ -16,6 +16,9 @@ importers:
       '@core-cast/object-store':
         specifier: 1.0.0
         version: link:../../shared/object-store
+      '@core-cast/prisma':
+        specifier: 1.0.0
+        version: link:../../shared/prisma
       '@core-cast/rabbitmq':
         specifier: 1.0.0
         version: link:../../shared/rabbitmq

@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { RabbitMQ } from '@core-cast/rabbitmq';
 import { Logger } from '../logging/logger';
 import { BaseLogger } from 'pino';
+import { VideoProcessingTask } from '../task/video-processing-task';
 
 export class TaskManager {
 	private runningTasks: number;
@@ -20,26 +21,34 @@ export class TaskManager {
 		this.rabbitMQ = RabbitMQ.getInstance();
 
 		this.rabbitMQ.videoProcessingChannel?.consume(this.rabbitMQ.videoProcessingQueueName, async msg => {
-			if (!msg) return;
-
-			console.log(msg.content.toString());
+			const { processingTaskId } = JSON.parse(msg?.content.toString() || '{}');
+			if (!processingTaskId) return;
 
 			if (this.runningTasks < this.maxRunningTasks) {
-				this.rabbitMQ!.videoProcessingChannel?.ack(msg);
-				await this.runTask();
+				this.rabbitMQ!.videoProcessingChannel?.ack(msg!);
+				await this.runTask(processingTaskId);
 			} else {
 				this.wait(20).then(() => {
 					this.logger.warn('Execution limit hit, requeuing task');
-					this.rabbitMQ!.videoProcessingChannel?.nack(msg, true, true);
+					this.rabbitMQ!.videoProcessingChannel?.nack(msg!, true, true);
 				});
 			}
 		});
 	}
 
-	private async runTask() {
+	private async runTask(taskId: string) {
 		this.runningTasks++;
 
-		await this.wait(120);
+		const task = new VideoProcessingTask(taskId);
+		try {
+			await task.loadTaskData();
+			this.logger.info(`Started task with id ${taskId}`);
+			await task.run();
+
+			this.logger.info(`Completed task with id ${taskId}`);
+		} catch (error) {
+			this.logger.error({ messgae: `Failed to start / run task with id ${taskId}`, error });
+		}
 
 		this.runningTasks--;
 	}

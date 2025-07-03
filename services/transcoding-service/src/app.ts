@@ -2,6 +2,8 @@ import { Logger } from './domain/logging/logger';
 import { TaskManager } from './domain/task-manager/task-manager';
 import { RabbitMQ } from '@core-cast/rabbitmq';
 import { ObjectStore, ObjectStoreConfigurationOptions } from '@core-cast/object-store';
+import { Prisma } from '@core-cast/prisma';
+
 
 async function main() {
 	printWelcomeMessage();
@@ -22,6 +24,13 @@ async function setupServices() {
 		privateBucket: process.env.OBJECT_STORE_PRIVATE_BUCKET || 'uploads',
 		publicBucket: process.env.OBJECT_STORE_PUBLIC_BUCKET || 'cdn',
 	};
+
+	try {
+		await Prisma.getInstance().connect(process.env.POSTGRESQL_CON_URL || '');
+		logger.info('Connected to postgreSQL');
+	} catch (error) {
+		logger.error({ message: 'Failed to connect to posgreSQL', error });
+	}
 
 	try {
 		ObjectStore.getInstance().connect(objectStoreConfig);
