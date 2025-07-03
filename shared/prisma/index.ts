@@ -15,7 +15,7 @@ export class Prisma {
 
 	public async connect(url: string) {
 		this.client = new PrismaClient({ datasources: { db: { url } } });
-		this.client.$connect();
+		await this.client.$connect();
 	}
 
 	public get prismaClient() {
@@ -24,3 +24,4 @@ export class Prisma {
 }
 
 export { PrismaClient };
+export * from './generated/prisma/index';

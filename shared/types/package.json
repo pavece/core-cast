@@ -8,5 +8,8 @@
 			"require": "./index.ts",
 			"import": "./index.ts"
 		}
+	},
+	"dependencies": {
+		"@core-cast/prisma": "1.0.0"
 	}
 }

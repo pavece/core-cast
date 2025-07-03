@@ -131,7 +131,11 @@ importers:
         specifier: ^0.10.7
         version: 0.10.7
 
-  shared/types: {}
+  shared/types:
+    dependencies:
+      '@core-cast/prisma':
+        specifier: 1.0.0
+        version: link:../prisma
 
 packages:
 

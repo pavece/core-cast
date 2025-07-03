@@ -8,7 +8,7 @@ import Redis from 'ioredis';
 import 'dotenv/config';
 
 import { ApiError } from '../errors/api-error';
-import { Upload } from '@core-cast/types';
+import { PendingUploadRepository, Upload } from '@core-cast/types';
 import { BaseLogger } from 'pino';
 
 import { Logger } from '../logging/logger';
@@ -18,20 +18,23 @@ import { RedisClient } from '../../infrastructure/database/redis';
 import { RabbitMQ } from '@core-cast/rabbitmq';
 import { ObjectStore } from '@core-cast/object-store';
 import { Prisma, PrismaClient } from '@core-cast/prisma';
+import { UploadRepository } from '../../infrastructure/repositories/upload.repo.impl';
 
 export class UploadService {
 	private redisClient: Redis;
 	private objectStoreClient: S3Client;
-	private prismaClient: PrismaClient;
 	private logger: BaseLogger;
 	private prometheus: Prometheus;
-	private rabbitMQ: RabbitMQ | undefined;
+	private rabbitMQ: RabbitMQ;
+	private pendingUploadRepo: PendingUploadRepository;
+	private prismaClient: PrismaClient;
 
 	constructor() {
+		this.pendingUploadRepo = new UploadRepository();
 		this.redisClient = new RedisClient().getClient();
-		this.prismaClient = Prisma.getInstance().prismaClient;
 		this.objectStoreClient = ObjectStore.getInstance().s3Client;
 		this.rabbitMQ = RabbitMQ.getInstance();
+		this.prismaClient = Prisma.getInstance().prismaClient;
 
 		this.logger = new Logger().getLogger();
 		this.prometheus = new Prometheus();
@@ -50,7 +53,7 @@ export class UploadService {
 			}
 
 			await this.redisClient.hset(UploadId, { startedAt: new Date().toISOString(), totalChunks, objectName });
-			await this.prismaClient.upload.create({ data: { multipartId: UploadId, user: 'TEMP USER' } });
+			await this.pendingUploadRepo.createPendingUpload(UploadId, 'TEST USER'); //TODO: Update when auth is in place
 
 			this.logger.info({ message: 'New multupart upload init', partialUploadId: UploadId.slice(0, 20) + '(...)' });
 
@@ -131,7 +134,7 @@ export class UploadService {
 
 			await this.redisClient.del(uploadId);
 			await this.redisClient.del(`parts:${uploadId}`);
-			await this.prismaClient.upload.delete({ where: { multipartId: uploadId } });
+			await this.pendingUploadRepo.deletePendingUploadByMultipartId(uploadId);
 
 			this.prometheus.uploadFilesCounter?.inc();
 
@@ -157,7 +160,7 @@ export class UploadService {
 
 	public async getPendingUploads(userId: string) {
 		try {
-			const pendingUploads = await this.prismaClient.upload.findMany();
+			const pendingUploads = await this.pendingUploadRepo.getPendingUploadsByUser(userId);
 			const modifiedPendingUploads: Upload.PendingUpload[] = [];
 
 			//Chunks can arrive at any order, client must be aware of all the uploaded chunks so he can skip them
