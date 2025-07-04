@@ -1,7 +1,5 @@
-//Video processing task steps
-
-import { Prisma, PrismaClient } from '@core-cast/prisma';
 import { videoProcessingTask } from '@core-cast/prisma/generated/prisma';
+import { VideoProcessingTaskRepository } from '@/infrastructure/repositories/video-task.repo.impl';
 
 // 1. Get the object name from the database + update status to started
 // 2. Get a presigned URL for the original video from the object store
@@ -15,17 +13,15 @@ export class VideoProcessingTask {
 	private videoProcessingRecordId: string;
 	private videoProcessingTaskRecord: videoProcessingTask | undefined;
 
-	private prismaClient: PrismaClient;
+	private videoProcessingTaskRepo: VideoProcessingTaskRepository;
 
 	constructor(videoProcessingRecordId: string) {
 		this.videoProcessingRecordId = videoProcessingRecordId;
-		this.prismaClient = Prisma.getInstance().prismaClient;
+		this.videoProcessingTaskRepo = new VideoProcessingTaskRepository();
 	}
 
 	public async loadTaskData() {
-		const videoProcessingRecord = await this.prismaClient.videoProcessingTask.findUnique({
-			where: { id: this.videoProcessingRecordId },
-		});
+		const videoProcessingRecord = await this.videoProcessingTaskRepo.markTaskAsStarted(this.videoProcessingRecordId);
 
 		if (!videoProcessingRecord?.objectName) {
 			throw new Error("Video processing task not found, can't start task");
@@ -37,11 +33,8 @@ export class VideoProcessingTask {
 	public run() {
 		if (!this.videoProcessingTaskRecord) throw new Error("Video processing task not found, can't start task");
 
-		this.markVideoProcessingAsStarted();
 		this.generatePresignedVideoUrl();
 	}
-
-	private markVideoProcessingAsStarted() {}
 
 	private generatePresignedVideoUrl() {}
 }

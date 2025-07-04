@@ -4,7 +4,7 @@ export interface ChunkData {
 }
 
 export interface RedisUploadRecord {
-	startedAt: Date;
+	startedAt: string;
 	totalChunks: number;
 	objectName: string;
 }
