@@ -6,17 +6,17 @@ import { Upload } from '@core-cast/types';
 
 import { Logger } from '../logging/logger';
 import { Prometheus } from '../logging/prometheus';
-import { RedisClient } from '../../infrastructure/database/redis';
 
 import { RabbitMQ } from '@core-cast/rabbitmq';
 import { ObjectStore } from '@core-cast/object-store';
 import { UploadRepository } from '../../infrastructure/repositories/upload.repo.impl';
 import { VideoProcessingTaskRepository } from '../../infrastructure/repositories/video-task.repo.impl';
+import { MultipartUploadRepository } from '../../infrastructure/repositories/multipart-upload.repo.impl';
 
 export class UploadService {
 	private pendingUploadRepo = new UploadRepository();
 	private videoProcessingTaskRepo = new VideoProcessingTaskRepository();
-	private redisClient = new RedisClient().getClient();
+	private multipartUploadRepo = new MultipartUploadRepository();
 	private objectStoreClient = ObjectStore.getInstance().s3Client;
 	private rabbitMQ = RabbitMQ.getInstance();
 
@@ -35,7 +35,7 @@ export class UploadService {
 				throw new Error('Upload id is undefined');
 			}
 
-			await this.redisClient.hset(UploadId, { startedAt: new Date().toISOString(), totalChunks, objectName });
+			await this.multipartUploadRepo.createMultipartUpload(UploadId, objectName, totalChunks);
 			await this.pendingUploadRepo.createPendingUpload(UploadId, 'TEST USER'); //TODO: Update when auth is in place
 
 			this.logger.info({ message: 'New multupart upload init', partialUploadId: UploadId.slice(0, 20) + '(...)' });
@@ -49,8 +49,8 @@ export class UploadService {
 
 	public async uploadChunk(uploadId: string, chunkNumber: number, chunk: Buffer) {
 		try {
-			const redisUploadRecord = (await this.redisClient.hgetall(uploadId)) as unknown as Upload.RedisUploadRecord;
-			if (!redisUploadRecord.objectName || !chunkNumber) {
+			const redisUploadRecord = await this.multipartUploadRepo.getMultipartUploadById(uploadId);
+			if (!redisUploadRecord?.objectName || !chunkNumber) {
 				throw new ApiError(404, 'Upload not found, the upload may be outdated');
 			}
 
@@ -65,10 +65,14 @@ export class UploadService {
 				})
 			);
 
+			if (!ETag) {
+				throw new Error('Failed to upload chunk');
+			}
+
 			//Prevent same chunk / part reuploading
-			const parts = await this.redisClient.lrange(`parts:${uploadId}`, 0, -1);
-			if (!parts.find(p => Number(p.split(':')[1]) == chunkNumber || p.split(':')[0] == ETag)) {
-				this.redisClient.rpush(`parts:${uploadId}`, `${ETag}:${chunkNumber}`);
+			const parts = await this.multipartUploadRepo.getChunks(uploadId);
+			if (!parts.find(p => p.PartNumber == chunkNumber || p.ETag == ETag)) {
+				await this.multipartUploadRepo.addChunk(uploadId, chunkNumber, ETag);
 			}
 
 			this.prometheus.uploadBytesCounter?.inc(chunk.byteLength);
@@ -91,15 +95,12 @@ export class UploadService {
 
 	public async finishChunkedUpload(uploadId: string) {
 		try {
-			const redisUploadRecord = (await this.redisClient.hgetall(uploadId)) as unknown as Upload.RedisUploadRecord;
+			const redisUploadRecord = await this.multipartUploadRepo.getMultipartUploadById(uploadId);
 			if (!redisUploadRecord) {
 				throw new ApiError(404, 'Upload not found, the upload may be outdated');
 			}
 
-			const parts = (await this.redisClient.lrange(`parts:${uploadId}`, 0, -1))
-				.map(p => ({ ETag: p.split(':')[0], PartNumber: Number(p.split(':')[1]) } as Upload.ChunkData))
-				.sort((a, b) => a.PartNumber - b.PartNumber);
-
+			const parts = await this.multipartUploadRepo.getChunks(uploadId);
 			if (parts.length != redisUploadRecord.totalChunks) {
 				throw new ApiError(400, 'Upload all the chunks before completing the upload');
 			}
@@ -115,8 +116,7 @@ export class UploadService {
 				})
 			);
 
-			await this.redisClient.del(uploadId);
-			await this.redisClient.del(`parts:${uploadId}`);
+			await this.multipartUploadRepo.deleteMultipartUpload(uploadId);
 			await this.pendingUploadRepo.deletePendingUploadByMultipartId(uploadId);
 
 			this.prometheus.uploadFilesCounter?.inc();
@@ -146,12 +146,10 @@ export class UploadService {
 
 			//Chunks can arrive at any order, client must be aware of all the uploaded chunks so he can skip them
 			for (const upload of pendingUploads) {
-				const uploadedChunks = (await this.redisClient.lrange(`parts:${upload.multipartId}`, 0, -1)).map(p =>
-					Number(p.split(':')[1])
-				);
+				const uploadedChunks = await this.multipartUploadRepo.getChunks(upload.multipartId);
 
 				modifiedPendingUploads.push({
-					uploadedChunks: uploadedChunks,
+					uploadedChunks: uploadedChunks.map(c => c.PartNumber),
 					uploadId: upload.multipartId,
 				});
 			}
