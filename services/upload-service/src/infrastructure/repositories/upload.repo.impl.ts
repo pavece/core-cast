@@ -1,7 +1,7 @@
 import { Prisma, upload } from '@core-cast/prisma';
-import { PendingUploadRepository } from '@core-cast/types';
+import { IUploadRepository } from '@core-cast/types';
 
-export class UploadRepository implements PendingUploadRepository {
+export class UploadRepository implements IUploadRepository {
 	private prismaClient = Prisma.getInstance().prismaClient;
 
 	async createPendingUpload(multipartId: string, userId: string): Promise<upload> {

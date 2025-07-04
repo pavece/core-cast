@@ -1,6 +1,6 @@
 import { upload } from '@core-cast/prisma';
 
-export interface PendingUploadRepository {
+export interface IUploadRepository {
 	createPendingUpload(multipartId: string, userId: string): Promise<upload>;
 	getPendingUploadById(id: string): Promise<upload | null>;
 	getPendingUploadsByUser(userId: string): Promise<upload[]>;

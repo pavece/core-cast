@@ -1,15 +1,8 @@
-import {
-	CompleteMultipartUploadCommand,
-	CreateMultipartUploadCommand,
-	S3Client,
-	UploadPartCommand,
-} from '@aws-sdk/client-s3';
-import Redis from 'ioredis';
+import { CompleteMultipartUploadCommand, CreateMultipartUploadCommand, UploadPartCommand } from '@aws-sdk/client-s3';
 import 'dotenv/config';
 
 import { ApiError } from '../errors/api-error';
-import { PendingUploadRepository, Upload } from '@core-cast/types';
-import { BaseLogger } from 'pino';
+import { Upload } from '@core-cast/types';
 
 import { Logger } from '../logging/logger';
 import { Prometheus } from '../logging/prometheus';
@@ -17,28 +10,18 @@ import { RedisClient } from '../../infrastructure/database/redis';
 
 import { RabbitMQ } from '@core-cast/rabbitmq';
 import { ObjectStore } from '@core-cast/object-store';
-import { Prisma, PrismaClient } from '@core-cast/prisma';
 import { UploadRepository } from '../../infrastructure/repositories/upload.repo.impl';
+import { VideoProcessingTaskRepository } from '../../infrastructure/repositories/video-task.repo.impl';
 
 export class UploadService {
-	private redisClient: Redis;
-	private objectStoreClient: S3Client;
-	private logger: BaseLogger;
-	private prometheus: Prometheus;
-	private rabbitMQ: RabbitMQ;
-	private pendingUploadRepo: PendingUploadRepository;
-	private prismaClient: PrismaClient;
+	private pendingUploadRepo = new UploadRepository();
+	private videoProcessingTaskRepo = new VideoProcessingTaskRepository();
+	private redisClient = new RedisClient().getClient();
+	private objectStoreClient = ObjectStore.getInstance().s3Client;
+	private rabbitMQ = RabbitMQ.getInstance();
 
-	constructor() {
-		this.pendingUploadRepo = new UploadRepository();
-		this.redisClient = new RedisClient().getClient();
-		this.objectStoreClient = ObjectStore.getInstance().s3Client;
-		this.rabbitMQ = RabbitMQ.getInstance();
-		this.prismaClient = Prisma.getInstance().prismaClient;
-
-		this.logger = new Logger().getLogger();
-		this.prometheus = new Prometheus();
-	}
+	private logger = new Logger().getLogger();
+	private prometheus = new Prometheus();
 
 	public async initializeChunkedUpload(originalObjectName: string, totalChunks: number) {
 		const objectName = crypto.randomUUID() + '-' + originalObjectName;
@@ -139,9 +122,7 @@ export class UploadService {
 			this.prometheus.uploadFilesCounter?.inc();
 
 			//Create video processing task & send to queue
-			const videoProcessingTask = await this.prismaClient.videoProcessingTask.create({
-				data: { objectName: redisUploadRecord.objectName, videoId: 'TEMP' },
-			});
+			const videoProcessingTask = await this.videoProcessingTaskRepo.createTask(redisUploadRecord.objectName, 'TEMP');
 			const videoProcessingMessage: Upload.VideoProcessingTaskMessage = { processingTaskId: videoProcessingTask.id };
 
 			this.rabbitMQ?.videoProcessingChannel?.sendToQueue(
