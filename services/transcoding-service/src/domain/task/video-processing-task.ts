@@ -4,6 +4,10 @@ import { ObjectStore } from '@core-cast/object-store';
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { generateThumbnail } from '../processing-functions/generate-thumbnail';
+import path from 'path';
+
+import 'dotenv/config';
+import fs from 'fs';
 
 // 1. Get the object name from the database + update status to started
 // 2. Get a presigned URL for the original video from the object store
@@ -48,6 +52,17 @@ export class VideoProcessingTask {
 		await this.runProcessingTasks();
 	}
 
+	private async runProcessingTasks() {
+		if (!this.presignedUrl) throw new Error(`Presigned URL does not extsit for task, cannot process video`);
+		const tempMediaDir = this.createTempVideoDir();
+
+		try {
+			await generateThumbnail(this.presignedUrl, tempMediaDir);
+		} finally {
+			//this.fsCleanup(tempMediaDir);
+		}
+	}
+
 	private checkIfObjectExtsists() {
 		const object = this.objectStore.send(
 			new GetObjectCommand({ Bucket: this.privateBucket, Key: this.videoProcessingTaskRecord?.objectName })
@@ -67,9 +82,17 @@ export class VideoProcessingTask {
 		});
 	}
 
-	private async runProcessingTasks() {
-		if (!this.presignedUrl) throw new Error(`Presigned URL does not extsit for task, cannot process video`);
+	private createTempVideoDir() {
+		const tempDir = process.env.TEMP_DIR || path.join(__dirname, '../../../temp');
+		const videoDir = path.join(tempDir, this.videoProcessingTaskRecord?.objectName!);
 
-		await generateThumbnail(this.presignedUrl, this.videoProcessingTaskRecord?.objectName!);
+		if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir);
+		if (!fs.existsSync(videoDir)) fs.mkdirSync(videoDir);
+
+		return videoDir;
+	}
+
+	private fsCleanup(videoDir: string) {
+		if (fs.existsSync(videoDir)) fs.rmSync(videoDir, { force: true, recursive: true });
 	}
 }

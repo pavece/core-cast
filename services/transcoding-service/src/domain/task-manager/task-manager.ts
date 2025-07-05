@@ -43,8 +43,8 @@ export class TaskManager {
 		try {
 			await task.loadTaskData();
 			this.logger.info(`Started task with id ${taskId}`);
+			
 			await task.run();
-
 			this.logger.info(`Completed task with id ${taskId}`);
 		} catch (error) {
 			this.logger.error({ messgae: `Failed to start / run task with id ${taskId}`, error });
