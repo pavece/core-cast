@@ -4,6 +4,7 @@ import { ObjectStore } from '@core-cast/object-store';
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { generateThumbnail } from '../processing-functions/generate-thumbnail';
+import { generatePreview } from '../processing-functions/generate-preview';
 import path from 'path';
 
 import 'dotenv/config';
@@ -58,6 +59,7 @@ export class VideoProcessingTask {
 
 		try {
 			await generateThumbnail(this.presignedUrl, tempMediaDir);
+			await generatePreview(this.presignedUrl, tempMediaDir);
 		} finally {
 			//this.fsCleanup(tempMediaDir);
 		}
