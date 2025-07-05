@@ -62,7 +62,8 @@ export class VideoProcessingTask {
 
 			await this.uploadResults(resultPaths, tempMediaDir, this.videoProcessingTaskRecord?.objectName!); //TODO: update to videoId when in place
 		} finally {
-			//this.fsCleanup(tempMediaDir);
+			this.fsCleanup(tempMediaDir);
+			this.objectCleanup();
 		}
 	}
 
@@ -111,5 +112,9 @@ export class VideoProcessingTask {
 
 	private fsCleanup(videoDir: string) {
 		if (fs.existsSync(videoDir)) fs.rmSync(videoDir, { force: true, recursive: true });
+	}
+
+	private async objectCleanup() {
+		await this.objectRepo.deleteObject(this.videoProcessingTaskRecord?.objectName!, this.privateBucket);
 	}
 }
