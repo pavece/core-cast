@@ -1,15 +1,12 @@
 import { videoProcessingTask } from '@core-cast/prisma/generated/prisma';
 import { VideoProcessingTaskRepository } from '../../infrastructure/repositories/video-task.repo.impl';
-import { ObjectStore } from '@core-cast/object-store';
-import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { generateThumbnail } from '../processing-functions/generate-thumbnail';
 import { generatePreview } from '../processing-functions/generate-preview';
 import path from 'path';
 
 import 'dotenv/config';
 import fs from 'fs';
-import { upload } from '../../../../../shared/prisma/generated/prisma/index';
+import { ObjectRepository } from '../../infrastructure/repositories/object.repository.impl';
 
 // 1. Get the object name from the database + update status to started
 // 2. Get a presigned URL for the original video from the object store
@@ -28,12 +25,12 @@ export class VideoProcessingTask {
 	private publicBucket = process.env.OBJECT_STORE_PUBLIC_BUCKET || 'cdn';
 
 	private videoProcessingTaskRepo: VideoProcessingTaskRepository;
-	private objectStore: S3Client;
+	private objectRepo: ObjectRepository;
 
 	constructor(videoProcessingRecordId: string) {
 		this.videoProcessingRecordId = videoProcessingRecordId;
 		this.videoProcessingTaskRepo = new VideoProcessingTaskRepository();
-		this.objectStore = ObjectStore.getInstance().s3Client;
+		this.objectRepo = new ObjectRepository();
 	}
 
 	public async loadTaskData() {
@@ -69,12 +66,13 @@ export class VideoProcessingTask {
 		}
 	}
 
-	private checkIfObjectExtsists() {
-		const object = this.objectStore.send(
-			new GetObjectCommand({ Bucket: this.privateBucket, Key: this.videoProcessingTaskRecord?.objectName })
+	private async checkIfObjectExtsists() {
+		const objectExists = await this.objectRepo.checkIfObjectExists(
+			this.videoProcessingTaskRecord?.objectName!,
+			this.privateBucket
 		);
 
-		if (!object) throw new Error('The specified object does not exist, cannot run processing task');
+		if (!objectExists) throw new Error('The specified object does not exist, cannot run processing task');
 	}
 
 	//TODO: the video inside S3 must be inside a path named with the same id as the video record
@@ -82,12 +80,10 @@ export class VideoProcessingTask {
 		const uploadPromises = [];
 
 		for (const name of fileNames) {
-			const uploadPromise = this.objectStore.send(
-				new PutObjectCommand({
-					Bucket: this.publicBucket,
-					Key: videoId + '/' + name,
-					Body: fs.readFileSync(path.join(currentMediaPath, name)),
-				})
+			const uploadPromise = this.objectRepo.putObject(
+				`${videoId}/${name}`,
+				this.publicBucket,
+				fs.readFileSync(path.join(currentMediaPath, name))
 			);
 
 			uploadPromises.push(uploadPromise);
@@ -97,14 +93,10 @@ export class VideoProcessingTask {
 	}
 
 	private async generatePresignedVideoUrl() {
-		const command = new GetObjectCommand({
-			Bucket: this.privateBucket,
-			Key: this.videoProcessingTaskRecord?.objectName,
-		});
-
-		this.presignedUrl = await getSignedUrl(this.objectStore, command, {
-			expiresIn: 60 * 60 * 24,
-		});
+		this.presignedUrl = await this.objectRepo.getPresignedUrl(
+			this.videoProcessingTaskRecord?.objectName!,
+			this.privateBucket
+		);
 	}
 
 	private createTempVideoDir() {
