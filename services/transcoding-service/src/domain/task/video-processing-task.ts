@@ -1,7 +1,7 @@
 import { videoProcessingTask } from '@core-cast/prisma/generated/prisma';
 import { VideoProcessingTaskRepository } from '../../infrastructure/repositories/video-task.repo.impl';
 import { ObjectStore } from '@core-cast/object-store';
-import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { generateThumbnail } from '../processing-functions/generate-thumbnail';
 import { generatePreview } from '../processing-functions/generate-preview';
@@ -9,6 +9,7 @@ import path from 'path';
 
 import 'dotenv/config';
 import fs from 'fs';
+import { upload } from '../../../../../shared/prisma/generated/prisma/index';
 
 // 1. Get the object name from the database + update status to started
 // 2. Get a presigned URL for the original video from the object store
@@ -56,10 +57,13 @@ export class VideoProcessingTask {
 	private async runProcessingTasks() {
 		if (!this.presignedUrl) throw new Error(`Presigned URL does not extsit for task, cannot process video`);
 		const tempMediaDir = this.createTempVideoDir();
+		let resultPaths: string[] = [];
 
 		try {
-			await generateThumbnail(this.presignedUrl, tempMediaDir);
-			await generatePreview(this.presignedUrl, tempMediaDir);
+			resultPaths = [...resultPaths, ...(await generateThumbnail(this.presignedUrl, tempMediaDir))];
+			resultPaths = [...resultPaths, ...(await generatePreview(this.presignedUrl, tempMediaDir))];
+
+			await this.uploadResults(resultPaths, tempMediaDir, this.videoProcessingTaskRecord?.objectName!); //TODO: update to videoId when in place
 		} finally {
 			//this.fsCleanup(tempMediaDir);
 		}
@@ -71,6 +75,25 @@ export class VideoProcessingTask {
 		);
 
 		if (!object) throw new Error('The specified object does not exist, cannot run processing task');
+	}
+
+	//TODO: the video inside S3 must be inside a path named with the same id as the video record
+	private async uploadResults(fileNames: string[], currentMediaPath: string, videoId: string) {
+		const uploadPromises = [];
+
+		for (const name of fileNames) {
+			const uploadPromise = this.objectStore.send(
+				new PutObjectCommand({
+					Bucket: this.publicBucket,
+					Key: videoId + '/' + name,
+					Body: fs.readFileSync(path.join(currentMediaPath, name)),
+				})
+			);
+
+			uploadPromises.push(uploadPromise);
+		}
+
+		await Promise.all(uploadPromises);
 	}
 
 	private async generatePresignedVideoUrl() {
