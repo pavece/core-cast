@@ -7,6 +7,8 @@ import path from 'path';
 import 'dotenv/config';
 import fs from 'fs';
 import { ObjectRepository } from '../../infrastructure/repositories/object.repository.impl';
+import { FfprobeData } from 'fluent-ffmpeg';
+import { VideoValidator } from './video-validator.task';
 
 // 1. Get the object name from the database + update status to started
 // 2. Get a presigned URL for the original video from the object store
@@ -20,17 +22,20 @@ export class VideoProcessingTask {
 	private videoProcessingRecordId: string;
 	private videoProcessingTaskRecord: videoProcessingTask | undefined;
 	private presignedUrl: string | undefined;
+	private videoInfo: FfprobeData | undefined;
 
 	private privateBucket = process.env.OBJECT_STORE_PRIVATE_BUCKET || 'uploads';
 	private publicBucket = process.env.OBJECT_STORE_PUBLIC_BUCKET || 'cdn';
 
 	private videoProcessingTaskRepo: VideoProcessingTaskRepository;
 	private objectRepo: ObjectRepository;
+	private videoValidator: VideoValidator;
 
 	constructor(videoProcessingRecordId: string) {
 		this.videoProcessingRecordId = videoProcessingRecordId;
 		this.videoProcessingTaskRepo = new VideoProcessingTaskRepository();
 		this.objectRepo = new ObjectRepository();
+		this.videoValidator = new VideoValidator('TEMP'); //TODO: Uopdate when video records are in place
 	}
 
 	public async loadTaskData() {
@@ -41,18 +46,14 @@ export class VideoProcessingTask {
 		}
 
 		this.videoProcessingTaskRecord = videoProcessingRecord;
-	}
-
-	public async run() {
-		if (!this.videoProcessingTaskRecord) throw new Error("Video processing task not found, can't start task");
-
 		await this.checkIfObjectExtsists();
 		await this.generatePresignedVideoUrl();
-		await this.runProcessingTasks();
+		this.videoInfo = await this.videoValidator.validate(this.presignedUrl!);
 	}
 
-	private async runProcessingTasks() {
+	public async runProcessingTasks() {
 		if (!this.presignedUrl) throw new Error(`Presigned URL does not extsit for task, cannot process video`);
+
 		const tempMediaDir = this.createTempVideoDir();
 		let resultPaths: string[] = [];
 
