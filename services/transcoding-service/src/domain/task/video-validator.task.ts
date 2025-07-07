@@ -45,7 +45,6 @@ export class VideoValidator {
 	//Must have at least 640 * 360 (360p)
 	private validateResolution() {
 		const videoStream = this.videoMetadata?.streams.find(s => s.codec_type == 'video');
-		console.log(videoStream);
 
 		if ((videoStream?.width || 0) < 640 || (videoStream?.height || 0) < 360) {
 			throw new Error(`Video must have at least 640x360 resolution`);

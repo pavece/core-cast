@@ -10,6 +10,7 @@ import { ObjectRepository } from '../../infrastructure/repositories/object.repos
 import { FfprobeData } from 'fluent-ffmpeg';
 import { VideoValidator } from './video-validator.task';
 import { transcodeHLS } from '../processing-functions/transcode-hls';
+import { generateMasterList } from '../processing-functions/generate-masterlist';
 
 // 1. Get the object name from the database + update status to started
 // 2. Get a presigned URL for the original video from the object store
@@ -22,8 +23,8 @@ import { transcodeHLS } from '../processing-functions/transcode-hls';
 const ABRLadder = [
 	{ vr: 360, br: 700 },
 	{ vr: 480, br: 1500 },
-	{ vr: 720, br: 3000 },
-	{ vr: 1080, br: 5500 },
+	// { vr: 720, br: 3000 },
+	// { vr: 1080, br: 5500 },
 ];
 
 export class VideoProcessingTask {
@@ -86,7 +87,7 @@ export class VideoProcessingTask {
 			tiers.push(tier);
 		}
 
-		//TODO: generate master playlist
+		generateMasterList(tempMediaDir, tiers);
 	}
 
 	private async checkIfObjectExtsists() {
@@ -113,7 +114,6 @@ export class VideoProcessingTask {
 			uploadPromises.push(uploadPromise);
 		}
 
-		//TODO: add batching
 		await Promise.all(uploadPromises);
 	}
 
