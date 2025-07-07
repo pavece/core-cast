@@ -9,6 +9,7 @@ import fs from 'fs';
 import { ObjectRepository } from '../../infrastructure/repositories/object.repository.impl';
 import { FfprobeData } from 'fluent-ffmpeg';
 import { VideoValidator } from './video-validator.task';
+import { transcodeHLS } from '../processing-functions/transcode-hls';
 
 // 1. Get the object name from the database + update status to started
 // 2. Get a presigned URL for the original video from the object store
@@ -48,7 +49,7 @@ export class VideoProcessingTask {
 		this.videoProcessingTaskRecord = videoProcessingRecord;
 		await this.checkIfObjectExtsists();
 		await this.generatePresignedVideoUrl();
-		this.videoInfo = await this.videoValidator.validate(this.presignedUrl!);
+		//this.videoInfo = await this.videoValidator.validate(this.presignedUrl!);
 	}
 
 	public async runProcessingTasks() {
@@ -60,6 +61,7 @@ export class VideoProcessingTask {
 		try {
 			resultPaths = [...resultPaths, ...(await generateThumbnail(this.presignedUrl, tempMediaDir))];
 			resultPaths = [...resultPaths, ...(await generatePreview(this.presignedUrl, tempMediaDir))];
+			await transcodeHLS(this.presignedUrl, tempMediaDir, 720, 5000);
 
 			await this.uploadResults(resultPaths, tempMediaDir, this.videoProcessingTaskRecord?.objectName!); //TODO: update to videoId when in place
 		} finally {
