@@ -56,14 +56,13 @@ export class VideoProcessingTask {
 		if (!this.presignedUrl) throw new Error(`Presigned URL does not extsit for task, cannot process video`);
 
 		const tempMediaDir = this.createTempVideoDir();
-		let resultPaths: string[] = [];
 
 		try {
-			resultPaths = [...resultPaths, ...(await generateThumbnail(this.presignedUrl, tempMediaDir))];
-			resultPaths = [...resultPaths, ...(await generatePreview(this.presignedUrl, tempMediaDir))];
+			await generateThumbnail(this.presignedUrl, tempMediaDir);
+			await generatePreview(this.presignedUrl, tempMediaDir);
 			await transcodeHLS(this.presignedUrl, tempMediaDir, 720, 5000);
 
-			await this.uploadResults(resultPaths, tempMediaDir, this.videoProcessingTaskRecord?.objectName!); //TODO: update to videoId when in place
+			await this.uploadResults(tempMediaDir, this.videoProcessingTaskRecord?.objectName!); //TODO: update to videoId when in place
 		} finally {
 			this.fsCleanup(tempMediaDir);
 			this.objectCleanup();
@@ -79,11 +78,12 @@ export class VideoProcessingTask {
 		if (!objectExists) throw new Error('The specified object does not exist, cannot run processing task');
 	}
 
-	//TODO: the video inside S3 must be inside a path named with the same id as the video record
-	private async uploadResults(fileNames: string[], currentMediaPath: string, videoId: string) {
+	private async uploadResults(currentMediaPath: string, videoId: string) {
 		const uploadPromises = [];
 
-		for (const name of fileNames) {
+		const files = fs.readdirSync(currentMediaPath);
+
+		for (const name of files) {
 			const uploadPromise = this.objectRepo.putObject(
 				`${videoId}/${name}`,
 				this.publicBucket,
