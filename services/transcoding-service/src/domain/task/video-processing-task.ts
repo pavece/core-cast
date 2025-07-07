@@ -23,8 +23,8 @@ import { generateMasterList } from '../processing-functions/generate-masterlist'
 const ABRLadder = [
 	{ vr: 360, br: 700 },
 	{ vr: 480, br: 1500 },
-	// { vr: 720, br: 3000 },
-	// { vr: 1080, br: 5500 },
+	{ vr: 720, br: 3000 },
+	{ vr: 1080, br: 5500 },
 ];
 
 export class VideoProcessingTask {
@@ -71,6 +71,7 @@ export class VideoProcessingTask {
 			await this.transcode(tempMediaDir);
 
 			await this.uploadResults(tempMediaDir, this.videoProcessingTaskRecord?.objectName!); //TODO: update to videoId when in place
+			await this.removeTaskRecord();
 		} finally {
 			this.fsCleanup(tempMediaDir);
 			this.objectCleanup();
@@ -132,6 +133,14 @@ export class VideoProcessingTask {
 		if (!fs.existsSync(videoDir)) fs.mkdirSync(videoDir);
 
 		return videoDir;
+	}
+
+	private async updateVideoRecord() {
+		//TODO: Add thumbnail, masterlist and preview links to the video record + mark as processed
+	}
+
+	private async removeTaskRecord() {
+		await this.videoProcessingTaskRepo.deleteTaskById(this.videoProcessingTaskRecord?.id!);
 	}
 
 	private fsCleanup(videoDir: string) {
