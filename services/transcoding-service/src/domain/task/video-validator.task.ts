@@ -26,7 +26,7 @@ export class VideoValidator {
 
 	//Must include at least one video & audio channel
 	private validateGeneralFormat() {
-		if (this.videoMetadata?.streams.length || 0 < 2) {
+		if ((this.videoMetadata?.streams.length || 0) < 2) {
 			throw new Error('Video must include at least one audio and video stream ');
 		}
 
@@ -45,6 +45,7 @@ export class VideoValidator {
 	//Must have at least 640 * 360 (360p)
 	private validateResolution() {
 		const videoStream = this.videoMetadata?.streams.find(s => s.codec_type == 'video');
+		console.log(videoStream);
 
 		if ((videoStream?.width || 0) < 640 || (videoStream?.height || 0) < 360) {
 			throw new Error(`Video must have at least 640x360 resolution`);
@@ -53,7 +54,7 @@ export class VideoValidator {
 
 	//Must be at least 10s long
 	private validateDuration() {
-		if (this.videoMetadata?.format.duration || 0 < 10) {
+		if ((this.videoMetadata?.format.duration || 0) < 10) {
 			throw new Error('Video must be at least 10s long');
 		}
 	}

@@ -9,6 +9,8 @@ export async function transcodeHLS(
 ) {
 	ffmpeg.setFfmpegPath(ffmpegPath.path);
 
+	//TODO: check for nvenc and use if possible
+
 	return new Promise((resolve, reject) => {
 		ffmpeg(videoUrl)
 			.on('error', reject)

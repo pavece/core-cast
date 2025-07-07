@@ -19,6 +19,13 @@ import { transcodeHLS } from '../processing-functions/transcode-hls';
 // 4. Remove original video from object store
 // 5. Remove pending task record from DB + mark video record as fully processed
 
+const ABRLadder = [
+	{ vr: 360, br: 700 },
+	{ vr: 480, br: 1500 },
+	{ vr: 720, br: 3000 },
+	{ vr: 1080, br: 5500 },
+];
+
 export class VideoProcessingTask {
 	private videoProcessingRecordId: string;
 	private videoProcessingTaskRecord: videoProcessingTask | undefined;
@@ -49,7 +56,7 @@ export class VideoProcessingTask {
 		this.videoProcessingTaskRecord = videoProcessingRecord;
 		await this.checkIfObjectExtsists();
 		await this.generatePresignedVideoUrl();
-		//this.videoInfo = await this.videoValidator.validate(this.presignedUrl!);
+		this.videoInfo = await this.videoValidator.validate(this.presignedUrl!);
 	}
 
 	public async runProcessingTasks() {
@@ -60,13 +67,26 @@ export class VideoProcessingTask {
 		try {
 			await generateThumbnail(this.presignedUrl, tempMediaDir);
 			await generatePreview(this.presignedUrl, tempMediaDir);
-			await transcodeHLS(this.presignedUrl, tempMediaDir, 720, 5000);
+			await this.transcode(tempMediaDir);
 
 			await this.uploadResults(tempMediaDir, this.videoProcessingTaskRecord?.objectName!); //TODO: update to videoId when in place
 		} finally {
 			this.fsCleanup(tempMediaDir);
 			this.objectCleanup();
 		}
+	}
+
+	private async transcode(tempMediaDir: string) {
+		const originalVerticalResolution = this.videoInfo?.streams.find(s => s.codec_type == 'video')?.height || 0;
+		const tiers = [];
+
+		for (const tier of ABRLadder) {
+			if (tier.vr > originalVerticalResolution) continue;
+			await transcodeHLS(this.presignedUrl!, tempMediaDir, tier.vr, tier.br);
+			tiers.push(tier);
+		}
+
+		//TODO: generate master playlist
 	}
 
 	private async checkIfObjectExtsists() {
@@ -93,6 +113,7 @@ export class VideoProcessingTask {
 			uploadPromises.push(uploadPromise);
 		}
 
+		//TODO: add batching
 		await Promise.all(uploadPromises);
 	}
 
