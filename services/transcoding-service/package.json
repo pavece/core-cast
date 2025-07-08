@@ -7,7 +7,7 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "nodemon",
 		"build": "rimraf ./dist && tsc",
-		"start": "pnpm run build && node dist/app.js"
+		"start": "node dist/app.js"
 	},
 	"keywords": [],
 	"author": "",
@@ -22,10 +22,10 @@
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.840.0",
 		"@aws-sdk/s3-request-presigner": "^3.842.0",
-		"@core-cast/object-store": "1.0.0",
-		"@core-cast/prisma": "1.0.0",
-		"@core-cast/rabbitmq": "1.0.0",
-		"@core-cast/types": "1.0.0",
+		"@core-cast/object-store": "workspace:*",
+		"@core-cast/prisma": "workspace:*",
+		"@core-cast/rabbitmq": "workspace:*",
+		"@core-cast/types": "workspace:*",
 		"@ffmpeg-installer/ffmpeg": "^1.1.0",
 		"dotenv": "^17.0.0",
 		"express": "^5.1.0",

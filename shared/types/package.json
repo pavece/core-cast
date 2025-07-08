@@ -13,6 +13,7 @@
 		}
 	},
 	"dependencies": {
-		"@core-cast/prisma": "1.0.0"
+		"@core-cast/prisma": "workspace:*",
+		"typescript": "^5.8.3"
 	}
 }

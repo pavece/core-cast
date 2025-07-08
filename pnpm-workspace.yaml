@@ -1,3 +1,6 @@
 packages:
   - 'shared/*'
   - 'services/*'
+syncInjectedDepsAfterScripts:
+- build
+injectWorkspacePackages: true
