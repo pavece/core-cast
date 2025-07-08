@@ -11,6 +11,7 @@ import { FfprobeData } from 'fluent-ffmpeg';
 import { VideoValidator } from './video-validator.task';
 import { transcodeHLS } from '../processing-functions/transcode-hls';
 import { generateMasterList } from '../processing-functions/generate-masterlist';
+import { batchPromises } from '../utils/promise-batcher';
 
 // 1. Get the object name from the database + update status to started
 // 2. Get a presigned URL for the original video from the object store
@@ -115,7 +116,7 @@ export class VideoProcessingTask {
 			uploadPromises.push(uploadPromise);
 		}
 
-		await Promise.all(uploadPromises);
+		await batchPromises(uploadPromises, 20);
 	}
 
 	private async generatePresignedVideoUrl() {

@@ -4,6 +4,7 @@ import { RabbitMQ } from '@core-cast/rabbitmq';
 import { ObjectStore, ObjectStoreConfigurationOptions } from '@core-cast/object-store';
 import { Prisma } from '@core-cast/prisma';
 import { PrometheusServer } from './presentation/prometheus-server';
+import { batchPromises } from './domain/utils/promise-batcher';
 
 async function main() {
 	printWelcomeMessage();

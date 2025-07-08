@@ -14,8 +14,7 @@ export function generateMasterList(currentMediaPath: string, tiers: Tier[]) {
         const listName = `${tier.vr}p.m3u8`
 
         fileContent.push(variantHeader)
-        fileContent.push(listName)
-        fileContent.push('\n')    
+        fileContent.push(listName)    
     }
 
     const masterDestination = path.join(currentMediaPath, 'master.m3u8')
