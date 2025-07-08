@@ -1,4 +1,4 @@
-import { Prisma, upload } from '@core-cast/prisma';
+import { Prisma as Prisma, upload } from '@core-cast/prisma';
 import { IUploadRepository } from '@core-cast/types';
 
 export class UploadRepository implements IUploadRepository {
