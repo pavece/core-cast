@@ -3,7 +3,7 @@ import { TaskManager } from './domain/task-manager/task-manager';
 import { RabbitMQ } from '@core-cast/rabbitmq';
 import { ObjectStore, ObjectStoreConfigurationOptions } from '@core-cast/object-store';
 import { Prisma } from '@core-cast/prisma';
-
+import { PrometheusServer } from './presentation/prometheus-server';
 
 async function main() {
 	printWelcomeMessage();
@@ -15,6 +15,12 @@ async function main() {
 
 async function setupServices() {
 	const logger = new Logger().getLogger();
+
+	if (process.env.PROMETHEUS_SERVER_PORT) {
+		new PrometheusServer(Number(process.env.PROMETHEUS_SERVER_PORT)).start();
+	} else {
+		logger.warn("No PROMETHEUS_SERVER_PORT specified, won't start prometheus HTTP server");
+	}
 
 	const objectStoreConfig: ObjectStoreConfigurationOptions = {
 		region: process.env.OBJECT_STORE_REGION || 'minio',

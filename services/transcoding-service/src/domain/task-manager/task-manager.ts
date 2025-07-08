@@ -3,18 +3,21 @@ import { RabbitMQ } from '@core-cast/rabbitmq';
 import { Logger } from '../logging/logger';
 import { BaseLogger } from 'pino';
 import { VideoProcessingTask } from '../task/video-processing-task';
+import { Prometheus } from '../logging/prometheus';
 
 export class TaskManager {
 	private runningTasks: number;
 	private maxRunningTasks: number;
 	private rabbitMQ: RabbitMQ | undefined;
 	private logger: BaseLogger;
+	private prometheus: Prometheus;
 
 	constructor() {
 		this.runningTasks = 0;
 		this.maxRunningTasks = Number(process.env.MAX_CONCURRENT_TASKS) | 2;
 
 		this.logger = new Logger().getLogger();
+		this.prometheus = new Prometheus();
 	}
 
 	public async start() {
@@ -38,6 +41,8 @@ export class TaskManager {
 
 	private async runTask(taskId: string) {
 		this.runningTasks++;
+		this.prometheus.processingPrssure?.set(this.runningTasks / this.maxRunningTasks);
+		this.prometheus.runningTasks?.set(this.runningTasks);
 
 		const task = new VideoProcessingTask(taskId);
 		try {
@@ -46,12 +51,16 @@ export class TaskManager {
 
 			await task.runProcessingTasks();
 			this.logger.info(`Completed task with id ${taskId}`);
+
+			this.prometheus.completedTasks?.inc();
 		} catch (error) {
-			console.log(error);
-			this.logger.error({ messgae: `Failed to start / run task with id ${taskId}`, error: error });
+			this.logger.error({ messgae: `Failed to start / run task with id ${taskId}`, error: String(error) });
+			this.prometheus.erroredTasks?.inc();
 		}
 
 		this.runningTasks--;
+		this.prometheus.processingPrssure?.set(this.runningTasks / this.maxRunningTasks);
+		this.prometheus.runningTasks?.set(this.runningTasks);
 	}
 
 	private wait(seconds: number) {
