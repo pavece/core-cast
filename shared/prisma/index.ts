@@ -1,15 +1,14 @@
-import { PrismaClient } from './generated/prisma/index';
+import { PrismaClient } from './generated/prisma';
 
 export class Prisma {
 	private static _instance: Prisma;
 	private client: PrismaClient | undefined;
 
-	private constructor() {}
-
 	public static getInstance() {
 		if (!Prisma._instance) {
 			Prisma._instance = new Prisma();
 		}
+
 		return Prisma._instance;
 	}
 
@@ -23,5 +22,4 @@ export class Prisma {
 	}
 }
 
-export { PrismaClient };
-export * from './generated/prisma/index';
+export * from './generated/prisma';

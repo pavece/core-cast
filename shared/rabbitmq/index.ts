@@ -1,9 +1,9 @@
-import amqp, { Channel } from 'amqplib';
+import { Channel, ChannelModel, connect } from 'amqplib';
 
 export class RabbitMQ {
 	private static _instance: RabbitMQ;
 
-	private client: amqp.ChannelModel | undefined;
+	private client: ChannelModel | undefined;
 
 	public videoProcessingChannel: Channel | undefined;
 	public videoProcessingQueueName: string = 'video-processing';
@@ -19,9 +19,9 @@ export class RabbitMQ {
 	}
 
 	public async connect(url: string) {
-		this.client = await amqp.connect(url);
+		this.client = await connect(url);
 		this.videoProcessingChannel = await this.client.createChannel();
 
-		await this.videoProcessingChannel.assertQueue('video-processing', { durable: true });
+		await this.videoProcessingChannel!.assertQueue('video-processing', { durable: true });
 	}
 }

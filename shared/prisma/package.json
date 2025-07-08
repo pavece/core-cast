@@ -1,16 +1,25 @@
 {
 	"name": "@core-cast/prisma",
 	"version": "1.0.0",
-	"main": "index.ts",
-	"types": "index.d.ts",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"copy-generated": "cpx \"generated/prisma/**/*\" dist/generated/prisma",
+		"build": "rimraf ./dist && tsc && pnpm copy-generated"
+	},
 	"exports": {
 		".": {
-			"require": "./index.ts",
-			"import": "./index.ts"
+			"require": "./dist/index.js",
+			"import": "./dist/index.js"
 		}
 	},
 	"dependencies": {
-		"@prisma/client": "6.11.0",
-		"prisma": "^6.11.0"
+		"@prisma/client": "6.11.1"
+	},
+	"devDependencies": {
+		"cpx": "^1.5.0",
+		"prisma": "^6.11.1",
+		"rimraf": "^6.0.1",
+		"typescript": "^5.8.3"
 	}
 }

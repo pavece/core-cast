@@ -1,6 +1,7 @@
 node_modules
 .env
 logs
+services/**/dist
 
 # Docker dev mount points
 redis-data

@@ -1,12 +1,15 @@
 {
 	"name": "@core-cast/rabbitmq",
 	"version": "1.0.0",
-	"main": "index.ts",
-	"types": "index.d.ts",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc"
+	},
 	"exports": {
 		".": {
-			"require": "./index.ts",
-			"import": "./index.ts"
+			"require": "./dist/index.js",
+			"import": "./dist/index.js"
 		}
 	},
 	"dependencies": {
