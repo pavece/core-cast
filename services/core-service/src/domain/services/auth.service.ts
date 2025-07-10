@@ -1,11 +1,13 @@
 import { Prisma, Role } from '@core-cast/prisma';
 import { ApiError } from '../errors/api-error';
 import bcrypt from 'bcrypt';
+import { AuthSessionRepository } from '../../infrastructure/repositories/auth-session.repository.impl';
 
 const SALT_ROUNDS = 12;
 
 export class AuthService {
 	private prismaClient = Prisma.getInstance().prismaClient;
+	private sessionRepository = new AuthSessionRepository();
 
 	public async registerUser(email: string, name: string, password: string) {
 		const existingUser = await this.prismaClient.user.findFirst({ where: { OR: [{ email }, { username: name }] } });
@@ -26,7 +28,7 @@ export class AuthService {
 			},
 		});
 
-		//TODO: Generate session token
-		return { user, session: 'TODO' };
+		const sessionToken = await this.sessionRepository.createSession({device: "TODO", email, username: name, userId: user.id, role: user.role})
+		return { user, session: sessionToken };
 	}
 }

@@ -11,27 +11,27 @@ export class AuthSessionRepository implements AuthSessionRepositoryInterface {
 
 	async getSession(token: string): Promise<AuthSession | null> {
 		await this.redis.select(this.redisDatabaseNumber);
-		const session = await this.redis.hgetall(token);
+		const session = await this.redis.hgetall('session:' + token);
 
 		if (!session) return null;
 		return session as unknown as AuthSession;
 	}
 
-	async createSession(session: AuthSession): Promise<String> {
+	async createSession(session: AuthSession): Promise<string> {
 		await this.redis.select(this.redisDatabaseNumber);
 		const sessionToken = crypto.randomBytes(48).toString('hex');
-		await this.redis.hset(`${session.userId}:${sessionToken}`, session);
+		await this.redis.hset(`session:${session.userId}:${sessionToken}`, session);
 
 		return `${session.userId}:${sessionToken}`;
 	}
 
 	async clearUserSessions(id: string): Promise<void> {
 		await this.redis.select(this.redisDatabaseNumber);
-		await this.redis.hdel(`${id}:*`);
+		await this.redis.hdel(`session:${id}:*`);
 	}
 
 	async deleteSession(token: string): Promise<void> {
 		await this.redis.select(this.redisDatabaseNumber);
-		await this.redis.hdel(token);
+		await this.redis.hdel('session:' + token);
 	}
 }

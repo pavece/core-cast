@@ -16,13 +16,19 @@ export class AuthController {
 
 		this.authService
 			.registerUser(parsedBody?.email, parsedBody?.username, parsedBody?.password)
-			.then(r =>
+			.then(r => {
+				res.cookie('session_token', r.session, {
+					httpOnly: true,
+					secure: true,
+					sameSite: 'strict',
+					expires: new Date(new Date().getTime() + 15 * 24 * 60 * 60 * 1000), //In 15 days
+				});
+
 				res.json({
 					message: 'User succesfully registered',
 					user: { email: r.user.email, role: r.user.role, username: r.user.username },
-					sessionToken: r.session,
-				} as ICreateUserResponse)
-			)
+				} as ICreateUserResponse);
+			})
 			.catch(err => handleApiError(err, res, 'Failed to create user'));
 	};
 
