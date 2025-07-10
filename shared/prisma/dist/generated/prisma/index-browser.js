@@ -120,6 +120,17 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  email: 'email',
+  password: 'password',
+  role: 'role',
+  twoFASecret: 'twoFASecret',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.UploadScalarFieldEnum = {
   id: 'id',
   user: 'user',
@@ -146,12 +157,23 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+exports.Role = exports.$Enums.Role = {
+  ADMIN: 'ADMIN',
+  USER: 'USER'
+};
+
 exports.VideoProcessingStatus = exports.$Enums.VideoProcessingStatus = {
   PENDING: 'PENDING',
   PROCESSING: 'PROCESSING'
 };
 
 exports.Prisma.ModelName = {
+  user: 'user',
   upload: 'upload',
   videoProcessingTask: 'videoProcessingTask'
 };
