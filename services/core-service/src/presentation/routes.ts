@@ -6,7 +6,7 @@ export class ApiRouter {
 		const router = Router();
 
 		const authRouter = AuthRouter.routes;
-		
+
 		router.use('/api/auth', authRouter);
 
 		return router;

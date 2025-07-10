@@ -4297,17 +4297,17 @@ export namespace Prisma {
 
   export type userWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    username?: string
+    email?: string
     AND?: userWhereInput | userWhereInput[]
     OR?: userWhereInput[]
     NOT?: userWhereInput | userWhereInput[]
-    username?: StringFilter<"user"> | string
-    email?: StringFilter<"user"> | string
     password?: StringFilter<"user"> | string
     role?: EnumRoleFilter<"user"> | $Enums.Role
     twoFASecret?: StringNullableFilter<"user"> | string | null
     createdAt?: DateTimeFilter<"user"> | Date | string
     updatedAt?: DateTimeFilter<"user"> | Date | string
-  }, "id">
+  }, "id" | "username" | "email">
 
   export type userOrderByWithAggregationInput = {
     id?: SortOrder
@@ -4451,7 +4451,7 @@ export namespace Prisma {
     username: string
     email: string
     password: string
-    role: $Enums.Role
+    role?: $Enums.Role
     twoFASecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -4462,7 +4462,7 @@ export namespace Prisma {
     username: string
     email: string
     password: string
-    role: $Enums.Role
+    role?: $Enums.Role
     twoFASecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -4495,7 +4495,7 @@ export namespace Prisma {
     username: string
     email: string
     password: string
-    role: $Enums.Role
+    role?: $Enums.Role
     twoFASecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
