@@ -4,6 +4,8 @@ import bcrypt from 'bcrypt';
 import { AuthSessionRepository } from '../../infrastructure/repositories/auth-session.repository.impl';
 import { AuthSession } from '../interfaces/repositories/auth-session.interface';
 import { authenticator } from 'otplib';
+import crypto from 'crypto';
+import { ApiRouter } from '../../presentation/routes';
 
 const SALT_ROUNDS = 12;
 
@@ -40,26 +42,53 @@ export class AuthService {
 		return { user, session: sessionToken };
 	}
 
-	// May need to update in order to use a 2 step process (generate secret, confirm activation)
-	// May also need to include a recovery code
-	public async activate2FA(session: AuthSession) {
+	public async configure2FA(session: AuthSession) {
 		const user = await this.prismaClient.user.findUnique({ where: { id: session.userId } });
 
 		if (!user) {
 			throw new ApiError(403, 'User does not exist');
 		}
 
-		if (user.twoFASecret) {
-			throw new ApiError(403, '2FA is already active on this account');
+		if (user.OTPSecret) {
+			throw new ApiError(403, '2FA is already configured on this account');
 		}
 
+		// Secret and recovery code should be encrypted (this is a toy project so I won't encrypt them :D)
 		const secret = authenticator.generateSecret();
+		const recoveryCode = crypto.randomBytes(12).toString('hex');
 		const otpAuthUri = authenticator.keyuri(user.email, 'Core Cast', secret);
 
-		await this.prismaClient.user.update({ where: { id: session.userId }, data: { twoFASecret: secret } });
+		await this.prismaClient.user.update({
+			where: { id: session.userId },
+			data: { OTPSecret: secret, OTPPendingValidation: true, OTPRecoveryCode: recoveryCode },
+		});
+		return {
+			otpAuthUri,
+			recoveryCode,
+		};
+	}
 
-		this.sessionRepository.clearUserSessions(user.id);
-		return otpAuthUri;
+	public async activate2FA(session: AuthSession, otpCode: string) {
+		const user = await this.prismaClient.user.findUnique({ where: { id: session.userId } });
+
+		if (!user) throw new ApiError(403, 'User does not exist');
+
+		if (!user.OTPSecret) throw new ApiError(400, '2FA is not configured');
+		if (!user.OTPPendingValidation) throw new ApiError(400, '2FA is already active');
+
+		if (!authenticator.check(otpCode, user.OTPSecret)) throw new ApiError(403, 'Invalid 2FA code');
+
+		await this.prismaClient.user.update({
+			where: { id: session.userId },
+			data: {
+				OTPPendingValidation: false,
+			},
+		});
+
+		await this.sessionRepository.clearUserSessions(session.userId);
+		const newSession = this.sessionRepository.createSession({ device: 'TODO', userId: user.id, ...user });
+
+		return newSession;
 	}
 
 	public async login(email: string, password: string, totp?: string) {
@@ -68,14 +97,21 @@ export class AuthService {
 		if (!user) throw new ApiError(401, 'Incorrect username or password');
 		if (!bcrypt.compareSync(password, user.password)) throw new ApiError(401, 'Incorrect username or password');
 
-		if (!totp && user.twoFASecret) {
+		if (!totp && user.OTPSecret && !user.OTPPendingValidation) {
 			return {
 				message: 'Include TOTP code',
 				requiresTotp: true,
 			};
 		}
 
-		if (totp && !authenticator.check(totp, user.twoFASecret!)) throw new ApiError(401, 'TOTP code not valid');
+		if (
+			totp &&
+			user.OTPSecret &&
+			!user.OTPPendingValidation &&
+			!authenticator.check(totp, user.OTPSecret!) &&
+			totp != user.OTPRecoveryCode
+		)
+			throw new ApiError(401, 'TOTP code not valid');
 
 		const sessionToken = await this.sessionRepository.createSession({
 			device: 'TODO',

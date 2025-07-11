@@ -10,7 +10,8 @@ export class AuthRouter {
 		router.post('/register', authController.createAccount);
 		router.post('/login', authController.login);
 
-		router.patch('/activate-2fa', validateSession, authController.activate2FA);
+		router.patch('/2fa/configure', validateSession, authController.configure2FA);
+		router.patch('/2fa/activate', validateSession, authController.activate2FA);
 
 		return router;
 	}
