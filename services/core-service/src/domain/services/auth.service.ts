@@ -28,7 +28,17 @@ export class AuthService {
 			},
 		});
 
-		const sessionToken = await this.sessionRepository.createSession({device: "TODO", email, username: name, userId: user.id, role: user.role})
+		const sessionToken = await this.sessionRepository.createSession({
+			device: 'TODO',
+			email,
+			username: name,
+			userId: user.id,
+			role: user.role,
+		});
 		return { user, session: sessionToken };
+	}
+
+	public async validateSession(sessionId: string) {
+		return await this.sessionRepository.getSession(sessionId);
 	}
 }

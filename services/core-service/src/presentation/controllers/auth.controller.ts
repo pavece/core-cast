@@ -3,6 +3,7 @@ import { AuthService } from '../../domain/services/auth.service';
 import { createUserRequestValidator } from '../../domain/validators/auth.validators';
 import { ICreateUserResponse } from '../../../../../shared/types/api/auth.types';
 import { handleApiError } from '../../domain/errors/api-error';
+import { AuthRequest } from '../middlewares/validate-session';
 
 export class AuthController {
 	private authService = new AuthService();
@@ -34,5 +35,7 @@ export class AuthController {
 
 	public login = (req: Request, res: Response) => {};
 
-	public activate2FA = (req: Request, res: Response) => {};
+	public activate2FA = (req: AuthRequest, res: Response) => {
+		res.json(req.session);
+	};
 }
