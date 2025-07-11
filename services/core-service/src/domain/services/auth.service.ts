@@ -62,6 +62,31 @@ export class AuthService {
 		return otpAuthUri;
 	}
 
+	public async login(email: string, password: string, totp?: string) {
+		const user = await this.prismaClient.user.findUnique({ where: { email } });
+
+		if (!user) throw new ApiError(401, 'Incorrect username or password');
+		if (!bcrypt.compareSync(password, user.password)) throw new ApiError(401, 'Incorrect username or password');
+
+		if (!totp && user.twoFASecret) {
+			return {
+				message: 'Include TOTP code',
+				requiresTotp: true,
+			};
+		}
+
+		if (totp && !authenticator.check(totp, user.twoFASecret!)) throw new ApiError(401, 'TOTP code not valid');
+
+		const sessionToken = await this.sessionRepository.createSession({
+			device: 'TODO',
+			email,
+			username: user.username,
+			userId: user.id,
+			role: user.role,
+		});
+		return { user, session: sessionToken };
+	}
+
 	public async validateSession(sessionId: string) {
 		// Should create and update a "lastUsed" property ?
 		return await this.sessionRepository.getSession(sessionId);

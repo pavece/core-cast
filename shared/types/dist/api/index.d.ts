@@ -1,5 +1,4 @@
 export interface IGenericApiResponse {
-	message: string;
+    message: string;
 }
-
 export * from './auth.types';

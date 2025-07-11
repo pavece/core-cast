@@ -8,3 +8,5 @@ export interface ICreateUserResponse extends IGenericApiResponse {
 	};
 	sessionToken: string;
 }
+
+export type ILoginResponse = ICreateUserResponse | (IGenericApiResponse & { requiresTotp: boolean });

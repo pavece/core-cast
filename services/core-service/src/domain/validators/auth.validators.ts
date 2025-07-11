@@ -5,3 +5,9 @@ export const createUserRequestValidator = z.object({
 	password: z.string().length(6),
 	email: z.string().email(),
 });
+
+export const loginValidator = z.object({
+	password: z.string().length(6),
+	email: z.string().email(),
+	totp: z.string().length(6).optional(),
+});

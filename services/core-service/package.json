@@ -21,6 +21,7 @@
 	"dependencies": {
 		"@core-cast/prisma": "workspace:*",
 		"@types/bcrypt": "^5.0.2",
+		"@core-cast/types": "workspace:*",
 		"@types/cookie-parser": "^1.4.9",
 		"@types/cors": "^2.8.19",
 		"bcrypt": "^6.0.0",
