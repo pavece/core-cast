@@ -13,7 +13,7 @@ export class AuthSessionRepository implements AuthSessionRepositoryInterface {
 		await this.redis.select(this.redisDatabaseNumber);
 		const session = await this.redis.hgetall('session:' + token);
 
-		if (!session) return null;
+		if (!session.userId) return null;
 		return session as unknown as AuthSession;
 	}
 
@@ -27,7 +27,10 @@ export class AuthSessionRepository implements AuthSessionRepositoryInterface {
 
 	async clearUserSessions(id: string): Promise<void> {
 		await this.redis.select(this.redisDatabaseNumber);
-		await this.redis.hdel(`session:${id}:*`);
+		const stream = await this.redis.scanStream({ match: `session:${id}:*` });
+		stream.on('data', async keys => {
+			if (keys.length) await this.redis.del(...keys);
+		});
 	}
 
 	async deleteSession(token: string): Promise<void> {

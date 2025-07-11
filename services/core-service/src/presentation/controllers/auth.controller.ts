@@ -36,6 +36,15 @@ export class AuthController {
 	public login = (req: Request, res: Response) => {};
 
 	public activate2FA = (req: AuthRequest, res: Response) => {
-		res.json(req.session);
+		console.log(req.session);
+		if (!req.session) {
+			res.status(401).json({ message: 'Unauthorized' });
+			return;
+		}
+
+		// this.authService
+		// 	.activate2FA(req.session)
+		// 	.then(r => res.json({ message: '2FA enabled', authenticatorUri: r }))
+		// 	.catch(e => handleApiError(e, res, 'Failed to enable 2FA'));
 	};
 }

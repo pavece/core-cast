@@ -2,6 +2,8 @@ import { Prisma, Role } from '@core-cast/prisma';
 import { ApiError } from '../errors/api-error';
 import bcrypt from 'bcrypt';
 import { AuthSessionRepository } from '../../infrastructure/repositories/auth-session.repository.impl';
+import { AuthSession } from '../interfaces/repositories/auth-session.interface';
+import { authenticator } from 'otplib';
 
 const SALT_ROUNDS = 12;
 
@@ -38,7 +40,30 @@ export class AuthService {
 		return { user, session: sessionToken };
 	}
 
+	// May need to update in order to use a 2 step process (generate secret, confirm activation)
+	// May also need to include a recovery code
+	public async activate2FA(session: AuthSession) {
+		const user = await this.prismaClient.user.findUnique({ where: { id: session.userId } });
+
+		if (!user) {
+			throw new ApiError(403, 'User does not exist');
+		}
+
+		if (user.twoFASecret) {
+			throw new ApiError(403, '2FA is already active on this account');
+		}
+
+		const secret = authenticator.generateSecret();
+		const otpAuthUri = authenticator.keyuri(user.email, 'Core Cast', secret);
+
+		await this.prismaClient.user.update({ where: { id: session.userId }, data: { twoFASecret: secret } });
+
+		this.sessionRepository.clearUserSessions(user.id);
+		return otpAuthUri;
+	}
+
 	public async validateSession(sessionId: string) {
+		// Should create and update a "lastUsed" property ?
 		return await this.sessionRepository.getSession(sessionId);
 	}
 }

@@ -11,8 +11,6 @@ export interface AuthRequest extends Request {
 export async function validateSession(req: AuthRequest, res: Response, next: NextFunction) {
 	const sessionToken = req.cookies['session_token'];
 
-	console.log(req.cookies);
-
 	if (!sessionToken) {
 		res.status(401).json({ message: 'Session token not included' });
 		return;
