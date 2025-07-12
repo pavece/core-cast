@@ -5,31 +5,31 @@ import { AuthSessionRepository } from '../../infrastructure/repositories/auth-se
 import { AuthSession } from '../interfaces/repositories/auth-session.interface';
 import { authenticator } from 'otplib';
 import crypto from 'crypto';
-import { ApiRouter } from '../../presentation/routes';
+import { UserRepository } from '../../infrastructure/repositories/user.repository.impl';
 
 const SALT_ROUNDS = 12;
 
 export class AuthService {
-	private prismaClient = Prisma.getInstance().prismaClient;
+	private userRepository = new UserRepository();
 	private sessionRepository = new AuthSessionRepository();
 
 	public async registerUser(email: string, name: string, password: string) {
-		const existingUser = await this.prismaClient.user.findFirst({ where: { OR: [{ email }, { username: name }] } });
+		const existingUser = await this.userRepository.areUsernameOrEmailAvailable(email, name);
 
-		if (existingUser) {
+		console.log(existingUser);
+
+		if (!existingUser) {
 			throw new ApiError(401, 'Username or email is already taken');
 		}
 
 		const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-		const databaseEmpty = !(await this.prismaClient.user.findFirst());
+		const databaseEmpty = await this.userRepository.isUserListEmpty();
 
-		const user = await this.prismaClient.user.create({
-			data: {
-				email,
-				password: hashedPassword,
-				username: name,
-				role: databaseEmpty ? Role.ADMIN : Role.USER,
-			},
+		const user = await this.userRepository.createUser({
+			email,
+			password: hashedPassword,
+			username: name,
+			role: databaseEmpty ? Role.ADMIN : Role.USER,
 		});
 
 		const sessionToken = await this.sessionRepository.createSession({
@@ -43,7 +43,7 @@ export class AuthService {
 	}
 
 	public async configure2FA(session: AuthSession) {
-		const user = await this.prismaClient.user.findUnique({ where: { id: session.userId } });
+		const user = await this.userRepository.getUserById(session.userId);
 
 		if (!user) {
 			throw new ApiError(403, 'User does not exist');
@@ -58,9 +58,10 @@ export class AuthService {
 		const recoveryCode = crypto.randomBytes(12).toString('hex');
 		const otpAuthUri = authenticator.keyuri(user.email, 'Core Cast', secret);
 
-		await this.prismaClient.user.update({
-			where: { id: session.userId },
-			data: { OTPSecret: secret, OTPPendingValidation: true, OTPRecoveryCode: recoveryCode },
+		await this.userRepository.updateUserById(user.id, {
+			OTPSecret: secret,
+			OTPPendingValidation: true,
+			OTPRecoveryCode: recoveryCode,
 		});
 		return {
 			otpAuthUri,
@@ -69,7 +70,7 @@ export class AuthService {
 	}
 
 	public async activate2FA(session: AuthSession, otpCode: string) {
-		const user = await this.prismaClient.user.findUnique({ where: { id: session.userId } });
+		const user = await this.userRepository.getUserById(session.userId);
 
 		if (!user) throw new ApiError(403, 'User does not exist');
 
@@ -78,11 +79,8 @@ export class AuthService {
 
 		if (!authenticator.check(otpCode, user.OTPSecret)) throw new ApiError(403, 'Invalid 2FA code');
 
-		await this.prismaClient.user.update({
-			where: { id: session.userId },
-			data: {
-				OTPPendingValidation: false,
-			},
+		await this.userRepository.updateUserById(session.userId, {
+			OTPPendingValidation: false,
 		});
 
 		await this.sessionRepository.clearUserSessions(session.userId);
@@ -92,7 +90,7 @@ export class AuthService {
 	}
 
 	public async login(email: string, password: string, totp?: string) {
-		const user = await this.prismaClient.user.findUnique({ where: { email } });
+		const user = await this.userRepository.getUserByEmail(email);
 
 		if (!user) throw new ApiError(401, 'Incorrect username or password');
 		if (!bcrypt.compareSync(password, user.password)) throw new ApiError(401, 'Incorrect username or password');
