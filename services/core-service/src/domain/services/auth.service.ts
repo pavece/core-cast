@@ -16,8 +16,6 @@ export class AuthService {
 	public async registerUser(email: string, name: string, password: string) {
 		const existingUser = await this.userRepository.areUsernameOrEmailAvailable(email, name);
 
-		console.log(existingUser);
-
 		if (!existingUser) {
 			throw new ApiError(401, 'Username or email is already taken');
 		}
@@ -38,6 +36,7 @@ export class AuthService {
 			username: name,
 			userId: user.id,
 			role: user.role,
+			lastUse: new Date().toISOString(),
 		});
 		return { user, session: sessionToken };
 	}
@@ -84,7 +83,14 @@ export class AuthService {
 		});
 
 		await this.sessionRepository.clearUserSessions(session.userId);
-		const newSession = this.sessionRepository.createSession({ device: 'TODO', userId: user.id, ...user });
+		const newSession = this.sessionRepository.createSession({
+			device: 'TODO',
+			userId: user.id,
+			lastUse: new Date().toISOString(),
+			email: user.email,
+			role: user.role,
+			username: user.username,
+		});
 
 		return newSession;
 	}
@@ -117,12 +123,12 @@ export class AuthService {
 			username: user.username,
 			userId: user.id,
 			role: user.role,
+			lastUse: new Date().toISOString(),
 		});
 		return { user, session: sessionToken };
 	}
 
 	public async validateSession(sessionId: string) {
-		// Should create and update a "lastUsed" property ?
-		return await this.sessionRepository.getSession(sessionId);
+		return await this.sessionRepository.updateSession(sessionId, { lastUse: new Date().toISOString() });
 	}
 }

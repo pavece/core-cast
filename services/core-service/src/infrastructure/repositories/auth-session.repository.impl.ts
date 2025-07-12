@@ -14,7 +14,7 @@ export class AuthSessionRepository implements AuthSessionRepositoryInterface {
 		const session = await this.redis.hgetall('session:' + token);
 
 		if (!session.userId) return null;
-		return session as unknown as AuthSession;
+		return { ...session, lastUse: new Date(session.lastUse) } as unknown as AuthSession;
 	}
 
 	async createSession(session: AuthSession): Promise<string> {
@@ -36,5 +36,16 @@ export class AuthSessionRepository implements AuthSessionRepositoryInterface {
 	async deleteSession(token: string): Promise<void> {
 		await this.redis.select(this.redisDatabaseNumber);
 		await this.redis.hdel('session:' + token);
+	}
+
+	async updateSession(token: string, updates: Partial<AuthSession>): Promise<AuthSession | null> {
+		await this.redis.select(this.redisDatabaseNumber);
+		const session = await this.redis.hgetall(`session:${token}`);
+		if (!session.userId) return null;
+
+		console.log('SESSION', session);
+
+		await this.redis.hset(`session:${token}`, updates);
+		return { ...(session as unknown as AuthSession), ...updates };
 	}
 }

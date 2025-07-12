@@ -3,6 +3,7 @@ export interface AuthSession {
 	username: string;
 	email: string;
 	device: string;
+	lastUse: string;
 	role: 'USER' | 'ADMIN';
 }
 
@@ -12,4 +13,5 @@ export interface AuthSessionRepositoryInterface {
 	createSession(session: AuthSession): Promise<String>;
 	deleteSession(token: string): Promise<void>;
 	clearUserSessions(id: string): Promise<void>;
+	updateSession(token: string, updates: Partial<AuthSession>): Promise<AuthSession | null>;
 }
