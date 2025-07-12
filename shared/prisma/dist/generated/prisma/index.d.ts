@@ -1096,6 +1096,7 @@ export namespace Prisma {
     email: string | null
     password: string | null
     role: $Enums.Role | null
+    banned: boolean | null
     OTPSecret: string | null
     OTPPendingValidation: boolean | null
     OTPRecoveryCode: string | null
@@ -1109,6 +1110,7 @@ export namespace Prisma {
     email: string | null
     password: string | null
     role: $Enums.Role | null
+    banned: boolean | null
     OTPSecret: string | null
     OTPPendingValidation: boolean | null
     OTPRecoveryCode: string | null
@@ -1122,6 +1124,7 @@ export namespace Prisma {
     email: number
     password: number
     role: number
+    banned: number
     OTPSecret: number
     OTPPendingValidation: number
     OTPRecoveryCode: number
@@ -1137,6 +1140,7 @@ export namespace Prisma {
     email?: true
     password?: true
     role?: true
+    banned?: true
     OTPSecret?: true
     OTPPendingValidation?: true
     OTPRecoveryCode?: true
@@ -1150,6 +1154,7 @@ export namespace Prisma {
     email?: true
     password?: true
     role?: true
+    banned?: true
     OTPSecret?: true
     OTPPendingValidation?: true
     OTPRecoveryCode?: true
@@ -1163,6 +1168,7 @@ export namespace Prisma {
     email?: true
     password?: true
     role?: true
+    banned?: true
     OTPSecret?: true
     OTPPendingValidation?: true
     OTPRecoveryCode?: true
@@ -1249,6 +1255,7 @@ export namespace Prisma {
     email: string
     password: string
     role: $Enums.Role
+    banned: boolean
     OTPSecret: string | null
     OTPPendingValidation: boolean | null
     OTPRecoveryCode: string | null
@@ -1279,6 +1286,7 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     role?: boolean
+    banned?: boolean
     OTPSecret?: boolean
     OTPPendingValidation?: boolean
     OTPRecoveryCode?: boolean
@@ -1292,6 +1300,7 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     role?: boolean
+    banned?: boolean
     OTPSecret?: boolean
     OTPPendingValidation?: boolean
     OTPRecoveryCode?: boolean
@@ -1305,6 +1314,7 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     role?: boolean
+    banned?: boolean
     OTPSecret?: boolean
     OTPPendingValidation?: boolean
     OTPRecoveryCode?: boolean
@@ -1318,6 +1328,7 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     role?: boolean
+    banned?: boolean
     OTPSecret?: boolean
     OTPPendingValidation?: boolean
     OTPRecoveryCode?: boolean
@@ -1325,7 +1336,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type userOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "password" | "role" | "OTPSecret" | "OTPPendingValidation" | "OTPRecoveryCode" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type userOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "password" | "role" | "banned" | "OTPSecret" | "OTPPendingValidation" | "OTPRecoveryCode" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 
   export type $userPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "user"
@@ -1336,6 +1347,7 @@ export namespace Prisma {
       email: string
       password: string
       role: $Enums.Role
+      banned: boolean
       OTPSecret: string | null
       OTPPendingValidation: boolean | null
       OTPRecoveryCode: string | null
@@ -1769,6 +1781,7 @@ export namespace Prisma {
     readonly email: FieldRef<"user", 'String'>
     readonly password: FieldRef<"user", 'String'>
     readonly role: FieldRef<"user", 'Role'>
+    readonly banned: FieldRef<"user", 'Boolean'>
     readonly OTPSecret: FieldRef<"user", 'String'>
     readonly OTPPendingValidation: FieldRef<"user", 'Boolean'>
     readonly OTPRecoveryCode: FieldRef<"user", 'String'>
@@ -4163,6 +4176,7 @@ export namespace Prisma {
     email: 'email',
     password: 'password',
     role: 'role',
+    banned: 'banned',
     OTPSecret: 'OTPSecret',
     OTPPendingValidation: 'OTPPendingValidation',
     OTPRecoveryCode: 'OTPRecoveryCode',
@@ -4314,6 +4328,7 @@ export namespace Prisma {
     email?: StringFilter<"user"> | string
     password?: StringFilter<"user"> | string
     role?: EnumRoleFilter<"user"> | $Enums.Role
+    banned?: BoolFilter<"user"> | boolean
     OTPSecret?: StringNullableFilter<"user"> | string | null
     OTPPendingValidation?: BoolNullableFilter<"user"> | boolean | null
     OTPRecoveryCode?: StringNullableFilter<"user"> | string | null
@@ -4327,6 +4342,7 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    banned?: SortOrder
     OTPSecret?: SortOrderInput | SortOrder
     OTPPendingValidation?: SortOrderInput | SortOrder
     OTPRecoveryCode?: SortOrderInput | SortOrder
@@ -4343,6 +4359,7 @@ export namespace Prisma {
     NOT?: userWhereInput | userWhereInput[]
     password?: StringFilter<"user"> | string
     role?: EnumRoleFilter<"user"> | $Enums.Role
+    banned?: BoolFilter<"user"> | boolean
     OTPSecret?: StringNullableFilter<"user"> | string | null
     OTPPendingValidation?: BoolNullableFilter<"user"> | boolean | null
     OTPRecoveryCode?: StringNullableFilter<"user"> | string | null
@@ -4356,6 +4373,7 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    banned?: SortOrder
     OTPSecret?: SortOrderInput | SortOrder
     OTPPendingValidation?: SortOrderInput | SortOrder
     OTPRecoveryCode?: SortOrderInput | SortOrder
@@ -4375,6 +4393,7 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"user"> | string
     password?: StringWithAggregatesFilter<"user"> | string
     role?: EnumRoleWithAggregatesFilter<"user"> | $Enums.Role
+    banned?: BoolWithAggregatesFilter<"user"> | boolean
     OTPSecret?: StringNullableWithAggregatesFilter<"user"> | string | null
     OTPPendingValidation?: BoolNullableWithAggregatesFilter<"user"> | boolean | null
     OTPRecoveryCode?: StringNullableWithAggregatesFilter<"user"> | string | null
@@ -4497,6 +4516,7 @@ export namespace Prisma {
     email: string
     password: string
     role?: $Enums.Role
+    banned?: boolean
     OTPSecret?: string | null
     OTPPendingValidation?: boolean | null
     OTPRecoveryCode?: string | null
@@ -4510,6 +4530,7 @@ export namespace Prisma {
     email: string
     password: string
     role?: $Enums.Role
+    banned?: boolean
     OTPSecret?: string | null
     OTPPendingValidation?: boolean | null
     OTPRecoveryCode?: string | null
@@ -4523,6 +4544,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    banned?: BoolFieldUpdateOperationsInput | boolean
     OTPSecret?: NullableStringFieldUpdateOperationsInput | string | null
     OTPPendingValidation?: NullableBoolFieldUpdateOperationsInput | boolean | null
     OTPRecoveryCode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -4536,6 +4558,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    banned?: BoolFieldUpdateOperationsInput | boolean
     OTPSecret?: NullableStringFieldUpdateOperationsInput | string | null
     OTPPendingValidation?: NullableBoolFieldUpdateOperationsInput | boolean | null
     OTPRecoveryCode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -4549,6 +4572,7 @@ export namespace Prisma {
     email: string
     password: string
     role?: $Enums.Role
+    banned?: boolean
     OTPSecret?: string | null
     OTPPendingValidation?: boolean | null
     OTPRecoveryCode?: string | null
@@ -4562,6 +4586,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    banned?: BoolFieldUpdateOperationsInput | boolean
     OTPSecret?: NullableStringFieldUpdateOperationsInput | string | null
     OTPPendingValidation?: NullableBoolFieldUpdateOperationsInput | boolean | null
     OTPRecoveryCode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -4575,6 +4600,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    banned?: BoolFieldUpdateOperationsInput | boolean
     OTPSecret?: NullableStringFieldUpdateOperationsInput | string | null
     OTPPendingValidation?: NullableBoolFieldUpdateOperationsInput | boolean | null
     OTPRecoveryCode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -4723,6 +4749,11 @@ export namespace Prisma {
     not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -4765,6 +4796,7 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    banned?: SortOrder
     OTPSecret?: SortOrder
     OTPPendingValidation?: SortOrder
     OTPRecoveryCode?: SortOrder
@@ -4778,6 +4810,7 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    banned?: SortOrder
     OTPSecret?: SortOrder
     OTPPendingValidation?: SortOrder
     OTPRecoveryCode?: SortOrder
@@ -4791,6 +4824,7 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     role?: SortOrder
+    banned?: SortOrder
     OTPSecret?: SortOrder
     OTPPendingValidation?: SortOrder
     OTPRecoveryCode?: SortOrder
@@ -4824,6 +4858,14 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumRoleFilter<$PrismaModel>
     _max?: NestedEnumRoleFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -4942,6 +4984,10 @@ export namespace Prisma {
     set?: $Enums.Role
   }
 
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
   }
@@ -4977,6 +5023,11 @@ export namespace Prisma {
     in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
     notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
     not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedStringNullableFilter<$PrismaModel = never> = {
@@ -5045,6 +5096,14 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumRoleFilter<$PrismaModel>
     _max?: NestedEnumRoleFilter<$PrismaModel>
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {

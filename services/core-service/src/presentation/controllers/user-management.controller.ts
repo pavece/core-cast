@@ -4,6 +4,7 @@ import { handleApiError } from '../../domain/errors/api-error';
 import { updateUserValidator } from '../../domain/validators/user.validators';
 import { user } from '@core-cast/prisma';
 import {
+	IBanUserResponse,
 	ICloseSessionsResponse,
 	IGetUsersResponse,
 	IRemoveUserResponse,
@@ -18,6 +19,7 @@ function cleanUser(original: user): PartialUser {
 		id: original.id,
 		role: original.role,
 		otpEnabled: original.OTPPendingValidation == false,
+		banned: original.banned,
 	};
 }
 
@@ -44,7 +46,14 @@ export class UserManagementController {
 			.catch(e => handleApiError(e, res));
 	};
 
-	public banUser = (req: Request, res: Response) => {};
+	public banUser = (req: Request, res: Response) => {
+		const userId = req.params.id;
+
+		this.userManagementService
+			.banUser(userId)
+			.then(r => res.json({ message: 'User banned successfully', user: cleanUser(r) } as IBanUserResponse))
+			.catch(e => handleApiError(e, res));
+	};
 
 	public updateUser = (req: Request, res: Response) => {
 		const userId = req.params.id;

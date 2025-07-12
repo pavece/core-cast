@@ -5,6 +5,7 @@ export interface PartialUser {
     email: string;
     role: 'ADMIN' | 'USER';
     otpEnabled: boolean;
+    banned: boolean;
 }
 export interface IRemoveUserResponse extends IGenericApiResponse {
     user: PartialUser;
