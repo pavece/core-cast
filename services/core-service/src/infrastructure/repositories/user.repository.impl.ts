@@ -16,10 +16,10 @@ export class UserRepository implements IUserRepository {
 	createUser(user: CreateUserParams): Promise<user> {
 		return this.prismaClient.user.create({ data: user });
 	}
-	updateUserById(userId: string, updates: Partial<user>): Promise<user | null> {
+	updateUserById(userId: string, updates: Partial<user>): Promise<user> {
 		return this.prismaClient.user.update({ where: { id: userId }, data: updates });
 	}
-	deleteUserById(id: string): Promise<user | null> {
+	deleteUserById(id: string): Promise<user> {
 		return this.prismaClient.user.delete({ where: { id } });
 	}
 	async isUserListEmpty(): Promise<boolean> {

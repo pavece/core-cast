@@ -43,8 +43,6 @@ export class AuthSessionRepository implements AuthSessionRepositoryInterface {
 		const session = await this.redis.hgetall(`session:${token}`);
 		if (!session.userId) return null;
 
-		console.log('SESSION', session);
-
 		await this.redis.hset(`session:${token}`, updates);
 		return { ...(session as unknown as AuthSession), ...updates };
 	}
