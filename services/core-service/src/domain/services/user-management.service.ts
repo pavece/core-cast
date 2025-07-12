@@ -21,12 +21,12 @@ export class UserManagementService {
 		return user;
 	}
 
-	public async banUser(userId: string) {
+	public async toggleUserBan(userId: string) {
 		const user = await this.userRepository.getUserById(userId);
 		if (!user) throw new ApiError(404, 'User does not exist');
 		if (user.role == 'ADMIN') throw new ApiError(403, 'Administrators cannot be banned');
 
-		const bannedUser = await this.userRepository.updateUserById(userId, { banned: true });
+		const bannedUser = await this.userRepository.updateUserById(userId, { banned: !user.banned });
 		await this.closeSessions(userId);
 
 		return bannedUser;

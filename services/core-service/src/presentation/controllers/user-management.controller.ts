@@ -50,7 +50,7 @@ export class UserManagementController {
 		const userId = req.params.id;
 
 		this.userManagementService
-			.banUser(userId)
+			.toggleUserBan(userId)
 			.then(r => res.json({ message: 'User banned successfully', user: cleanUser(r) } as IBanUserResponse))
 			.catch(e => handleApiError(e, res));
 	};

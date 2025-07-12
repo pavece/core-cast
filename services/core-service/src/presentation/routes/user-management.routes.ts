@@ -11,7 +11,7 @@ export class UserManagementRouter {
 		router.get('', validateSession, validateAdmin, userManagementController.getUsers);
 		router.delete('/:id', validateSession, validateAdmin, userManagementController.removeUser);
 		router.put('/:id', validateSession, validateAdmin, userManagementController.updateUser);
-		router.patch('/ban/:id', validateSession, validateAdmin, userManagementController.banUser);
+		router.patch('/toggle-ban/:id', validateSession, validateAdmin, userManagementController.banUser);
 		router.delete('/close-sessions/:id', validateSession, validateAdmin, userManagementController.closeSessions);
 
 		return router;

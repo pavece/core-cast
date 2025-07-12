@@ -99,6 +99,7 @@ export class AuthService {
 		const user = await this.userRepository.getUserByEmail(email);
 
 		if (!user) throw new ApiError(401, 'Incorrect username or password');
+		if (user.banned) throw new ApiError(403, 'User is banned');
 		if (!bcrypt.compareSync(password, user.password)) throw new ApiError(401, 'Incorrect username or password');
 
 		if (!totp && user.OTPSecret && !user.OTPPendingValidation) {
