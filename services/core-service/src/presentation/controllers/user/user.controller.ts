@@ -1,9 +1,9 @@
 import { Response } from 'express';
-import { AuthRequest } from '../middlewares/validate-session';
-import { cleanUser } from './user-management.controller';
-import { handleApiError } from '../../domain/errors/api-error';
-import { updateUserValidator } from '../../domain/validators/user.validators';
-import { UserManagementService } from '../../domain/services/user-management.service';
+import { AuthRequest } from '../../middlewares/validate-session';
+import { cleanUser } from '../admin/user-management.controller';
+import { handleApiError } from '../../../domain/errors/api-error';
+import { updateUserValidator } from '../../../domain/validators/user.validators';
+import { UserManagementService } from '../../../domain/services/user-management.service';
 import {
 	ICloseUserSessionsResponse,
 	IGetUserReponse,

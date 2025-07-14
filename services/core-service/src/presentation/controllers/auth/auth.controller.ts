@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { AuthService } from '../../domain/services/auth.service';
-import { createUserRequestValidator, loginValidator } from '../../domain/validators/auth.validators';
+import { AuthService } from '../../../domain/services/auth.service';
+import { createUserRequestValidator, loginValidator } from '../../../domain/validators/auth.validators';
 import { ICreateUserResponse, ILoginResponse } from '@core-cast/types';
-import { handleApiError } from '../../domain/errors/api-error';
-import { AuthRequest } from '../middlewares/validate-session';
+import { handleApiError } from '../../../domain/errors/api-error';
+import { AuthRequest } from '../../middlewares/validate-session';
 
 export class AuthController {
 	private authService = new AuthService();

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { validateSession } from '../middlewares/validate-session';
-import { UserManagementController } from '../controllers/user-management.controller';
+import { UserManagementController } from '../controllers/admin/user-management.controller';
 import { validateAdmin } from '../middlewares/validate-admin';
 
 export class UserManagementRouter {
@@ -9,6 +9,7 @@ export class UserManagementRouter {
 		const userManagementController = new UserManagementController();
 
 		router.get('', validateSession, validateAdmin, userManagementController.getUsers);
+		router.get('/:id', validateSession, validateAdmin, userManagementController.getUser);
 		router.delete('/:id', validateSession, validateAdmin, userManagementController.removeUser);
 		router.put('/:id', validateSession, validateAdmin, userManagementController.updateUser);
 		router.patch('/toggle-ban/:id', validateSession, validateAdmin, userManagementController.banUser);

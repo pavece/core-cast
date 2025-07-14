@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { UserController } from '../controllers/user.controller';
+import { UserController } from '../controllers/user/user.controller';
 import { validateSession } from '../middlewares/validate-session';
 
 export class UserRoouter {

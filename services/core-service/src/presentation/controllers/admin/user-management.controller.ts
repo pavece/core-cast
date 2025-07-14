@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { UserManagementService } from '../../domain/services/user-management.service';
-import { handleApiError } from '../../domain/errors/api-error';
-import { adminUpdateUserValidator } from '../../domain/validators/user.validators';
+import { UserManagementService } from '../../../domain/services/user-management.service';
+import { handleApiError } from '../../../domain/errors/api-error';
+import { adminUpdateUserValidator } from '../../../domain/validators/user.validators';
 import { user } from '@core-cast/prisma';
 import {
 	IAdminBanUserResponse,
@@ -26,6 +26,21 @@ export function cleanUser(original: user): PartialUser {
 //Admin only user management endpoints
 export class UserManagementController {
 	private userManagementService = new UserManagementService();
+
+	public getUser = (req: Request, res: Response) => {
+		const userId = req.params.id;
+
+		this.userManagementService
+			.getUser(userId)
+			.then(r => {
+				if (r.role == 'ADMIN') {
+					res.status(403).json({ message: "Can't view other administrator users" });
+					return;
+				}
+				res.json({ message: 'user', user: cleanUser(r) });
+			})
+			.catch(e => handleApiError(e, res));
+	};
 
 	public getUsers = (req: Request, res: Response) => {
 		this.userManagementService

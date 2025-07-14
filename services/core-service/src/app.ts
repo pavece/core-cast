@@ -4,7 +4,6 @@ import { Server } from './presentation/server';
 import 'dotenv/config';
 import { Logger } from './domain/logging/logger';
 import { BaseLogger } from 'pino';
-import { RedisClient } from './infrastructure/database/redis';
 
 async function main() {
 	const logger = new Logger().getLogger();
