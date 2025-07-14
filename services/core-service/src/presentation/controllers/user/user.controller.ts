@@ -72,6 +72,30 @@ export class UserController {
 			.catch(e => handleApiError(e, res));
 	};
 
-	//TODO
-	public updatePicture = (req: AuthRequest, res: Response) => {};
+	public uploadPicture = (req: AuthRequest, res: Response) => {
+		const userId = req.session?.userId;
+		if (!userId) {
+			res.status(401).json({ message: 'Unauthorized' });
+			return;
+		}
+
+		if (!req.file || !req.file.mimetype.startsWith('image/')) {
+			res.status(400).json({ message: 'Include a valid image' });
+			return;
+		}
+
+		if (req.params.type !== 'avatar' && req.params.type !== 'cover') {
+			res.status(400).json({ message: 'Type must be avatar or cover' });
+			return;
+		}
+
+		this.userManagementService
+			.uploadPicture(userId, req.params.type, req.file)
+			.then(r =>
+				res.json({
+					message: `${req.params.type} image updated`,
+				})
+			)
+			.catch(e => handleApiError(e, res));
+	};
 }

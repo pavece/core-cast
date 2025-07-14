@@ -4,6 +4,7 @@ import { Server } from './presentation/server';
 import 'dotenv/config';
 import { Logger } from './domain/logging/logger';
 import { BaseLogger } from 'pino';
+import { ObjectStore, ObjectStoreConfigurationOptions } from '@core-cast/object-store';
 
 async function main() {
 	const logger = new Logger().getLogger();
@@ -27,6 +28,22 @@ async function setupServices(logger: BaseLogger) {
 		logger.info('Connected to posgreSQL');
 	} catch (error) {
 		logger.error({ message: 'Failed to connect to posgreSQL', error });
+	}
+
+	const objectStoreConfig: ObjectStoreConfigurationOptions = {
+		region: process.env.OBJECT_STORE_REGION || 'minio',
+		endpoint: process.env.OBJECT_STORE_ENDPOINT || '',
+		accesKeyId: process.env.OBJECT_STORE_KEY_ID || '',
+		secretAccessKey: process.env.OBJECT_STORE_SECRET || '',
+		privateBucket: process.env.OBJECT_STORE_PRIVATE_BUCKET || 'uploads',
+		publicBucket: process.env.OBJECT_STORE_PUBLIC_BUCKET || 'cdn',
+	};
+
+	try {
+		await ObjectStore.getInstance().connect(objectStoreConfig);
+		logger.info('Connected to object store');
+	} catch (error) {
+		logger.error({ message: 'Failed to connect to object store', error });
 	}
 }
 

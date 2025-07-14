@@ -2,10 +2,15 @@ import { user } from '@core-cast/prisma';
 import { AuthSessionRepository } from '../../infrastructure/repositories/auth-session.repository.impl';
 import { UserRepository } from '../../infrastructure/repositories/user.repository.impl';
 import { ApiError } from '../errors/api-error';
+import { ObjectStore } from '@core-cast/object-store';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import 'dotenv/config';
+import { FILE } from 'dns';
 
 export class UserManagementService {
 	private userRepository = new UserRepository();
 	private authSessionRepository = new AuthSessionRepository();
+	private objectStore = ObjectStore.getInstance().s3Client;
 
 	public async getUser(userId: string) {
 		const user = await this.userRepository.getUserById(userId);
@@ -55,5 +60,20 @@ export class UserManagementService {
 		const updated = await this.userRepository.updateUserById(userId, updates);
 
 		return updated;
+	}
+
+	public async uploadPicture(userId: string, type: 'avatar' | 'cover', file: Express.Multer.File) {
+		const objectName = `${type}/${crypto.randomUUID()}${file.originalname}`;
+		const url = `${process.env.OBJECT_STORE_ENDPOINT}/${process.env.OBJECT_STORE_PUBLIC_BUCKET}/${objectName}`;
+
+		await this.objectStore.send(
+			new PutObjectCommand({ Bucket: process.env.OBJECT_STORE_PUBLIC_BUCKET, Key: objectName, Body: file.buffer })
+		);
+
+		if (type == 'avatar') {
+			await this.userRepository.updateUserById(userId, { avatar: url });
+		} else {
+			await this.userRepository.updateUserById(userId, { channelCover: url });
+		}
 	}
 }

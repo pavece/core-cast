@@ -20,6 +20,9 @@ export function cleanUser(original: user): PartialUser {
 		role: original.role,
 		otpEnabled: original.OTPPendingValidation == false,
 		banned: original.banned,
+		channelDescription: original.channelDescription,
+		channelCover: original.channelCover,
+		avatar: original.avatar,
 	};
 }
 

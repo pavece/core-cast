@@ -7,6 +7,9 @@ export interface PartialUser {
 	role: 'ADMIN' | 'USER';
 	otpEnabled: boolean;
 	banned: boolean;
+	channelDescription: string | null;
+	avatar: string | null;
+	channelCover: string | null;
 }
 
 export interface IAdminRemoveUserResponse extends IGenericApiResponse {
