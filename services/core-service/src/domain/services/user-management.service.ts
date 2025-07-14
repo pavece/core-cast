@@ -7,6 +7,13 @@ export class UserManagementService {
 	private userRepository = new UserRepository();
 	private authSessionRepository = new AuthSessionRepository();
 
+	public async getUser(userId: string) {
+		const user = await this.userRepository.getUserById(userId);
+		if (!user) throw new ApiError(404, 'User not found');
+
+		return user;
+	}
+
 	public async getUsers() {
 		return (await this.userRepository.getUsers()).filter(u => u.role == 'USER');
 	}

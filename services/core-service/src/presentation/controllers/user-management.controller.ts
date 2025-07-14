@@ -1,18 +1,18 @@
 import { Request, Response } from 'express';
 import { UserManagementService } from '../../domain/services/user-management.service';
 import { handleApiError } from '../../domain/errors/api-error';
-import { updateUserValidator } from '../../domain/validators/user.validators';
+import { adminUpdateUserValidator } from '../../domain/validators/user.validators';
 import { user } from '@core-cast/prisma';
 import {
-	IBanUserResponse,
-	ICloseSessionsResponse,
-	IGetUsersResponse,
-	IRemoveUserResponse,
-	IUpdateUserResponse,
+	IAdminBanUserResponse,
+	IAdminCloseSessionsResponse,
+	IAdminGetUsersResponse,
+	IAdminRemoveUserResponse,
+	IAdminUpdateUserResponse,
 	PartialUser,
 } from '@core-cast/types';
 
-function cleanUser(original: user): PartialUser {
+export function cleanUser(original: user): PartialUser {
 	return {
 		username: original.username,
 		email: original.email,
@@ -32,7 +32,7 @@ export class UserManagementController {
 			.getUsers()
 			.then(user => {
 				const cleanUsers = user.map(user => cleanUser(user));
-				res.status(214).json({ message: 'User list', users: cleanUsers } as IGetUsersResponse);
+				res.status(214).json({ message: 'User list', users: cleanUsers } as IAdminGetUsersResponse);
 			})
 			.catch(e => handleApiError(e, res));
 	};
@@ -42,7 +42,7 @@ export class UserManagementController {
 
 		this.userManagementService
 			.removeUser(userId)
-			.then(r => res.json({ message: 'User removed successfully', user: cleanUser(r) } as IRemoveUserResponse))
+			.then(r => res.json({ message: 'User removed successfully', user: cleanUser(r) } as IAdminRemoveUserResponse))
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -51,13 +51,13 @@ export class UserManagementController {
 
 		this.userManagementService
 			.toggleUserBan(userId)
-			.then(r => res.json({ message: 'User banned successfully', user: cleanUser(r) } as IBanUserResponse))
+			.then(r => res.json({ message: 'User banned successfully', user: cleanUser(r) } as IAdminBanUserResponse))
 			.catch(e => handleApiError(e, res));
 	};
 
 	public updateUser = (req: Request, res: Response) => {
 		const userId = req.params.id;
-		const { error, data: parsedBody } = updateUserValidator.safeParse(req.body);
+		const { error, data: parsedBody } = adminUpdateUserValidator.safeParse(req.body);
 		if (error) {
 			res.status(400).json({ message: error.message });
 			return;
@@ -66,7 +66,7 @@ export class UserManagementController {
 		this.userManagementService
 			.updateUser(userId, parsedBody)
 			.then(r => {
-				res.status(214).json({ message: 'User updated succesfully', user: cleanUser(r) } as IUpdateUserResponse);
+				res.status(214).json({ message: 'User updated succesfully', user: cleanUser(r) } as IAdminUpdateUserResponse);
 			})
 			.catch(e => handleApiError(e, res));
 	};
@@ -76,7 +76,7 @@ export class UserManagementController {
 
 		this.userManagementService
 			.closeSessions(userId)
-			.then(r => res.json({ message: 'Sessions closed' } as ICloseSessionsResponse))
+			.then(r => res.json({ message: 'Sessions closed' } as IAdminCloseSessionsResponse))
 			.catch(e => handleApiError(e, res));
 	};
 }

@@ -9,20 +9,20 @@ export interface PartialUser {
 	banned: boolean;
 }
 
-export interface IRemoveUserResponse extends IGenericApiResponse {
+export interface IAdminRemoveUserResponse extends IGenericApiResponse {
 	user: PartialUser;
 }
 
-export interface IUpdateUserResponse extends IGenericApiResponse {
+export interface IAdminUpdateUserResponse extends IGenericApiResponse {
 	user: PartialUser;
 }
 
-export interface IBanUserResponse extends IGenericApiResponse {
+export interface IAdminBanUserResponse extends IGenericApiResponse {
 	user: PartialUser;
 }
 
-export interface IGetUsersResponse extends IGenericApiResponse {
+export interface IAdminGetUsersResponse extends IGenericApiResponse {
 	users: PartialUser[];
 }
 
-export interface ICloseSessionsResponse extends IGenericApiResponse {}
+export interface IAdminCloseSessionsResponse extends IGenericApiResponse {}
