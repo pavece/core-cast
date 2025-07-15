@@ -7,5 +7,6 @@ dist
 redis-data
 minio-data
 pg-data
+meili-data
 
 temp

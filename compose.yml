@@ -35,8 +35,15 @@ services:
   rabbit-mq:
     image: rabbitmq:4-management
     ports:
-      - 5672:5672   # Do NOT expose without authenticatiuon properly configured
+      - 5672:5672 # Do NOT expose without authenticatiuon properly configured
       - 9091:15672 # Do NOT expose (.)
+
+  melisearch:
+    image: getmeili/meilisearch:v1.15
+    ports:
+      - 7700:7700
+    volumes:
+      - ./meili-data:/meili_data
 
   # OPTIONAL: Explorer for postgreSQL
   adminer:
