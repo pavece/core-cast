@@ -1,27 +1,43 @@
 import { IVideoCreationProps } from '@core-cast/types';
+import { VideoRepository } from '../../infrastructure/repositories/video-repository.impl';
+import { ApiError } from '../errors/api-error';
 
 export class VideoManagementService {
-	public getVideo(userId: string, videoId: string) {
-		//TODO: Check if video belongs to the user
-		//TODO: Return video (does not matter if it's processed or not)
+	private videoRepository = new VideoRepository();
+
+	public async getVideo(userId: string, videoId: string) {
+		const video = await this.videoRepository.getVideoById(videoId);
+		if (!video?.id) throw new ApiError(404, 'Video not found');
+		if (video?.userId !== userId) throw new ApiError(403, 'You dont own this video');
+
+		return video;
 	}
 
 	public getVideos(userId: string) {
-		//TODO: Return user videos (does not matter if it's processed or not)
+		return this.videoRepository.getUserVideos(userId);
 	}
 
-	public createVideo(userId: string, videoProps: IVideoCreationProps) {
-		//TODO: Add the video record to the database
+	public async createVideo(userId: string, videoProps: IVideoCreationProps) {
+		const video = await this.videoRepository.createVideo(videoProps, userId);
+
 		//TODO: Create video metadata embeding (title + description) and upload to vector database
 		//TODO: Insert video search information into meilisearch (title + description)
+		return video;
 	}
 
-	public removeVideo(userId: string, videoId: string) {
-		//TODO: Check if the video belongs to the user and remove from DB
+	public async removeVideo(userId: string, videoId: string) {
+		const video = await this.getVideo(userId, videoId); //Check ownership
+
 		//TODO: Remove media from object store
+		//TODO: Remove pending tasks
+
+		await this.videoRepository.deleteVideo(videoId);
+		return video;
 	}
 
-	public updateVideo(userId: string, videoId: string, videoProps: Partial<IVideoCreationProps>) {
-		//TODO: Check if the video belongs to the user and update props
+	public async updateVideo(userId: string, videoId: string, videoProps: Partial<IVideoCreationProps>) {
+		await this.getVideo(userId, videoId); //Check ownership
+
+		return await this.videoRepository.updateVideo(videoId, videoProps);
 	}
 }
