@@ -137,6 +137,19 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.VideoScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  thumbnail: 'thumbnail',
+  hlsMaterList: 'hlsMaterList',
+  previewClip: 'previewClip',
+  userId: 'userId',
+  public: 'public',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.UploadScalarFieldEnum = {
   id: 'id',
   user: 'user',
@@ -148,8 +161,8 @@ exports.Prisma.UploadScalarFieldEnum = {
 exports.Prisma.VideoProcessingTaskScalarFieldEnum = {
   id: 'id',
   objectName: 'objectName',
-  videoId: 'videoId',
   status: 'status',
+  videoId: 'videoId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -180,6 +193,7 @@ exports.VideoProcessingStatus = exports.$Enums.VideoProcessingStatus = {
 
 exports.Prisma.ModelName = {
   user: 'user',
+  video: 'video',
   upload: 'upload',
   videoProcessingTask: 'videoProcessingTask'
 };

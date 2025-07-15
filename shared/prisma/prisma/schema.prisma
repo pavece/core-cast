@@ -33,21 +33,44 @@ model user {
   OTPRecoveryCode      String?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @default(now())
+
+  video  video[]
+  upload upload[]
+}
+
+model video {
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  thumbnail    String?
+  hlsMaterList String?
+  previewClip  String?
+  userId       String
+  public       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+
+  uploadedBy          user                  @relation(fields: [userId], references: [id])
+  videoProcessingTask videoProcessingTask[]
 }
 
 model upload {
   id          String   @id @default(uuid())
-  user        String //TODO: Must be a relation with user (change when auth is in place)
+  user        String
   multipartId String   @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
+
+  uploader user @relation(fields: [user], references: [id])
 }
 
 model videoProcessingTask {
   id         String                @id @default(uuid())
   objectName String
-  videoId    String //TODO: Must be a relation with video (change when video records are in place)
   status     VideoProcessingStatus @default(PENDING)
+  videoId    String
   createdAt  DateTime              @default(now())
   updatedAt  DateTime              @default(now())
+
+  video video @relation(fields: [videoId], references: [id])
 }

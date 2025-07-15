@@ -17,3 +17,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./auth.types"), exports);
 __exportStar(require("./user-management.types"), exports);
 __exportStar(require("./user.types"), exports);
+__exportStar(require("./video-manegement.types"), exports);
