@@ -4,6 +4,7 @@ export const initUploadRequestValidator = z.object({
 	objectName: z.string(),
 	totalChunks: z.number(),
 	chunkSizeMiB: z.number(),
+	videoId: z.string(),
 });
 
 export const uploadChunkHeadersValidator = z.object({

@@ -1,11 +1,13 @@
-import { Prisma as Prisma, upload } from '@core-cast/prisma';
+import { Prisma, upload } from '@core-cast/prisma';
 import { IUploadRepository } from '@core-cast/types';
 
 export class UploadRepository implements IUploadRepository {
 	private prismaClient = Prisma.getInstance().prismaClient;
 
-	async createPendingUpload(multipartId: string, userId: string): Promise<upload> {
-		return await this.prismaClient.upload.create({ data: { multipartId, user: userId } });
+	async createPendingUpload(multipartId: string, userId: string, videoId: string): Promise<upload> {
+		return await this.prismaClient.upload.create({
+			data: { video: { connect: { id: videoId } }, uploader: { connect: { id: userId } }, multipartId },
+		});
 	}
 	async getPendingUploadById(id: string): Promise<upload | null> {
 		return await this.prismaClient.upload.findUnique({ where: { id } });

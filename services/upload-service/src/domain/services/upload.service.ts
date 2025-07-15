@@ -23,7 +23,9 @@ export class UploadService {
 	private logger = new Logger().getLogger();
 	private prometheus = new Prometheus();
 
-	public async initializeChunkedUpload(originalObjectName: string, totalChunks: number) {
+	public async initializeChunkedUpload(originalObjectName: string, totalChunks: number, videoId: string) {
+		//TODO: Check if the provided vuideoId belongs to that user
+
 		const objectName = crypto.randomUUID() + '-' + originalObjectName;
 
 		try {
@@ -35,8 +37,8 @@ export class UploadService {
 				throw new Error('Upload id is undefined');
 			}
 
-			await this.multipartUploadRepo.createMultipartUpload(UploadId, objectName, totalChunks);
-			await this.pendingUploadRepo.createPendingUpload(UploadId, 'TEST USER'); //TODO: Update when auth is in place
+			await this.multipartUploadRepo.createMultipartUpload(UploadId, objectName, totalChunks, videoId);
+			await this.pendingUploadRepo.createPendingUpload(UploadId, 'faf3184a-dc91-4630-a4b8-2e7fe2e7a497', videoId); //TODO: Update when auth is in place
 
 			this.logger.info({ message: 'New multupart upload init', partialUploadId: UploadId.slice(0, 20) + '(...)' });
 
@@ -122,7 +124,7 @@ export class UploadService {
 			this.prometheus.uploadFilesCounter?.inc();
 
 			//Create video processing task & send to queue
-			const videoProcessingTask = await this.videoProcessingTaskRepo.createTask(redisUploadRecord.objectName, 'TEMP');
+			const videoProcessingTask = await this.videoProcessingTaskRepo.createTask(redisUploadRecord.objectName, redisUploadRecord.videoId);
 			const videoProcessingMessage: Upload.VideoProcessingTaskMessage = { processingTaskId: videoProcessingTask.id };
 
 			this.rabbitMQ?.videoProcessingChannel?.sendToQueue(

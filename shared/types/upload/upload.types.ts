@@ -7,6 +7,7 @@ export interface RedisUploadRecord {
 	startedAt: string;
 	totalChunks: number;
 	objectName: string;
+	videoId: string
 }
 
 export interface PendingUpload {

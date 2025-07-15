@@ -20,7 +20,7 @@ export class UploadController {
 		}
 
 		this.uploadService
-			.initializeChunkedUpload(parsedBody.data.objectName, parsedBody.data.totalChunks)
+			.initializeChunkedUpload(parsedBody.data.objectName, parsedBody.data.totalChunks, parsedBody.data.videoId)
 			.then(r => res.json({ message: 'Multipart init correct, you may now proceed uploading chunks.', uploadId: r }))
 			.catch(e => handleApiError(e, res));
 	};

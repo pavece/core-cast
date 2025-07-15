@@ -5,8 +5,8 @@ import { RedisClient } from '../database/redis';
 export class MultipartUploadRepository implements IMultipartUploadRepository {
 	private redisClient = new RedisClient().getClient();
 
-	async createMultipartUpload(id: string, objectName: string, totalChunks: number): Promise<RedisUploadRecord> {
-		const upload: RedisUploadRecord = { objectName, totalChunks, startedAt: new Date().toISOString() };
+	async createMultipartUpload(id: string, objectName: string, totalChunks: number, videoId: string): Promise<RedisUploadRecord> {
+		const upload: RedisUploadRecord = { objectName, totalChunks, startedAt: new Date().toISOString(), videoId };
 		await this.redisClient.hset(id, upload);
 		return upload;
 	}

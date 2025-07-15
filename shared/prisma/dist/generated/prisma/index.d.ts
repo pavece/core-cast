@@ -285,8 +285,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.11.1
-   * Query Engine version: f40f79ec31188888a2e33acda0ecc8fd10a853a9
+   * Prisma Client JS version: 6.12.0
+   * Query Engine version: 8047c96bbd92db98a2abc7c9323ce77c02c89dbc
    */
   export type PrismaVersion = {
     client: string
@@ -1212,10 +1212,12 @@ export namespace Prisma {
 
   export type VideoCountOutputType = {
     videoProcessingTask: number
+    upload: number
   }
 
   export type VideoCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     videoProcessingTask?: boolean | VideoCountOutputTypeCountVideoProcessingTaskArgs
+    upload?: boolean | VideoCountOutputTypeCountUploadArgs
   }
 
   // Custom InputTypes
@@ -1234,6 +1236,13 @@ export namespace Prisma {
    */
   export type VideoCountOutputTypeCountVideoProcessingTaskArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: videoProcessingTaskWhereInput
+  }
+
+  /**
+   * VideoCountOutputType without action
+   */
+  export type VideoCountOutputTypeCountUploadArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: uploadWhereInput
   }
 
 
@@ -2662,6 +2671,7 @@ export namespace Prisma {
     updatedAt?: boolean
     uploadedBy?: boolean | userDefaultArgs<ExtArgs>
     videoProcessingTask?: boolean | video$videoProcessingTaskArgs<ExtArgs>
+    upload?: boolean | video$uploadArgs<ExtArgs>
     _count?: boolean | VideoCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["video"]>
 
@@ -2710,6 +2720,7 @@ export namespace Prisma {
   export type videoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     uploadedBy?: boolean | userDefaultArgs<ExtArgs>
     videoProcessingTask?: boolean | video$videoProcessingTaskArgs<ExtArgs>
+    upload?: boolean | video$uploadArgs<ExtArgs>
     _count?: boolean | VideoCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type videoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2724,6 +2735,7 @@ export namespace Prisma {
     objects: {
       uploadedBy: Prisma.$userPayload<ExtArgs>
       videoProcessingTask: Prisma.$videoProcessingTaskPayload<ExtArgs>[]
+      upload: Prisma.$uploadPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3132,6 +3144,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     uploadedBy<T extends userDefaultArgs<ExtArgs> = {}>(args?: Subset<T, userDefaultArgs<ExtArgs>>): Prisma__userClient<$Result.GetResult<Prisma.$userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     videoProcessingTask<T extends video$videoProcessingTaskArgs<ExtArgs> = {}>(args?: Subset<T, video$videoProcessingTaskArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$videoProcessingTaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    upload<T extends video$uploadArgs<ExtArgs> = {}>(args?: Subset<T, video$uploadArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$uploadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3591,6 +3604,30 @@ export namespace Prisma {
   }
 
   /**
+   * video.upload
+   */
+  export type video$uploadArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the upload
+     */
+    select?: uploadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the upload
+     */
+    omit?: uploadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: uploadInclude<ExtArgs> | null
+    where?: uploadWhereInput
+    orderBy?: uploadOrderByWithRelationInput | uploadOrderByWithRelationInput[]
+    cursor?: uploadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UploadScalarFieldEnum | UploadScalarFieldEnum[]
+  }
+
+  /**
    * video without action
    */
   export type videoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3625,6 +3662,7 @@ export namespace Prisma {
     multipartId: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    videoId: string | null
   }
 
   export type UploadMaxAggregateOutputType = {
@@ -3633,6 +3671,7 @@ export namespace Prisma {
     multipartId: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    videoId: string | null
   }
 
   export type UploadCountAggregateOutputType = {
@@ -3641,6 +3680,7 @@ export namespace Prisma {
     multipartId: number
     createdAt: number
     updatedAt: number
+    videoId: number
     _all: number
   }
 
@@ -3651,6 +3691,7 @@ export namespace Prisma {
     multipartId?: true
     createdAt?: true
     updatedAt?: true
+    videoId?: true
   }
 
   export type UploadMaxAggregateInputType = {
@@ -3659,6 +3700,7 @@ export namespace Prisma {
     multipartId?: true
     createdAt?: true
     updatedAt?: true
+    videoId?: true
   }
 
   export type UploadCountAggregateInputType = {
@@ -3667,6 +3709,7 @@ export namespace Prisma {
     multipartId?: true
     createdAt?: true
     updatedAt?: true
+    videoId?: true
     _all?: true
   }
 
@@ -3748,6 +3791,7 @@ export namespace Prisma {
     multipartId: string
     createdAt: Date
     updatedAt: Date
+    videoId: string
     _count: UploadCountAggregateOutputType | null
     _min: UploadMinAggregateOutputType | null
     _max: UploadMaxAggregateOutputType | null
@@ -3773,7 +3817,9 @@ export namespace Prisma {
     multipartId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    videoId?: boolean
     uploader?: boolean | userDefaultArgs<ExtArgs>
+    video?: boolean | videoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["upload"]>
 
   export type uploadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3782,7 +3828,9 @@ export namespace Prisma {
     multipartId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    videoId?: boolean
     uploader?: boolean | userDefaultArgs<ExtArgs>
+    video?: boolean | videoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["upload"]>
 
   export type uploadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3791,7 +3839,9 @@ export namespace Prisma {
     multipartId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    videoId?: boolean
     uploader?: boolean | userDefaultArgs<ExtArgs>
+    video?: boolean | videoDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["upload"]>
 
   export type uploadSelectScalar = {
@@ -3800,23 +3850,28 @@ export namespace Prisma {
     multipartId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    videoId?: boolean
   }
 
-  export type uploadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user" | "multipartId" | "createdAt" | "updatedAt", ExtArgs["result"]["upload"]>
+  export type uploadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user" | "multipartId" | "createdAt" | "updatedAt" | "videoId", ExtArgs["result"]["upload"]>
   export type uploadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     uploader?: boolean | userDefaultArgs<ExtArgs>
+    video?: boolean | videoDefaultArgs<ExtArgs>
   }
   export type uploadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     uploader?: boolean | userDefaultArgs<ExtArgs>
+    video?: boolean | videoDefaultArgs<ExtArgs>
   }
   export type uploadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     uploader?: boolean | userDefaultArgs<ExtArgs>
+    video?: boolean | videoDefaultArgs<ExtArgs>
   }
 
   export type $uploadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "upload"
     objects: {
       uploader: Prisma.$userPayload<ExtArgs>
+      video: Prisma.$videoPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3824,6 +3879,7 @@ export namespace Prisma {
       multipartId: string
       createdAt: Date
       updatedAt: Date
+      videoId: string
     }, ExtArgs["result"]["upload"]>
     composites: {}
   }
@@ -4219,6 +4275,7 @@ export namespace Prisma {
   export interface Prisma__uploadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     uploader<T extends userDefaultArgs<ExtArgs> = {}>(args?: Subset<T, userDefaultArgs<ExtArgs>>): Prisma__userClient<$Result.GetResult<Prisma.$userPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    video<T extends videoDefaultArgs<ExtArgs> = {}>(args?: Subset<T, videoDefaultArgs<ExtArgs>>): Prisma__videoClient<$Result.GetResult<Prisma.$videoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4253,6 +4310,7 @@ export namespace Prisma {
     readonly multipartId: FieldRef<"upload", 'String'>
     readonly createdAt: FieldRef<"upload", 'DateTime'>
     readonly updatedAt: FieldRef<"upload", 'DateTime'>
+    readonly videoId: FieldRef<"upload", 'String'>
   }
     
 
@@ -5793,7 +5851,8 @@ export namespace Prisma {
     user: 'user',
     multipartId: 'multipartId',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    videoId: 'videoId'
   };
 
   export type UploadScalarFieldEnum = (typeof UploadScalarFieldEnum)[keyof typeof UploadScalarFieldEnum]
@@ -6039,6 +6098,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"video"> | Date | string
     uploadedBy?: XOR<UserScalarRelationFilter, userWhereInput>
     videoProcessingTask?: VideoProcessingTaskListRelationFilter
+    upload?: UploadListRelationFilter
   }
 
   export type videoOrderByWithRelationInput = {
@@ -6054,6 +6114,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     uploadedBy?: userOrderByWithRelationInput
     videoProcessingTask?: videoProcessingTaskOrderByRelationAggregateInput
+    upload?: uploadOrderByRelationAggregateInput
   }
 
   export type videoWhereUniqueInput = Prisma.AtLeast<{
@@ -6072,6 +6133,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"video"> | Date | string
     uploadedBy?: XOR<UserScalarRelationFilter, userWhereInput>
     videoProcessingTask?: VideoProcessingTaskListRelationFilter
+    upload?: UploadListRelationFilter
   }, "id">
 
   export type videoOrderByWithAggregationInput = {
@@ -6115,7 +6177,9 @@ export namespace Prisma {
     multipartId?: StringFilter<"upload"> | string
     createdAt?: DateTimeFilter<"upload"> | Date | string
     updatedAt?: DateTimeFilter<"upload"> | Date | string
+    videoId?: StringFilter<"upload"> | string
     uploader?: XOR<UserScalarRelationFilter, userWhereInput>
+    video?: XOR<VideoScalarRelationFilter, videoWhereInput>
   }
 
   export type uploadOrderByWithRelationInput = {
@@ -6124,7 +6188,9 @@ export namespace Prisma {
     multipartId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    videoId?: SortOrder
     uploader?: userOrderByWithRelationInput
+    video?: videoOrderByWithRelationInput
   }
 
   export type uploadWhereUniqueInput = Prisma.AtLeast<{
@@ -6136,7 +6202,9 @@ export namespace Prisma {
     user?: StringFilter<"upload"> | string
     createdAt?: DateTimeFilter<"upload"> | Date | string
     updatedAt?: DateTimeFilter<"upload"> | Date | string
+    videoId?: StringFilter<"upload"> | string
     uploader?: XOR<UserScalarRelationFilter, userWhereInput>
+    video?: XOR<VideoScalarRelationFilter, videoWhereInput>
   }, "id" | "multipartId">
 
   export type uploadOrderByWithAggregationInput = {
@@ -6145,6 +6213,7 @@ export namespace Prisma {
     multipartId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    videoId?: SortOrder
     _count?: uploadCountOrderByAggregateInput
     _max?: uploadMaxOrderByAggregateInput
     _min?: uploadMinOrderByAggregateInput
@@ -6159,6 +6228,7 @@ export namespace Prisma {
     multipartId?: StringWithAggregatesFilter<"upload"> | string
     createdAt?: DateTimeWithAggregatesFilter<"upload"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"upload"> | Date | string
+    videoId?: StringWithAggregatesFilter<"upload"> | string
   }
 
   export type videoProcessingTaskWhereInput = {
@@ -6360,6 +6430,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     uploadedBy: userCreateNestedOneWithoutVideoInput
     videoProcessingTask?: videoProcessingTaskCreateNestedManyWithoutVideoInput
+    upload?: uploadCreateNestedManyWithoutVideoInput
   }
 
   export type videoUncheckedCreateInput = {
@@ -6374,6 +6445,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     videoProcessingTask?: videoProcessingTaskUncheckedCreateNestedManyWithoutVideoInput
+    upload?: uploadUncheckedCreateNestedManyWithoutVideoInput
   }
 
   export type videoUpdateInput = {
@@ -6388,6 +6460,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedBy?: userUpdateOneRequiredWithoutVideoNestedInput
     videoProcessingTask?: videoProcessingTaskUpdateManyWithoutVideoNestedInput
+    upload?: uploadUpdateManyWithoutVideoNestedInput
   }
 
   export type videoUncheckedUpdateInput = {
@@ -6402,6 +6475,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     videoProcessingTask?: videoProcessingTaskUncheckedUpdateManyWithoutVideoNestedInput
+    upload?: uploadUncheckedUpdateManyWithoutVideoNestedInput
   }
 
   export type videoCreateManyInput = {
@@ -6448,6 +6522,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     uploader: userCreateNestedOneWithoutUploadInput
+    video: videoCreateNestedOneWithoutUploadInput
   }
 
   export type uploadUncheckedCreateInput = {
@@ -6456,6 +6531,7 @@ export namespace Prisma {
     multipartId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    videoId: string
   }
 
   export type uploadUpdateInput = {
@@ -6464,6 +6540,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploader?: userUpdateOneRequiredWithoutUploadNestedInput
+    video?: videoUpdateOneRequiredWithoutUploadNestedInput
   }
 
   export type uploadUncheckedUpdateInput = {
@@ -6472,6 +6549,7 @@ export namespace Prisma {
     multipartId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    videoId?: StringFieldUpdateOperationsInput | string
   }
 
   export type uploadCreateManyInput = {
@@ -6480,6 +6558,7 @@ export namespace Prisma {
     multipartId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    videoId: string
   }
 
   export type uploadUpdateManyMutationInput = {
@@ -6495,6 +6574,7 @@ export namespace Prisma {
     multipartId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    videoId?: StringFieldUpdateOperationsInput | string
   }
 
   export type videoProcessingTaskCreateInput = {
@@ -6823,12 +6903,18 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type VideoScalarRelationFilter = {
+    is?: videoWhereInput
+    isNot?: videoWhereInput
+  }
+
   export type uploadCountOrderByAggregateInput = {
     id?: SortOrder
     user?: SortOrder
     multipartId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    videoId?: SortOrder
   }
 
   export type uploadMaxOrderByAggregateInput = {
@@ -6837,6 +6923,7 @@ export namespace Prisma {
     multipartId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    videoId?: SortOrder
   }
 
   export type uploadMinOrderByAggregateInput = {
@@ -6845,6 +6932,7 @@ export namespace Prisma {
     multipartId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    videoId?: SortOrder
   }
 
   export type EnumVideoProcessingStatusFilter<$PrismaModel = never> = {
@@ -6852,11 +6940,6 @@ export namespace Prisma {
     in?: $Enums.VideoProcessingStatus[] | ListEnumVideoProcessingStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.VideoProcessingStatus[] | ListEnumVideoProcessingStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumVideoProcessingStatusFilter<$PrismaModel> | $Enums.VideoProcessingStatus
-  }
-
-  export type VideoScalarRelationFilter = {
-    is?: videoWhereInput
-    isNot?: videoWhereInput
   }
 
   export type videoProcessingTaskCountOrderByAggregateInput = {
@@ -7017,11 +7100,25 @@ export namespace Prisma {
     connect?: videoProcessingTaskWhereUniqueInput | videoProcessingTaskWhereUniqueInput[]
   }
 
+  export type uploadCreateNestedManyWithoutVideoInput = {
+    create?: XOR<uploadCreateWithoutVideoInput, uploadUncheckedCreateWithoutVideoInput> | uploadCreateWithoutVideoInput[] | uploadUncheckedCreateWithoutVideoInput[]
+    connectOrCreate?: uploadCreateOrConnectWithoutVideoInput | uploadCreateOrConnectWithoutVideoInput[]
+    createMany?: uploadCreateManyVideoInputEnvelope
+    connect?: uploadWhereUniqueInput | uploadWhereUniqueInput[]
+  }
+
   export type videoProcessingTaskUncheckedCreateNestedManyWithoutVideoInput = {
     create?: XOR<videoProcessingTaskCreateWithoutVideoInput, videoProcessingTaskUncheckedCreateWithoutVideoInput> | videoProcessingTaskCreateWithoutVideoInput[] | videoProcessingTaskUncheckedCreateWithoutVideoInput[]
     connectOrCreate?: videoProcessingTaskCreateOrConnectWithoutVideoInput | videoProcessingTaskCreateOrConnectWithoutVideoInput[]
     createMany?: videoProcessingTaskCreateManyVideoInputEnvelope
     connect?: videoProcessingTaskWhereUniqueInput | videoProcessingTaskWhereUniqueInput[]
+  }
+
+  export type uploadUncheckedCreateNestedManyWithoutVideoInput = {
+    create?: XOR<uploadCreateWithoutVideoInput, uploadUncheckedCreateWithoutVideoInput> | uploadCreateWithoutVideoInput[] | uploadUncheckedCreateWithoutVideoInput[]
+    connectOrCreate?: uploadCreateOrConnectWithoutVideoInput | uploadCreateOrConnectWithoutVideoInput[]
+    createMany?: uploadCreateManyVideoInputEnvelope
+    connect?: uploadWhereUniqueInput | uploadWhereUniqueInput[]
   }
 
   export type userUpdateOneRequiredWithoutVideoNestedInput = {
@@ -7046,6 +7143,20 @@ export namespace Prisma {
     deleteMany?: videoProcessingTaskScalarWhereInput | videoProcessingTaskScalarWhereInput[]
   }
 
+  export type uploadUpdateManyWithoutVideoNestedInput = {
+    create?: XOR<uploadCreateWithoutVideoInput, uploadUncheckedCreateWithoutVideoInput> | uploadCreateWithoutVideoInput[] | uploadUncheckedCreateWithoutVideoInput[]
+    connectOrCreate?: uploadCreateOrConnectWithoutVideoInput | uploadCreateOrConnectWithoutVideoInput[]
+    upsert?: uploadUpsertWithWhereUniqueWithoutVideoInput | uploadUpsertWithWhereUniqueWithoutVideoInput[]
+    createMany?: uploadCreateManyVideoInputEnvelope
+    set?: uploadWhereUniqueInput | uploadWhereUniqueInput[]
+    disconnect?: uploadWhereUniqueInput | uploadWhereUniqueInput[]
+    delete?: uploadWhereUniqueInput | uploadWhereUniqueInput[]
+    connect?: uploadWhereUniqueInput | uploadWhereUniqueInput[]
+    update?: uploadUpdateWithWhereUniqueWithoutVideoInput | uploadUpdateWithWhereUniqueWithoutVideoInput[]
+    updateMany?: uploadUpdateManyWithWhereWithoutVideoInput | uploadUpdateManyWithWhereWithoutVideoInput[]
+    deleteMany?: uploadScalarWhereInput | uploadScalarWhereInput[]
+  }
+
   export type videoProcessingTaskUncheckedUpdateManyWithoutVideoNestedInput = {
     create?: XOR<videoProcessingTaskCreateWithoutVideoInput, videoProcessingTaskUncheckedCreateWithoutVideoInput> | videoProcessingTaskCreateWithoutVideoInput[] | videoProcessingTaskUncheckedCreateWithoutVideoInput[]
     connectOrCreate?: videoProcessingTaskCreateOrConnectWithoutVideoInput | videoProcessingTaskCreateOrConnectWithoutVideoInput[]
@@ -7060,10 +7171,30 @@ export namespace Prisma {
     deleteMany?: videoProcessingTaskScalarWhereInput | videoProcessingTaskScalarWhereInput[]
   }
 
+  export type uploadUncheckedUpdateManyWithoutVideoNestedInput = {
+    create?: XOR<uploadCreateWithoutVideoInput, uploadUncheckedCreateWithoutVideoInput> | uploadCreateWithoutVideoInput[] | uploadUncheckedCreateWithoutVideoInput[]
+    connectOrCreate?: uploadCreateOrConnectWithoutVideoInput | uploadCreateOrConnectWithoutVideoInput[]
+    upsert?: uploadUpsertWithWhereUniqueWithoutVideoInput | uploadUpsertWithWhereUniqueWithoutVideoInput[]
+    createMany?: uploadCreateManyVideoInputEnvelope
+    set?: uploadWhereUniqueInput | uploadWhereUniqueInput[]
+    disconnect?: uploadWhereUniqueInput | uploadWhereUniqueInput[]
+    delete?: uploadWhereUniqueInput | uploadWhereUniqueInput[]
+    connect?: uploadWhereUniqueInput | uploadWhereUniqueInput[]
+    update?: uploadUpdateWithWhereUniqueWithoutVideoInput | uploadUpdateWithWhereUniqueWithoutVideoInput[]
+    updateMany?: uploadUpdateManyWithWhereWithoutVideoInput | uploadUpdateManyWithWhereWithoutVideoInput[]
+    deleteMany?: uploadScalarWhereInput | uploadScalarWhereInput[]
+  }
+
   export type userCreateNestedOneWithoutUploadInput = {
     create?: XOR<userCreateWithoutUploadInput, userUncheckedCreateWithoutUploadInput>
     connectOrCreate?: userCreateOrConnectWithoutUploadInput
     connect?: userWhereUniqueInput
+  }
+
+  export type videoCreateNestedOneWithoutUploadInput = {
+    create?: XOR<videoCreateWithoutUploadInput, videoUncheckedCreateWithoutUploadInput>
+    connectOrCreate?: videoCreateOrConnectWithoutUploadInput
+    connect?: videoWhereUniqueInput
   }
 
   export type userUpdateOneRequiredWithoutUploadNestedInput = {
@@ -7072,6 +7203,14 @@ export namespace Prisma {
     upsert?: userUpsertWithoutUploadInput
     connect?: userWhereUniqueInput
     update?: XOR<XOR<userUpdateToOneWithWhereWithoutUploadInput, userUpdateWithoutUploadInput>, userUncheckedUpdateWithoutUploadInput>
+  }
+
+  export type videoUpdateOneRequiredWithoutUploadNestedInput = {
+    create?: XOR<videoCreateWithoutUploadInput, videoUncheckedCreateWithoutUploadInput>
+    connectOrCreate?: videoCreateOrConnectWithoutUploadInput
+    upsert?: videoUpsertWithoutUploadInput
+    connect?: videoWhereUniqueInput
+    update?: XOR<XOR<videoUpdateToOneWithWhereWithoutUploadInput, videoUpdateWithoutUploadInput>, videoUncheckedUpdateWithoutUploadInput>
   }
 
   export type videoCreateNestedOneWithoutVideoProcessingTaskInput = {
@@ -7272,6 +7411,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     videoProcessingTask?: videoProcessingTaskCreateNestedManyWithoutVideoInput
+    upload?: uploadCreateNestedManyWithoutVideoInput
   }
 
   export type videoUncheckedCreateWithoutUploadedByInput = {
@@ -7285,6 +7425,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     videoProcessingTask?: videoProcessingTaskUncheckedCreateNestedManyWithoutVideoInput
+    upload?: uploadUncheckedCreateNestedManyWithoutVideoInput
   }
 
   export type videoCreateOrConnectWithoutUploadedByInput = {
@@ -7302,6 +7443,7 @@ export namespace Prisma {
     multipartId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    video: videoCreateNestedOneWithoutUploadInput
   }
 
   export type uploadUncheckedCreateWithoutUploaderInput = {
@@ -7309,6 +7451,7 @@ export namespace Prisma {
     multipartId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    videoId: string
   }
 
   export type uploadCreateOrConnectWithoutUploaderInput = {
@@ -7378,6 +7521,7 @@ export namespace Prisma {
     multipartId?: StringFilter<"upload"> | string
     createdAt?: DateTimeFilter<"upload"> | Date | string
     updatedAt?: DateTimeFilter<"upload"> | Date | string
+    videoId?: StringFilter<"upload"> | string
   }
 
   export type userCreateWithoutVideoInput = {
@@ -7444,6 +7588,32 @@ export namespace Prisma {
 
   export type videoProcessingTaskCreateManyVideoInputEnvelope = {
     data: videoProcessingTaskCreateManyVideoInput | videoProcessingTaskCreateManyVideoInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type uploadCreateWithoutVideoInput = {
+    id?: string
+    multipartId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploader: userCreateNestedOneWithoutUploadInput
+  }
+
+  export type uploadUncheckedCreateWithoutVideoInput = {
+    id?: string
+    user: string
+    multipartId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type uploadCreateOrConnectWithoutVideoInput = {
+    where: uploadWhereUniqueInput
+    create: XOR<uploadCreateWithoutVideoInput, uploadUncheckedCreateWithoutVideoInput>
+  }
+
+  export type uploadCreateManyVideoInputEnvelope = {
+    data: uploadCreateManyVideoInput | uploadCreateManyVideoInput[]
     skipDuplicates?: boolean
   }
 
@@ -7522,6 +7692,22 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"videoProcessingTask"> | Date | string
   }
 
+  export type uploadUpsertWithWhereUniqueWithoutVideoInput = {
+    where: uploadWhereUniqueInput
+    update: XOR<uploadUpdateWithoutVideoInput, uploadUncheckedUpdateWithoutVideoInput>
+    create: XOR<uploadCreateWithoutVideoInput, uploadUncheckedCreateWithoutVideoInput>
+  }
+
+  export type uploadUpdateWithWhereUniqueWithoutVideoInput = {
+    where: uploadWhereUniqueInput
+    data: XOR<uploadUpdateWithoutVideoInput, uploadUncheckedUpdateWithoutVideoInput>
+  }
+
+  export type uploadUpdateManyWithWhereWithoutVideoInput = {
+    where: uploadScalarWhereInput
+    data: XOR<uploadUpdateManyMutationInput, uploadUncheckedUpdateManyWithoutVideoInput>
+  }
+
   export type userCreateWithoutUploadInput = {
     id?: string
     username: string
@@ -7561,6 +7747,39 @@ export namespace Prisma {
   export type userCreateOrConnectWithoutUploadInput = {
     where: userWhereUniqueInput
     create: XOR<userCreateWithoutUploadInput, userUncheckedCreateWithoutUploadInput>
+  }
+
+  export type videoCreateWithoutUploadInput = {
+    id?: string
+    title: string
+    description: string
+    thumbnail?: string | null
+    hlsMaterList?: string | null
+    previewClip?: string | null
+    public?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploadedBy: userCreateNestedOneWithoutVideoInput
+    videoProcessingTask?: videoProcessingTaskCreateNestedManyWithoutVideoInput
+  }
+
+  export type videoUncheckedCreateWithoutUploadInput = {
+    id?: string
+    title: string
+    description: string
+    thumbnail?: string | null
+    hlsMaterList?: string | null
+    previewClip?: string | null
+    userId: string
+    public?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    videoProcessingTask?: videoProcessingTaskUncheckedCreateNestedManyWithoutVideoInput
+  }
+
+  export type videoCreateOrConnectWithoutUploadInput = {
+    where: videoWhereUniqueInput
+    create: XOR<videoCreateWithoutUploadInput, videoUncheckedCreateWithoutUploadInput>
   }
 
   export type userUpsertWithoutUploadInput = {
@@ -7610,6 +7829,45 @@ export namespace Prisma {
     video?: videoUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
+  export type videoUpsertWithoutUploadInput = {
+    update: XOR<videoUpdateWithoutUploadInput, videoUncheckedUpdateWithoutUploadInput>
+    create: XOR<videoCreateWithoutUploadInput, videoUncheckedCreateWithoutUploadInput>
+    where?: videoWhereInput
+  }
+
+  export type videoUpdateToOneWithWhereWithoutUploadInput = {
+    where?: videoWhereInput
+    data: XOR<videoUpdateWithoutUploadInput, videoUncheckedUpdateWithoutUploadInput>
+  }
+
+  export type videoUpdateWithoutUploadInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
+    hlsMaterList?: NullableStringFieldUpdateOperationsInput | string | null
+    previewClip?: NullableStringFieldUpdateOperationsInput | string | null
+    public?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploadedBy?: userUpdateOneRequiredWithoutVideoNestedInput
+    videoProcessingTask?: videoProcessingTaskUpdateManyWithoutVideoNestedInput
+  }
+
+  export type videoUncheckedUpdateWithoutUploadInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
+    hlsMaterList?: NullableStringFieldUpdateOperationsInput | string | null
+    previewClip?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
+    public?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    videoProcessingTask?: videoProcessingTaskUncheckedUpdateManyWithoutVideoNestedInput
+  }
+
   export type videoCreateWithoutVideoProcessingTaskInput = {
     id?: string
     title: string
@@ -7621,6 +7879,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedBy: userCreateNestedOneWithoutVideoInput
+    upload?: uploadCreateNestedManyWithoutVideoInput
   }
 
   export type videoUncheckedCreateWithoutVideoProcessingTaskInput = {
@@ -7634,6 +7893,7 @@ export namespace Prisma {
     public?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    upload?: uploadUncheckedCreateNestedManyWithoutVideoInput
   }
 
   export type videoCreateOrConnectWithoutVideoProcessingTaskInput = {
@@ -7663,6 +7923,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedBy?: userUpdateOneRequiredWithoutVideoNestedInput
+    upload?: uploadUpdateManyWithoutVideoNestedInput
   }
 
   export type videoUncheckedUpdateWithoutVideoProcessingTaskInput = {
@@ -7676,6 +7937,7 @@ export namespace Prisma {
     public?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    upload?: uploadUncheckedUpdateManyWithoutVideoNestedInput
   }
 
   export type videoCreateManyUploadedByInput = {
@@ -7695,6 +7957,7 @@ export namespace Prisma {
     multipartId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    videoId: string
   }
 
   export type videoUpdateWithoutUploadedByInput = {
@@ -7708,6 +7971,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     videoProcessingTask?: videoProcessingTaskUpdateManyWithoutVideoNestedInput
+    upload?: uploadUpdateManyWithoutVideoNestedInput
   }
 
   export type videoUncheckedUpdateWithoutUploadedByInput = {
@@ -7721,6 +7985,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     videoProcessingTask?: videoProcessingTaskUncheckedUpdateManyWithoutVideoNestedInput
+    upload?: uploadUncheckedUpdateManyWithoutVideoNestedInput
   }
 
   export type videoUncheckedUpdateManyWithoutUploadedByInput = {
@@ -7740,6 +8005,7 @@ export namespace Prisma {
     multipartId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    video?: videoUpdateOneRequiredWithoutUploadNestedInput
   }
 
   export type uploadUncheckedUpdateWithoutUploaderInput = {
@@ -7747,6 +8013,7 @@ export namespace Prisma {
     multipartId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    videoId?: StringFieldUpdateOperationsInput | string
   }
 
   export type uploadUncheckedUpdateManyWithoutUploaderInput = {
@@ -7754,12 +8021,21 @@ export namespace Prisma {
     multipartId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    videoId?: StringFieldUpdateOperationsInput | string
   }
 
   export type videoProcessingTaskCreateManyVideoInput = {
     id?: string
     objectName: string
     status?: $Enums.VideoProcessingStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type uploadCreateManyVideoInput = {
+    id?: string
+    user: string
+    multipartId: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -7784,6 +8060,30 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     objectName?: StringFieldUpdateOperationsInput | string
     status?: EnumVideoProcessingStatusFieldUpdateOperationsInput | $Enums.VideoProcessingStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type uploadUpdateWithoutVideoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    multipartId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploader?: userUpdateOneRequiredWithoutUploadNestedInput
+  }
+
+  export type uploadUncheckedUpdateWithoutVideoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user?: StringFieldUpdateOperationsInput | string
+    multipartId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type uploadUncheckedUpdateManyWithoutVideoInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user?: StringFieldUpdateOperationsInput | string
+    multipartId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

@@ -5,7 +5,7 @@ export class VideoProcessingTaskRepository implements IVideoProcessingTaskReposi
 	private prismaClient = Prisma.getInstance().prismaClient;
 
 	async createTask(objectName: string, videoId: string): Promise<videoProcessingTask> {
-		return await this.prismaClient.videoProcessingTask.create({ data: { objectName, videoId } });
+		return await this.prismaClient.videoProcessingTask.create({ data: { objectName, video: {connect: {id: videoId}} } });
 	}
 	async getTaskById(taskId: string): Promise<videoProcessingTask | null> {
 		return await this.prismaClient.videoProcessingTask.findUnique({ where: { id: taskId } });
