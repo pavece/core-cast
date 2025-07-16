@@ -1,2 +1,5 @@
 export * from './pending-upload.type';
 export * from './processing-task.type';
+export * from './multipart-upload.type';
+export * from './user-repository.interface';
+export * from './'

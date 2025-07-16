@@ -1,8 +1,8 @@
-import { Prisma, videoProcessingTask } from '@core-cast/prisma';
+import { PrismaClient, videoProcessingTask } from '@core-cast/prisma';
 import { IVideoProcessingTaskRepository } from '../types';
 
 export class VideoProcessingTaskRepository implements IVideoProcessingTaskRepository {
-	private prismaClient = Prisma.getInstance().prismaClient;
+	constructor(private prismaClient: PrismaClient) {}
 
 	async createTask(objectName: string, videoId: string): Promise<videoProcessingTask> {
 		return await this.prismaClient.videoProcessingTask.create({

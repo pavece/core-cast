@@ -8,13 +8,14 @@
 	},
 	"exports": {
 		".": {
-			"require": "./dist/index.ts",
-			"import": "./dist/index.ts"
+			"require": "./dist/index.js",
+			"import": "./dist/index.js"
 		}
 	},
 	"dependencies": {
 		"@core-cast/prisma": "workspace:*",
 		"@core-cast/types": "workspace:*",
+		"ioredis": "^5.6.1",
 		"typescript": "^5.8.3"
 	}
 }

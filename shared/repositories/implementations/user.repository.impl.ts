@@ -1,8 +1,8 @@
-import { user, Prisma } from '@core-cast/prisma';
+import { user, Prisma, PrismaClient } from '@core-cast/prisma';
 import { CreateUserParams, IUserRepository } from '../types/user-repository.interface';
 
 export class UserRepository implements IUserRepository {
-	private prismaClient = Prisma.getInstance().prismaClient;
+	constructor(private prismaClient: PrismaClient) {}
 
 	getUserById(userId: string): Promise<user | null> {
 		return this.prismaClient.user.findUnique({ where: { id: userId } });

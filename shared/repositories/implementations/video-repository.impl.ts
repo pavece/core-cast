@@ -1,9 +1,9 @@
-import { Prisma, video } from '@core-cast/prisma';
+import { PrismaClient, video } from '@core-cast/prisma';
 import { IVideoCreationProps } from '@core-cast/types';
 import { IVideoRepository } from '../types/video-repository.interface';
 
 export class VideoRepository implements IVideoRepository {
-	private prismaClient = Prisma.getInstance().prismaClient;
+	constructor(private prismaClient: PrismaClient) {}
 
 	getVideoById(videoId: string): Promise<video | null> {
 		return this.prismaClient.video.findUnique({ where: { id: videoId } });

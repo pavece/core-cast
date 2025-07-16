@@ -1,0 +1,44 @@
+import { RedisUploadRecord, ChunkData } from '@core-cast/types/upload/upload.types';
+import { IMultipartUploadRepository } from '../types/multipart-upload.type';
+import Redis from 'ioredis';
+
+export class MultipartUploadRepository implements IMultipartUploadRepository {
+	constructor(private redisClient: Redis) {}
+
+	async createMultipartUpload(
+		id: string,
+		objectName: string,
+		totalChunks: number,
+		videoId: string
+	): Promise<RedisUploadRecord> {
+		const upload: RedisUploadRecord = { objectName, totalChunks, startedAt: new Date().toISOString(), videoId };
+		await this.redisClient.hset(id, upload);
+		return upload;
+	}
+
+	async getMultipartUploadById(id: string): Promise<RedisUploadRecord | null> {
+		const result = await this.redisClient.hgetall(id);
+		if (!result) return null;
+		return result as unknown as RedisUploadRecord;
+	}
+
+	async deleteMultipartUpload(id: string): Promise<RedisUploadRecord | null> {
+		const record = await this.getMultipartUploadById(id);
+		if (!record) return null;
+
+		await this.redisClient.del(id);
+		await this.redisClient.del(`parts:${id}`);
+		return record;
+	}
+
+	async getChunks(uploadId: string): Promise<ChunkData[]> {
+		return (await this.redisClient.lrange(`parts:${uploadId}`, 0, -1))
+			.map(p => ({ ETag: p.split(':')[0], PartNumber: Number(p.split(':')[1]) } as ChunkData))
+			.sort((a, b) => a.PartNumber - b.PartNumber);
+	}
+
+	async addChunk(uploadId: string, chunkNumber: number, Etag: string): Promise<ChunkData> {
+		await this.redisClient.rpush(`parts:${uploadId}`, `${Etag}:${chunkNumber}`);
+		return { ETag: Etag, PartNumber: chunkNumber } as ChunkData;
+	}
+}
