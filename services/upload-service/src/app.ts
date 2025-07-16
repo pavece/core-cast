@@ -1,11 +1,12 @@
 import { Prisma } from '@core-cast/prisma';
-import { RedisClient } from './infrastructure/database/redis';
+
 import { ObjectStore, ObjectStoreConfigurationOptions } from '@core-cast/object-store';
 import { RabbitMQ } from '@core-cast/rabbitmq';
 import { ServiceRoutes } from './presentation/routes';
 import { Server } from './presentation/server';
 import 'dotenv/config';
 import { Logger } from './domain/logging/logger';
+import { RedisClient } from '@core-cast/redis';
 
 async function main() {
 	printWelcomeMessage();
@@ -21,8 +22,6 @@ async function main() {
 
 async function setupServices() {
 	const logger = new Logger().getLogger();
-
-	new RedisClient();
 
 	const objectStoreConfig: ObjectStoreConfigurationOptions = {
 		region: process.env.OBJECT_STORE_REGION || 'minio',
@@ -52,6 +51,13 @@ async function setupServices() {
 		logger.info('Connected to rabbitMQ message broker');
 	} catch (error) {
 		logger.error({ message: 'Failed to connect to rabbitMQ message broker', error });
+	}
+
+	try {
+		await RedisClient.getInstance().connect(process.env.REDIS_CON_URL || '');
+		logger.info('Connected to Redis');
+	} catch (error) {
+		logger.error({ message: 'Failed to connect to Redis', error });
 	}
 }
 

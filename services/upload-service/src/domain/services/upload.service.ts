@@ -9,14 +9,15 @@ import { Prometheus } from '../logging/prometheus';
 
 import { RabbitMQ } from '@core-cast/rabbitmq';
 import { ObjectStore } from '@core-cast/object-store';
-import { UploadRepository } from '../../infrastructure/repositories/upload.repo.impl';
-import { VideoProcessingTaskRepository } from '../../infrastructure/repositories/video-task.repo.impl';
-import { MultipartUploadRepository } from '../../infrastructure/repositories/multipart-upload.repo.impl';
+import { UploadRepository, VideoProcessingTaskRepository, MultipartUploadRepository } from '@core-cast/repositories';
+
+import { Prisma } from '@core-cast/prisma';
+import { RedisClient } from '@core-cast/redis';
 
 export class UploadService {
-	private pendingUploadRepo = new UploadRepository();
-	private videoProcessingTaskRepo = new VideoProcessingTaskRepository();
-	private multipartUploadRepo = new MultipartUploadRepository();
+	private pendingUploadRepo = new UploadRepository(Prisma.getInstance().prismaClient);
+	private videoProcessingTaskRepo = new VideoProcessingTaskRepository(Prisma.getInstance().prismaClient);
+	private multipartUploadRepo = new MultipartUploadRepository(RedisClient.getInstance().getClient());
 	private objectStoreClient = ObjectStore.getInstance().s3Client;
 	private rabbitMQ = RabbitMQ.getInstance();
 
@@ -25,6 +26,7 @@ export class UploadService {
 
 	public async initializeChunkedUpload(originalObjectName: string, totalChunks: number, videoId: string) {
 		//TODO: Check if the provided vuideoId belongs to that user
+		//TODO: Check if the videos already has media attached to it / a task attached to it
 
 		const objectName = crypto.randomUUID() + '-' + originalObjectName;
 
@@ -124,7 +126,10 @@ export class UploadService {
 			this.prometheus.uploadFilesCounter?.inc();
 
 			//Create video processing task & send to queue
-			const videoProcessingTask = await this.videoProcessingTaskRepo.createTask(redisUploadRecord.objectName, redisUploadRecord.videoId);
+			const videoProcessingTask = await this.videoProcessingTaskRepo.createTask(
+				redisUploadRecord.objectName,
+				redisUploadRecord.videoId
+			);
 			const videoProcessingMessage: Upload.VideoProcessingTaskMessage = { processingTaskId: videoProcessingTask.id };
 
 			this.rabbitMQ?.videoProcessingChannel?.sendToQueue(

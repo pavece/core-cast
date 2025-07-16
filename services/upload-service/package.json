@@ -27,6 +27,8 @@
 		"@core-cast/prisma": "workspace:*",
 		"@core-cast/rabbitmq": "workspace:*",
 		"@core-cast/types": "workspace:*",
+		"@core-cast/repositories": "workspace:*",
+		"@core-cast/redis": "workspace:*",
 		"cors": "^2.8.5",
 		"dotenv": "^16.5.0",
 		"express": "^5.1.0",

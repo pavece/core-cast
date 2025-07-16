@@ -157,6 +157,12 @@ importers:
       '@core-cast/rabbitmq':
         specifier: workspace:*
         version: link:../../shared/rabbitmq
+      '@core-cast/redis':
+        specifier: workspace:*
+        version: link:../../shared/redis
+      '@core-cast/repositories':
+        specifier: workspace:*
+        version: file:shared/repositories(prisma@6.10.1(typescript@5.8.3))
       '@core-cast/types':
         specifier: workspace:*
         version: file:shared/types(prisma@6.10.1(typescript@5.8.3))
@@ -260,6 +266,34 @@ importers:
       '@types/amqplib':
         specifier: ^0.10.7
         version: 0.10.7
+
+  shared/redis:
+    dependencies:
+      ioredis:
+        specifier: ^5.6.1
+        version: 5.6.1
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.8
+        version: 24.0.10
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+
+  shared/repositories:
+    dependencies:
+      '@core-cast/prisma':
+        specifier: workspace:*
+        version: file:shared/prisma(prisma@6.11.1(typescript@5.8.3))(typescript@5.8.3)
+      '@core-cast/types':
+        specifier: workspace:*
+        version: file:shared/types(prisma@6.11.1(typescript@5.8.3))
+      ioredis:
+        specifier: ^5.6.1
+        version: 5.6.1
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
 
   shared/types:
     dependencies:
@@ -513,6 +547,12 @@ packages:
 
   '@core-cast/prisma@file:shared/prisma':
     resolution: {directory: shared/prisma, type: directory}
+
+  '@core-cast/redis@file:shared/redis':
+    resolution: {directory: shared/redis, type: directory}
+
+  '@core-cast/repositories@file:shared/repositories':
+    resolution: {directory: shared/repositories, type: directory}
 
   '@core-cast/types@file:shared/types':
     resolution: {directory: shared/types, type: directory}
@@ -3135,9 +3175,39 @@ snapshots:
       - prisma
       - typescript
 
+  '@core-cast/prisma@file:shared/prisma(prisma@6.11.1(typescript@5.8.3))(typescript@5.8.3)':
+    dependencies:
+      '@prisma/client': 6.11.1(prisma@6.11.1(typescript@5.8.3))(typescript@5.8.3)
+    transitivePeerDependencies:
+      - prisma
+      - typescript
+
+  '@core-cast/redis@file:shared/redis':
+    dependencies:
+      ioredis: 5.6.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@core-cast/repositories@file:shared/repositories(prisma@6.10.1(typescript@5.8.3))':
+    dependencies:
+      '@core-cast/prisma': file:shared/prisma(prisma@6.10.1(typescript@5.8.3))(typescript@5.8.3)
+      '@core-cast/redis': file:shared/redis
+      '@core-cast/types': file:shared/types(prisma@6.10.1(typescript@5.8.3))
+      typescript: 5.8.3
+    transitivePeerDependencies:
+      - prisma
+      - supports-color
+
   '@core-cast/types@file:shared/types(prisma@6.10.1(typescript@5.8.3))':
     dependencies:
       '@core-cast/prisma': file:shared/prisma(prisma@6.10.1(typescript@5.8.3))(typescript@5.8.3)
+      typescript: 5.8.3
+    transitivePeerDependencies:
+      - prisma
+
+  '@core-cast/types@file:shared/types(prisma@6.11.1(typescript@5.8.3))':
+    dependencies:
+      '@core-cast/prisma': file:shared/prisma(prisma@6.11.1(typescript@5.8.3))(typescript@5.8.3)
       typescript: 5.8.3
     transitivePeerDependencies:
       - prisma
@@ -4056,6 +4126,10 @@ snapshots:
     dependencies:
       ms: 2.0.0
 
+  debug@4.4.1:
+    dependencies:
+      ms: 2.1.3
+
   debug@4.4.1(supports-color@5.5.0):
     dependencies:
       ms: 2.1.3
@@ -4400,7 +4474,7 @@ snapshots:
     dependencies:
       '@ioredis/commands': 1.2.0
       cluster-key-slot: 1.1.2
-      debug: 4.4.1(supports-color@5.5.0)
+      debug: 4.4.1
       denque: 2.1.0
       lodash.defaults: 4.2.0
       lodash.isarguments: 3.1.0
