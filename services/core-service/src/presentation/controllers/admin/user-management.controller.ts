@@ -50,7 +50,7 @@ export class UserManagementController {
 			.getUsers()
 			.then(user => {
 				const cleanUsers = user.map(user => cleanUser(user));
-				res.status(214).json({ message: 'User list', users: cleanUsers } as IAdminGetUsersResponse);
+				res.status(200).json({ message: 'User list', users: cleanUsers } as IAdminGetUsersResponse);
 			})
 			.catch(e => handleApiError(e, res));
 	};

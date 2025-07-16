@@ -1,13 +1,9 @@
-import {
-	AuthSession,
-	AuthSessionRepositoryInterface,
-} from '../../domain/interfaces/repositories/auth-session.interface';
-import { RedisClient } from '../database/redis';
-import crypto from 'crypto';
+import Redis from 'ioredis';
+import { AuthSession, AuthSessionRepositoryInterface } from '../types/auth-session.interface';
+import { randomBytes } from 'crypto';
 
 export class AuthSessionRepository implements AuthSessionRepositoryInterface {
-	private redis = new RedisClient().getClient();
-	private redisDatabaseNumber = 2;
+	constructor(private redis: Redis, private redisDatabaseNumber: number = 2) {}
 
 	async getSession(token: string): Promise<AuthSession | null> {
 		await this.redis.select(this.redisDatabaseNumber);
@@ -19,7 +15,7 @@ export class AuthSessionRepository implements AuthSessionRepositoryInterface {
 
 	async createSession(session: AuthSession): Promise<string> {
 		await this.redis.select(this.redisDatabaseNumber);
-		const sessionToken = crypto.randomBytes(48).toString('hex');
+		const sessionToken = randomBytes(48).toString('hex');
 		await this.redis.hset(`session:${session.userId}:${sessionToken}`, session);
 
 		return `${session.userId}:${sessionToken}`;

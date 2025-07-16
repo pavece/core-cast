@@ -1,9 +1,10 @@
 import { IVideoCreationProps } from '@core-cast/types';
-import { VideoRepository } from '../../infrastructure/repositories/video-repository.impl';
+import { VideoRepository } from '@core-cast/repositories';
 import { ApiError } from '../errors/api-error';
+import { Prisma } from '@core-cast/prisma';
 
 export class VideoManagementService {
-	private videoRepository = new VideoRepository();
+	private videoRepository = new VideoRepository(Prisma.getInstance().prismaClient);
 
 	public async getVideo(userId: string, videoId: string) {
 		const video = await this.videoRepository.getVideoById(videoId);

@@ -1,15 +1,16 @@
-import { user } from '@core-cast/prisma';
-import { AuthSessionRepository } from '../../infrastructure/repositories/auth-session.repository.impl';
-import { UserRepository } from '../../infrastructure/repositories/user.repository.impl';
+import { Prisma, user } from '@core-cast/prisma';
+import { RedisClient } from '@core-cast/redis';
+import { AuthSessionRepository } from '@core-cast/repositories';
+import { UserRepository } from '@core-cast/repositories';
 import { ApiError } from '../errors/api-error';
 import { ObjectStore } from '@core-cast/object-store';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
+
 import 'dotenv/config';
-import { FILE } from 'dns';
 
 export class UserManagementService {
-	private userRepository = new UserRepository();
-	private authSessionRepository = new AuthSessionRepository();
+	private userRepository = new UserRepository(Prisma.getInstance().prismaClient);
+	private authSessionRepository = new AuthSessionRepository(RedisClient.getInstance().getClient());
 	private objectStore = ObjectStore.getInstance().s3Client;
 
 	public async getUser(userId: string) {

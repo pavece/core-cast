@@ -23,6 +23,8 @@
 		"@core-cast/object-store": "workspace:*",
 		"@core-cast/prisma": "workspace:*",
 		"@core-cast/types": "workspace:*",
+		"@core-cast/redis": "workspace:*",
+		"@core-cast/repositories": "workspace:*",
 		"@types/bcrypt": "^5.0.2",
 		"@types/cookie-parser": "^1.4.9",
 		"@types/cors": "^2.8.19",

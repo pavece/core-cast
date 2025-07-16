@@ -1,5 +1,4 @@
 import Redis from 'ioredis';
-import 'dotenv/config';
 
 export class RedisClient {
 	private static _instance: RedisClient;
@@ -13,16 +12,17 @@ export class RedisClient {
 		return RedisClient._instance;
 	}
 
-	public connect(url: string) {
-		return new Promise((resolve, reject) => {
-			this.client = new Redis(process.env.REDIS_CON_URL || '');
+	public async connect(url: string) {
+		await new Promise((resolve, reject) => {
+			this.client = new Redis(url || '');
 
-			this.client.on('connect', resolve);
-			this.client.on('error', error => reject(error));
+			this.client.once('ready', resolve);
+			this.client.once('error', error => reject(error));
 		});
 	}
 
 	public getClient() {
-		return this.client as Redis;
+		if (!this.client) throw new Error('Redis client is not connected');
+		return this.client;
 	}
 }

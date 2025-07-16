@@ -1,17 +1,18 @@
 import { Prisma, Role } from '@core-cast/prisma';
 import { ApiError } from '../errors/api-error';
 import bcrypt from 'bcrypt';
-import { AuthSessionRepository } from '../../infrastructure/repositories/auth-session.repository.impl';
-import { AuthSession } from '../interfaces/repositories/auth-session.interface';
+import { AuthSessionRepository } from '@core-cast/repositories';
+import { AuthSession } from '@core-cast/repositories';
 import { authenticator } from 'otplib';
 import crypto from 'crypto';
-import { UserRepository } from '../../infrastructure/repositories/user.repository.impl';
+import { UserRepository } from '@core-cast/repositories';
+import { RedisClient } from '@core-cast/redis';
 
 const SALT_ROUNDS = 12;
 
 export class AuthService {
-	private userRepository = new UserRepository();
-	private sessionRepository = new AuthSessionRepository();
+	private userRepository = new UserRepository(Prisma.getInstance().prismaClient);
+	private sessionRepository = new AuthSessionRepository(RedisClient.getInstance().getClient(), 2);
 
 	public async registerUser(email: string, name: string, password: string) {
 		const existingUser = await this.userRepository.areUsernameOrEmailAvailable(email, name);

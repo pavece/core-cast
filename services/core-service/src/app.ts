@@ -5,6 +5,7 @@ import 'dotenv/config';
 import { Logger } from './domain/logging/logger';
 import { BaseLogger } from 'pino';
 import { ObjectStore, ObjectStoreConfigurationOptions } from '@core-cast/object-store';
+import { RedisClient } from '@core-cast/redis';
 
 async function main() {
 	const logger = new Logger().getLogger();
@@ -44,6 +45,13 @@ async function setupServices(logger: BaseLogger) {
 		logger.info('Connected to object store');
 	} catch (error) {
 		logger.error({ message: 'Failed to connect to object store', error });
+	}
+
+	try {
+		await RedisClient.getInstance().connect(process.env.REDIS_CON_URL || '');
+		logger.info('Connected to redis');
+	} catch (error) {
+		logger.error({ message: 'Failed to connect to prisma', error });
 	}
 }
 

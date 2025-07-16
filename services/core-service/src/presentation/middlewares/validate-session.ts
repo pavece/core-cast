@@ -1,14 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import { AuthService } from '../../domain/services/auth.service';
-import { AuthSession } from '../../domain/interfaces/repositories/auth-session.interface';
-
-const authService = new AuthService();
+import { AuthSession } from '@core-cast/repositories';
 
 export interface AuthRequest extends Request {
 	session?: AuthSession;
 }
 
 export async function validateSession(req: AuthRequest, res: Response, next: NextFunction) {
+	const authService = new AuthService();
 	const sessionToken = req.cookies['session_token'];
 
 	if (!sessionToken) {
