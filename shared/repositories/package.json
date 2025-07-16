@@ -1,0 +1,20 @@
+{
+	"name": "@core-cast/repositories",
+	"version": "1.0.0",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc"
+	},
+	"exports": {
+		".": {
+			"require": "./dist/index.ts",
+			"import": "./dist/index.ts"
+		}
+	},
+	"dependencies": {
+		"@core-cast/prisma": "workspace:*",
+		"@core-cast/types": "workspace:*",
+		"typescript": "^5.8.3"
+	}
+}
