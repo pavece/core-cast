@@ -25,7 +25,9 @@ export class ObjectStore {
 	}
 
 	public get s3Client() {
-		return this.client as S3Client;
+		if (!this.client) throw new Error('S3 client not connected');
+
+		return this.client;
 	}
 
 	public async connect(config: ObjectStoreConfigurationOptions) {

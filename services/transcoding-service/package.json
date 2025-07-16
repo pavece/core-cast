@@ -26,6 +26,7 @@
 		"@core-cast/prisma": "workspace:*",
 		"@core-cast/rabbitmq": "workspace:*",
 		"@core-cast/types": "workspace:*",
+		"@core-cast/repositories": "workspace:*",
 		"@ffmpeg-installer/ffmpeg": "^1.1.0",
 		"dotenv": "^17.0.0",
 		"express": "^5.1.0",

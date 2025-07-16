@@ -1,5 +1,5 @@
 import { videoProcessingTask } from '@core-cast/prisma/generated/prisma';
-import { VideoProcessingTaskRepository } from '../../infrastructure/repositories/video-task.repo.impl';
+import { VideoProcessingTaskRepository } from '@core-cast/repositories';
 import { generateThumbnail } from '../processing-functions/generate-thumbnail';
 import { generatePreview } from '../processing-functions/generate-preview';
 import path from 'path';
@@ -12,14 +12,7 @@ import { VideoValidator } from './video-validator.task';
 import { transcodeHLS } from '../processing-functions/transcode-hls';
 import { generateMasterList } from '../processing-functions/generate-masterlist';
 import { batchPromises } from '../utils/promise-batcher';
-
-// 1. Get the object name from the database + update status to started
-// 2. Get a presigned URL for the original video from the object store
-// 3.1 Execute all the video processing subtask (thumbnail extraction, preview clip extraction, HLS transcoding)
-// 3.2 Upload results to object store
-// 3.3 Update video record to include those object urls
-// 4. Remove original video from object store
-// 5. Remove pending task record from DB + mark video record as fully processed
+import { Prisma } from '@core-cast/prisma';
 
 const ABRLadder = [
 	{ vr: 360, br: 700 },
@@ -43,7 +36,7 @@ export class VideoProcessingTask {
 
 	constructor(videoProcessingRecordId: string) {
 		this.videoProcessingRecordId = videoProcessingRecordId;
-		this.videoProcessingTaskRepo = new VideoProcessingTaskRepository();
+		this.videoProcessingTaskRepo = new VideoProcessingTaskRepository(Prisma.getInstance().prismaClient);
 		this.objectRepo = new ObjectRepository();
 		this.videoValidator = new VideoValidator('TEMP'); //TODO: Uopdate when video records are in place
 	}
@@ -137,7 +130,10 @@ export class VideoProcessingTask {
 	}
 
 	private async updateVideoRecord() {
+		//TODO: Check if the video is valid
 		//TODO: Add thumbnail, masterlist and preview links to the video record + mark as processed
+		//TODO: Generate Embeding and store into database
+		//TODO: Add video search information to meilisearch
 	}
 
 	private async removeTaskRecord() {

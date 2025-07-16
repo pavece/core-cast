@@ -11,6 +11,8 @@ class ObjectStore {
         return ObjectStore._instance;
     }
     get s3Client() {
+        if (!this.client)
+            throw new Error('S3 client not connected');
         return this.client;
     }
     async connect(config) {
