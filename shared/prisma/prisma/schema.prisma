@@ -50,7 +50,7 @@ model video {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now())
 
-  uploadedBy          user                  @relation(fields: [userId], references: [id])
+  uploadedBy          user                  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   videoProcessingTask videoProcessingTask[]
   upload              upload[]
 }
@@ -63,8 +63,8 @@ model upload {
   updatedAt   DateTime @default(now())
   videoId     String
 
-  uploader user  @relation(fields: [user], references: [id])
-  video    video @relation(fields: [videoId], references: [id])
+  uploader user  @relation(fields: [user], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  video    video @relation(fields: [videoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model videoProcessingTask {
@@ -75,5 +75,5 @@ model videoProcessingTask {
   createdAt  DateTime              @default(now())
   updatedAt  DateTime              @default(now())
 
-  video video @relation(fields: [videoId], references: [id])
+  video video @relation(fields: [videoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

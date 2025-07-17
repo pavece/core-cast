@@ -31,8 +31,8 @@ export class TaskManager {
 				this.rabbitMQ!.videoProcessingChannel?.ack(msg!);
 				await this.runTask(processingTaskId);
 			} else {
+				this.logger.warn('Execution limit hit, requeuing task');
 				this.wait(20).then(() => {
-					this.logger.warn('Execution limit hit, requeuing task');
 					this.rabbitMQ!.videoProcessingChannel?.nack(msg!, true, true);
 				});
 			}
