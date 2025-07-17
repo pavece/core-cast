@@ -17,7 +17,7 @@ export class VideoRepository implements IVideoRepository {
 	deleteVideo(videoId: string): Promise<video> {
 		return this.prismaClient.video.delete({ where: { id: videoId } });
 	}
-	updateVideo(videoId: string, updates: Partial<IVideoCreationProps>): Promise<video> {
+	updateVideo(videoId: string, updates: Partial<video>): Promise<video> {
 		return this.prismaClient.video.update({ where: { id: videoId }, data: { ...updates, updatedAt: new Date() } });
 	}
 }

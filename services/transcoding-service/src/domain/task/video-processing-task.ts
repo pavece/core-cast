@@ -1,5 +1,5 @@
 import { videoProcessingTask } from '@core-cast/prisma/generated/prisma';
-import { VideoProcessingTaskRepository } from '@core-cast/repositories';
+import { VideoProcessingTaskRepository, VideoRepository } from '@core-cast/repositories';
 import { generateThumbnail } from '../processing-functions/generate-thumbnail';
 import { generatePreview } from '../processing-functions/generate-preview';
 import path from 'path';
@@ -31,12 +31,14 @@ export class VideoProcessingTask {
 	private publicBucket = process.env.OBJECT_STORE_PUBLIC_BUCKET || 'cdn';
 
 	private videoProcessingTaskRepo: VideoProcessingTaskRepository;
+	private videoRepo: VideoRepository;
 	private objectRepo: ObjectRepository;
 	private videoValidator: VideoValidator;
 
 	constructor(videoProcessingRecordId: string) {
 		this.videoProcessingRecordId = videoProcessingRecordId;
 		this.videoProcessingTaskRepo = new VideoProcessingTaskRepository(Prisma.getInstance().prismaClient);
+		this.videoRepo = new VideoRepository(Prisma.getInstance().prismaClient);
 		this.objectRepo = new ObjectRepository();
 		this.videoValidator = new VideoValidator('TEMP'); //TODO: Uopdate when video records are in place
 	}
@@ -64,7 +66,7 @@ export class VideoProcessingTask {
 			await generatePreview(this.presignedUrl, tempMediaDir);
 			await this.transcode(tempMediaDir);
 
-			await this.uploadResults(tempMediaDir, this.videoProcessingTaskRecord?.objectName!); //TODO: update to videoId when in place
+			await this.uploadResults(tempMediaDir, this.videoProcessingTaskRecord?.videoId!); //TODO: update to videoId when in place
 			await this.removeTaskRecord();
 		} finally {
 			this.fsCleanup(tempMediaDir);
@@ -95,6 +97,13 @@ export class VideoProcessingTask {
 	}
 
 	private async uploadResults(currentMediaPath: string, videoId: string) {
+		const video = this.videoRepo.getVideoById(videoId);
+		if (!video) {
+			this.fsCleanup(currentMediaPath);
+			console.log(`Video ${videoId} not found (likely removed by the user)`);
+			return;
+		}
+
 		const uploadPromises = [];
 
 		const files = fs.readdirSync(currentMediaPath);
@@ -110,6 +119,7 @@ export class VideoProcessingTask {
 		}
 
 		await batchPromises(uploadPromises, 20);
+		await this.updateVideoRecord();
 	}
 
 	private async generatePresignedVideoUrl() {
@@ -130,8 +140,23 @@ export class VideoProcessingTask {
 	}
 
 	private async updateVideoRecord() {
-		//TODO: Check if the video is valid
-		//TODO: Add thumbnail, masterlist and preview links to the video record + mark as processed
+		const baseObjectStoreUrl = `${process.env.OBJECT_STORE_ENDPOINT}/${process.env.OBJECT_STORE_PUBLIC_BUCKET || "cdn"}/${this.videoProcessingTaskRecord?.videoId}`;
+		const thumbnailUrl = baseObjectStoreUrl + '/thumbnail.jpg';
+		const masterlistUrl = baseObjectStoreUrl + '/master.m3u8';
+		const previewClipUrl = baseObjectStoreUrl + '/preview.mp4';
+
+		const video = this.videoRepo.getVideoById(this.videoProcessingTaskRecord?.videoId!);
+		if (!video) {
+			console.log(`Video not found (likely removed by the user)`);
+			return;
+		}
+
+		await this.videoRepo.updateVideo(this.videoProcessingTaskRecord?.videoId!, {
+			previewClip: previewClipUrl,
+			hlsMaterList: masterlistUrl,
+			thumbnail: thumbnailUrl,
+		});
+
 		//TODO: Generate Embeding and store into database
 		//TODO: Add video search information to meilisearch
 	}
