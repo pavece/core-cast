@@ -1,6 +1,12 @@
 packages:
-  - 'shared/*'
-  - 'services/*'
-syncInjectedDepsAfterScripts:
-- build
+  - shared/*
+  - services/*
+
 injectWorkspacePackages: true
+
+onlyBuiltDependencies:
+  - protobufjs
+  - sharp
+
+syncInjectedDepsAfterScripts:
+  - build

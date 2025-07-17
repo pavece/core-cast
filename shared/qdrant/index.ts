@@ -15,8 +15,8 @@ export class Qdrant {
 	public async connect(url: string) {
 		this.client = new QdrantClient({ url });
 
-		const videosCollection = await this.client.getCollection('videos');
-		if (videosCollection) {
+		const { collections } = await this.client.getCollections();
+		if (collections.find(c => c.name == 'videos')) {
 			console.log("Qdrant collection 'videos' already exists, skiping creation");
 			return;
 		}

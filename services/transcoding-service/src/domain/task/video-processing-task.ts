@@ -15,7 +15,8 @@ import { batchPromises } from '../utils/promise-batcher';
 import { Prisma } from '@core-cast/prisma';
 import { Meili } from '@core-cast/meilisearch';
 import { MeiliSearch } from 'meilisearch';
-import { VideoSearchRecord } from '../../../../../shared/types/dist/search/video-search';
+import { VideoSearchRecord } from '@core-cast/types';
+import { generateStoreVideoEmbeding } from '../video-indexing/embeding-generator';
 
 const ABRLadder = [
 	{ vr: 360, br: 700 },
@@ -162,18 +163,18 @@ export class VideoProcessingTask {
 			thumbnail: thumbnailUrl,
 		});
 
-		this.meilisearchClient.index('videos').addDocuments([
-			{
-				id: video.id,
-				title: video.title,
-				description: video.description,
-				previewClip: previewClipUrl,
-				thumbnail: thumbnailUrl,
-				username: video.uploadedBy.username,
-				userId: video.uploadedBy.id,
-			},
-		] as VideoSearchRecord[]);
-		//TODO: Generate Embeding and store into database
+		const videoInfo: VideoSearchRecord = {
+			id: video.id,
+			title: video.title,
+			description: video.description,
+			previewClip: previewClipUrl,
+			thumbnail: thumbnailUrl,
+			username: video.uploadedBy.username,
+			userId: video.uploadedBy.id,
+		};
+
+		await this.meilisearchClient.index('videos').addDocuments([videoInfo] as VideoSearchRecord[]);
+		await generateStoreVideoEmbeding(videoInfo);
 	}
 
 	private async removeTaskRecord() {

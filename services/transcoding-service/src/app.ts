@@ -5,6 +5,7 @@ import { ObjectStore, ObjectStoreConfigurationOptions } from '@core-cast/object-
 import { Prisma } from '@core-cast/prisma';
 import { PrometheusServer } from './presentation/prometheus-server';
 import { Meili } from '@core-cast/meilisearch';
+import { Qdrant } from '@core-cast/qdrant';
 
 async function main() {
 	printWelcomeMessage();
@@ -58,6 +59,13 @@ async function setupServices() {
 		logger.info('Connected to meilisearch');
 	} catch (error) {
 		logger.error({ message: 'Failed to connect to meilisearch', error });
+	}
+
+	try {
+		await Qdrant.getInstance().connect(process.env.QDRANT_URL || '');
+		logger.info('Connected to Qdrant')		
+	} catch (error) {
+		logger.error({ message: 'Failed to connect to Qdrant', error });
 	}
 }
 
