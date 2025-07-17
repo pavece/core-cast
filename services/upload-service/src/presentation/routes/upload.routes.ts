@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { UploadController } from '../controllers/upload.controller';
 import multer from 'multer';
+import { validateSession } from '../middlewares/validate-session';
 
 export class UploadRoutes {
 	public static get routes() {
@@ -8,10 +9,10 @@ export class UploadRoutes {
 		const uploadController = new UploadController();
 		const upload = multer({ storage: multer.memoryStorage() });
 
-		router.post('/init-upload', uploadController.initChunkedUpload);
-		router.put('/upload-chunk', upload.single('chunk'), uploadController.uploadChunk);
-		router.post('/finish-upload', uploadController.finishUpload);
-		router.get('/pending', uploadController.getPendingUploads);
+		router.post('/init-upload', validateSession, uploadController.initChunkedUpload);
+		router.put('/upload-chunk', validateSession, upload.single('chunk'), uploadController.uploadChunk);
+		router.post('/finish-upload', validateSession, uploadController.finishUpload);
+		router.get('/pending', validateSession, uploadController.getPendingUploads);
 
 		return router;
 	}

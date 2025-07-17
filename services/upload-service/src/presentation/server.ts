@@ -1,6 +1,7 @@
 import express, { Router } from 'express';
 import cors from 'cors';
 import { Prometheus } from '../domain/logging/prometheus';
+import cookieParser from 'cookie-parser';
 
 export class Server {
 	public readonly app = express();
@@ -11,6 +12,8 @@ export class Server {
 	private configure() {
 		this.app.use(express.json());
 		this.app.use(express.urlencoded({ extended: true }));
+
+		this.app.use(cookieParser());
 
 		this.app.use(cors({ origin: '*', methods: ['PUT', 'POST', 'GET'] })); //TODO: Add to configuration / improve
 

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { UploadService } from '../../domain/services/upload.service';
 import {
 	finishUploadValidator,
@@ -6,12 +6,17 @@ import {
 	uploadChunkHeadersValidator,
 } from '../../domain/validation/upload-validators';
 import { handleApiError } from '../../domain/errors/api-error';
+import { AuthRequest } from '../middlewares/validate-session';
 
 export class UploadController {
 	private uploadService = new UploadService();
 
-	//TODO: Requires auth
-	public initChunkedUpload = (req: Request, res: Response) => {
+	public initChunkedUpload = (req: AuthRequest, res: Response) => {
+		if (!req.session?.userId) {
+			res.status(401).json({ message: 'Invalid session' });
+			return;
+		}
+
 		const parsedBody = initUploadRequestValidator.safeParse(req.body);
 		if (parsedBody.error) {
 			console.log(parsedBody.error);
@@ -20,13 +25,17 @@ export class UploadController {
 		}
 
 		this.uploadService
-			.initializeChunkedUpload(parsedBody.data.objectName, parsedBody.data.totalChunks, parsedBody.data.videoId)
+			.initializeChunkedUpload(
+				parsedBody.data.objectName,
+				parsedBody.data.totalChunks,
+				parsedBody.data.videoId,
+				req.session.userId
+			)
 			.then(r => res.json({ message: 'Multipart init correct, you may now proceed uploading chunks.', uploadId: r }))
 			.catch(e => handleApiError(e, res));
 	};
 
-	//TODO: Requires auth ?
-	public uploadChunk = (req: Request, res: Response) => {
+	public uploadChunk = (req: AuthRequest, res: Response) => {
 		const parsedHeaders = uploadChunkHeadersValidator.safeParse(req.headers);
 		if (parsedHeaders.error) {
 			res.status(400).json(parsedHeaders.error);
@@ -48,8 +57,7 @@ export class UploadController {
 			.catch(e => handleApiError(e, res));
 	};
 
-	//TODO: requires auth
-	public finishUpload = (req: Request, res: Response) => {
+	public finishUpload = (req: AuthRequest, res: Response) => {
 		const parsedBody = finishUploadValidator.safeParse(req.body);
 		if (parsedBody.error) {
 			res.status(400).json(parsedBody.error);
@@ -62,10 +70,15 @@ export class UploadController {
 			.catch(e => handleApiError(e, res));
 	};
 
-	//TODO: requires auth
-	public getPendingUploads = (req: Request, res: Response) => {
+	public getPendingUploads = (req: AuthRequest, res: Response) => {
+		const userId = req.session?.userId;
+		if (!userId) {
+			res.status(401).json({ message: 'Invalid session' });
+			return;
+		}
+
 		this.uploadService
-			.getPendingUploads('TEST USER')
+			.getPendingUploads(userId)
 			.then(r => res.status(200).json(r))
 			.catch(e => handleApiError(e, res));
 	};

@@ -9,7 +9,7 @@ import { Prometheus } from '../logging/prometheus';
 
 import { RabbitMQ } from '@core-cast/rabbitmq';
 import { ObjectStore } from '@core-cast/object-store';
-import { UploadRepository, VideoProcessingTaskRepository, MultipartUploadRepository } from '@core-cast/repositories';
+import { UploadRepository, VideoProcessingTaskRepository, MultipartUploadRepository, VideoRepository } from '@core-cast/repositories';
 
 import { Prisma } from '@core-cast/prisma';
 import { RedisClient } from '@core-cast/redis';
@@ -17,6 +17,7 @@ import { RedisClient } from '@core-cast/redis';
 export class UploadService {
 	private pendingUploadRepo = new UploadRepository(Prisma.getInstance().prismaClient);
 	private videoProcessingTaskRepo = new VideoProcessingTaskRepository(Prisma.getInstance().prismaClient);
+	private videoRepo = new VideoRepository(Prisma.getInstance().prismaClient);
 	private multipartUploadRepo = new MultipartUploadRepository(RedisClient.getInstance().getClient());
 	private objectStoreClient = ObjectStore.getInstance().s3Client;
 	private rabbitMQ = RabbitMQ.getInstance();
@@ -24,9 +25,23 @@ export class UploadService {
 	private logger = new Logger().getLogger();
 	private prometheus = new Prometheus();
 
-	public async initializeChunkedUpload(originalObjectName: string, totalChunks: number, videoId: string) {
-		//TODO: Check if the provided vuideoId belongs to that user
-		//TODO: Check if the videos already has media attached to it / a task attached to it
+	private async validateUpload(videoId: string, userId: string){
+		const video = await this.videoRepo.getVideoById(videoId);
+		const pendingUpload = await this.pendingUploadRepo.getPendingUploadByVideoId(videoId);
+
+		if (video?.userId !== userId) {
+			throw new ApiError(403, 'You are not the owner of this video');
+		}
+		if (video.hlsMaterList) {
+			throw new ApiError(403, 'Video already contains media');
+		}
+		if(pendingUpload){
+			throw new ApiError(400, `Video contains a pending upload, please continue ${pendingUpload.multipartId}`)
+		}
+	}
+
+	public async initializeChunkedUpload(originalObjectName: string, totalChunks: number, videoId: string, userId: string) {
+		await this.validateUpload(videoId, userId)
 
 		const objectName = crypto.randomUUID() + '-' + originalObjectName;
 
@@ -51,6 +66,8 @@ export class UploadService {
 		}
 	}
 
+	//No need to check for upload ownsership
+	//Upload ids are not public
 	public async uploadChunk(uploadId: string, chunkNumber: number, chunk: Buffer) {
 		try {
 			const redisUploadRecord = await this.multipartUploadRepo.getMultipartUploadById(uploadId);

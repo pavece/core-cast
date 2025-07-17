@@ -13,6 +13,10 @@ export class UploadRepository implements IUploadRepository {
 	async getPendingUploadById(id: string): Promise<upload | null> {
 		return await this.prismaClient.upload.findUnique({ where: { id } });
 	}
+	async getPendingUploadByVideoId(videoId: string): Promise<upload | null> {
+		return await this.prismaClient.upload.findFirst({ where: { videoId } });
+	}
+
 	async getPendingUploadsByUser(userId: string): Promise<upload[]> {
 		return await this.prismaClient.upload.findMany({ where: { user: userId } });
 	}
