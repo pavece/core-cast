@@ -2,6 +2,7 @@ import express, { Router } from 'express';
 import cors from 'cors';
 import { Prometheus } from '../domain/logging/prometheus';
 import cookieParser from 'cookie-parser';
+import 'dotenv/config';
 
 export class Server {
 	public readonly app = express();
@@ -15,7 +16,7 @@ export class Server {
 
 		this.app.use(cookieParser());
 
-		this.app.use(cors({ origin: '*', methods: ['PUT', 'POST', 'GET'] })); //TODO: Add to configuration / improve
+		this.app.use(cors({ origin: process.env.CLIENT_BASE_URL || '*', methods: ['PUT', 'POST', 'GET'], credentials: true }));
 
 		this.app.use('/api', this.routes);
 

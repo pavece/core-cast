@@ -55,7 +55,7 @@ export class UploadService {
 			}
 
 			await this.multipartUploadRepo.createMultipartUpload(UploadId, objectName, totalChunks, videoId);
-			await this.pendingUploadRepo.createPendingUpload(UploadId, 'faf3184a-dc91-4630-a4b8-2e7fe2e7a497', videoId); //TODO: Update when auth is in place
+			await this.pendingUploadRepo.createPendingUpload(UploadId, userId, videoId);
 
 			this.logger.info({ message: 'New multupart upload init', partialUploadId: UploadId.slice(0, 20) + '(...)' });
 
