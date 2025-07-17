@@ -96,6 +96,9 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: ^3.842.0
         version: 3.846.0
+      '@core-cast/meilisearch':
+        specifier: workspace:*
+        version: link:../../shared/meilisearch
       '@core-cast/object-store':
         specifier: workspace:*
         version: link:../../shared/object-store
@@ -123,6 +126,9 @@ importers:
       fluent-ffmpeg:
         specifier: ^2.1.3
         version: 2.1.3
+      meilisearch:
+        specifier: ^0.51.0
+        version: 0.51.0
       pino:
         specifier: ^9.7.0
         version: 9.7.0

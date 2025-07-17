@@ -40,6 +40,8 @@ services:
 
   melisearch:
     image: getmeili/meilisearch:v1.15
+    environment:
+      - MEILI_MASTER_KEY=masterKey
     ports:
       - 7700:7700
     volumes:
@@ -52,6 +54,15 @@ services:
       - 9090:8080
     networks:
       - admin
+
+  # OPTIONAL: Explorer for meilisearch
+  # docker run -d --restart=on-failure:5 --name="meilisearch-ui" -p <your-port>:24900 -e BASE_PATH="/meilisearch-ui" riccoxie/meilisearch-ui:lates
+  meilisearch-ui:
+    image: riccoxie/meilisearch-ui:latest
+    environment:
+      - BASE_PATH=/meilisearch-ui
+    ports:
+      - 24900:24900
 
 networks:
   admin:

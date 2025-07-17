@@ -4,7 +4,7 @@ import { RabbitMQ } from '@core-cast/rabbitmq';
 import { ObjectStore, ObjectStoreConfigurationOptions } from '@core-cast/object-store';
 import { Prisma } from '@core-cast/prisma';
 import { PrometheusServer } from './presentation/prometheus-server';
-import { batchPromises } from './domain/utils/promise-batcher';
+import { Meili } from '@core-cast/meilisearch';
 
 async function main() {
 	printWelcomeMessage();
@@ -51,6 +51,13 @@ async function setupServices() {
 		logger.info('Connected to rabbitMQ message broker');
 	} catch (error) {
 		logger.error({ message: 'Failed to connect to rabbitMQ message broker', error });
+	}
+
+	try {
+		await Meili.getInstance().connect(process.env.MEILISEARCH_URL || '', process.env.MEILISEARCH_APIKEY || '');
+		logger.info('Connected to meilisearch');
+	} catch (error) {
+		logger.error({ message: 'Failed to connect to meilisearch', error });
 	}
 }
 

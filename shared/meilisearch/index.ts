@@ -16,4 +16,9 @@ export class Meili {
 	public async connect(host: string, apiKey: string) {
 		this.client = new MeiliSearch({ host, apiKey });
 	}
+
+	public getClient() {
+		if (!this.client) throw new Error('Connect before accessing the meilsearch client');
+		return this.client;
+	}
 }

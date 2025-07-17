@@ -13,6 +13,9 @@ import { transcodeHLS } from '../processing-functions/transcode-hls';
 import { generateMasterList } from '../processing-functions/generate-masterlist';
 import { batchPromises } from '../utils/promise-batcher';
 import { Prisma } from '@core-cast/prisma';
+import { Meili } from '@core-cast/meilisearch';
+import { MeiliSearch } from 'meilisearch';
+import { VideoSearchRecord } from '../../../../../shared/types/dist/search/video-search';
 
 const ABRLadder = [
 	{ vr: 360, br: 700 },
@@ -33,6 +36,7 @@ export class VideoProcessingTask {
 	private videoProcessingTaskRepo: VideoProcessingTaskRepository;
 	private videoRepo: VideoRepository;
 	private objectRepo: ObjectRepository;
+	private meilisearchClient: MeiliSearch;
 	private videoValidator: VideoValidator;
 
 	constructor(videoProcessingRecordId: string) {
@@ -41,6 +45,7 @@ export class VideoProcessingTask {
 		this.videoRepo = new VideoRepository(Prisma.getInstance().prismaClient);
 		this.objectRepo = new ObjectRepository();
 		this.videoValidator = new VideoValidator('TEMP'); //TODO: Uopdate when video records are in place
+		this.meilisearchClient = Meili.getInstance().getClient();
 	}
 
 	public async loadTaskData() {
@@ -66,7 +71,7 @@ export class VideoProcessingTask {
 			await generatePreview(this.presignedUrl, tempMediaDir);
 			await this.transcode(tempMediaDir);
 
-			await this.uploadResults(tempMediaDir, this.videoProcessingTaskRecord?.videoId!); //TODO: update to videoId when in place
+			await this.uploadResults(tempMediaDir, this.videoProcessingTaskRecord?.videoId!);
 			await this.removeTaskRecord();
 		} finally {
 			this.fsCleanup(tempMediaDir);
@@ -140,12 +145,12 @@ export class VideoProcessingTask {
 	}
 
 	private async updateVideoRecord() {
-		const baseObjectStoreUrl = `${process.env.OBJECT_STORE_ENDPOINT}/${process.env.OBJECT_STORE_PUBLIC_BUCKET || "cdn"}/${this.videoProcessingTaskRecord?.videoId}`;
+		const baseObjectStoreUrl = `${process.env.OBJECT_STORE_ENDPOINT}/${this.privateBucket}/${this.videoProcessingTaskRecord?.videoId}`;
 		const thumbnailUrl = baseObjectStoreUrl + '/thumbnail.jpg';
 		const masterlistUrl = baseObjectStoreUrl + '/master.m3u8';
 		const previewClipUrl = baseObjectStoreUrl + '/preview.mp4';
 
-		const video = this.videoRepo.getVideoById(this.videoProcessingTaskRecord?.videoId!);
+		const video = await this.videoRepo.getVideoById(this.videoProcessingTaskRecord?.videoId!);
 		if (!video) {
 			console.log(`Video not found (likely removed by the user)`);
 			return;
@@ -157,8 +162,18 @@ export class VideoProcessingTask {
 			thumbnail: thumbnailUrl,
 		});
 
+		this.meilisearchClient.index('videos').addDocuments([
+			{
+				id: video.id,
+				title: video.title,
+				description: video.description,
+				previewClip: previewClipUrl,
+				thumbnail: thumbnailUrl,
+				username: video.uploadedBy.username,
+				userId: video.uploadedBy.id,
+			},
+		] as VideoSearchRecord[]);
 		//TODO: Generate Embeding and store into database
-		//TODO: Add video search information to meilisearch
 	}
 
 	private async removeTaskRecord() {
