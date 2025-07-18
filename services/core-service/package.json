@@ -25,6 +25,8 @@
 		"@core-cast/types": "workspace:*",
 		"@core-cast/redis": "workspace:*",
 		"@core-cast/repositories": "workspace:*",
+		"@core-cast/meilisearch": "workspace:*",
+		"@core-cast/qdrant": "workspace:*",
 		"@types/bcrypt": "^5.0.2",
 		"@types/cookie-parser": "^1.4.9",
 		"@types/cors": "^2.8.19",

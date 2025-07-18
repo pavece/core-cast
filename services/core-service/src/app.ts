@@ -6,6 +6,8 @@ import { Logger } from './domain/logging/logger';
 import { BaseLogger } from 'pino';
 import { ObjectStore, ObjectStoreConfigurationOptions } from '@core-cast/object-store';
 import { RedisClient } from '@core-cast/redis';
+import { Qdrant } from '@core-cast/qdrant';
+import { Meili } from '@core-cast/meilisearch';
 
 async function main() {
 	const logger = new Logger().getLogger();
@@ -52,6 +54,20 @@ async function setupServices(logger: BaseLogger) {
 		logger.info('Connected to redis');
 	} catch (error) {
 		logger.error({ message: 'Failed to connect to prisma', error });
+	}
+
+	try {
+		await Qdrant.getInstance().connect(process.env.QDRANT_URL || '');
+		logger.info('Connected to Qdrant');
+	} catch (error) {
+		logger.error({ message: 'Failed to connect to Qdrant', error });
+	}
+
+	try {
+		await Meili.getInstance().connect(process.env.MEILISEARCH_URL || '', process.env.MEILISEARCH_APIKEY || '');
+		logger.info('Connected to Qdrant');
+	} catch (error) {
+		logger.error({ message: 'Failed to connect to meilisearcg', error });
 	}
 }
 

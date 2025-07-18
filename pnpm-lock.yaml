@@ -14,12 +14,18 @@ importers:
       '@aws-sdk/client-s3':
         specifier: ^3.844.0
         version: 3.846.0
+      '@core-cast/meilisearch':
+        specifier: workspace:*
+        version: link:../../shared/meilisearch
       '@core-cast/object-store':
         specifier: workspace:*
         version: link:../../shared/object-store
       '@core-cast/prisma':
         specifier: workspace:*
         version: link:../../shared/prisma
+      '@core-cast/qdrant':
+        specifier: workspace:*
+        version: link:../../shared/qdrant
       '@core-cast/redis':
         specifier: workspace:*
         version: link:../../shared/redis
