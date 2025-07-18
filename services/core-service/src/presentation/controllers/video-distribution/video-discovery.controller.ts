@@ -6,9 +6,15 @@ export class VideoDiscoveryController {
 	private videoDiscoveryService = new VideoDiscoveryService();
 
 	public getFeed = (req: Request, res: Response) => {
+		let lastSeenVideos: string[] = [];
+
+		try {
+			lastSeenVideos = JSON.parse(req.cookies['last_videos'] || '[]');
+		} catch {}
+
 		this.videoDiscoveryService
-			.buildFeed()
-			.then(r => res.json({ message: 'Video feed', videos: r }))
+			.buildFeed(lastSeenVideos)
+			.then(r => res.json({ message: `${lastSeenVideos.length ? 'Warm' : 'Cold start'} feed`, videos: r }))
 			.catch(e => handleApiError(e, res));
 	};
 

@@ -5,6 +5,10 @@ import { VideoRepository } from '@core-cast/repositories';
 import { ApiError } from '../errors/api-error';
 import { VideoSearchRecord } from '@core-cast/types';
 
+const RELEVANT_LAST_VIDEO_COUNT = 5; //How many ids are used to retrieve the warm video feed
+const VIDEOS_PER_VECTOR_SEARCH = 5; //For the warm feed
+const WANTED_RECOMMENDED_VIDEOS = 30;
+
 export class VideoDiscoveryService {
 	private meilisearchClient = Meili.getInstance().getClient();
 	private qdrantClient = Qdrant.getInstance().getClient();
@@ -24,7 +28,29 @@ export class VideoDiscoveryService {
 	}
 
 	//Could be cached
-	private buildWarmFeed(seenVideos: string[]) {}
+	private async buildWarmFeed(seenVideos: string[]) {
+		const videos: { [videoId: string]: VideoSearchRecord } = {};
+
+		//Try to retieve videos based on latest searches
+		const searchPromises = [];
+		for (let i = 0; i < Math.min(seenVideos.length, RELEVANT_LAST_VIDEO_COUNT); i++) {
+			searchPromises.push(
+				this.qdrantClient
+					.query('videos', { query: seenVideos[i], with_payload: true, limit: VIDEOS_PER_VECTOR_SEARCH })
+					.then(r => r.points.forEach(p => (videos[p.id] = p.payload as unknown as VideoSearchRecord)))
+			);
+		}
+
+		await Promise.all(searchPromises);
+
+		//Fill with trending if needed
+		if (Object.keys(videos).length < WANTED_RECOMMENDED_VIDEOS) {
+			const trendingVideos = await this.videoRepository.getLatestPopularVideos(10);
+			trendingVideos.forEach(v => (videos[v.id] = v));
+		}
+
+		return Object.values(videos);
+	}
 
 	public async buildFeed(seenVideos?: string[]) {
 		if (!seenVideos || seenVideos.length == 0) {
