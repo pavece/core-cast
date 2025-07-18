@@ -146,6 +146,7 @@ exports.Prisma.VideoScalarFieldEnum = {
   previewClip: 'previewClip',
   userId: 'userId',
   public: 'public',
+  popularitScore: 'popularitScore',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

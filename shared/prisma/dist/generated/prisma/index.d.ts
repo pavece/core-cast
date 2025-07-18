@@ -2471,8 +2471,18 @@ export namespace Prisma {
 
   export type AggregateVideo = {
     _count: VideoCountAggregateOutputType | null
+    _avg: VideoAvgAggregateOutputType | null
+    _sum: VideoSumAggregateOutputType | null
     _min: VideoMinAggregateOutputType | null
     _max: VideoMaxAggregateOutputType | null
+  }
+
+  export type VideoAvgAggregateOutputType = {
+    popularitScore: number | null
+  }
+
+  export type VideoSumAggregateOutputType = {
+    popularitScore: number | null
   }
 
   export type VideoMinAggregateOutputType = {
@@ -2484,6 +2494,7 @@ export namespace Prisma {
     previewClip: string | null
     userId: string | null
     public: boolean | null
+    popularitScore: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2497,6 +2508,7 @@ export namespace Prisma {
     previewClip: string | null
     userId: string | null
     public: boolean | null
+    popularitScore: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2510,11 +2522,20 @@ export namespace Prisma {
     previewClip: number
     userId: number
     public: number
+    popularitScore: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
+
+  export type VideoAvgAggregateInputType = {
+    popularitScore?: true
+  }
+
+  export type VideoSumAggregateInputType = {
+    popularitScore?: true
+  }
 
   export type VideoMinAggregateInputType = {
     id?: true
@@ -2525,6 +2546,7 @@ export namespace Prisma {
     previewClip?: true
     userId?: true
     public?: true
+    popularitScore?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2538,6 +2560,7 @@ export namespace Prisma {
     previewClip?: true
     userId?: true
     public?: true
+    popularitScore?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2551,6 +2574,7 @@ export namespace Prisma {
     previewClip?: true
     userId?: true
     public?: true
+    popularitScore?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2594,6 +2618,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: VideoAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: VideoSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: VideoMinAggregateInputType
@@ -2624,6 +2660,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: VideoCountAggregateInputType | true
+    _avg?: VideoAvgAggregateInputType
+    _sum?: VideoSumAggregateInputType
     _min?: VideoMinAggregateInputType
     _max?: VideoMaxAggregateInputType
   }
@@ -2637,9 +2675,12 @@ export namespace Prisma {
     previewClip: string | null
     userId: string
     public: boolean
+    popularitScore: number
     createdAt: Date
     updatedAt: Date
     _count: VideoCountAggregateOutputType | null
+    _avg: VideoAvgAggregateOutputType | null
+    _sum: VideoSumAggregateOutputType | null
     _min: VideoMinAggregateOutputType | null
     _max: VideoMaxAggregateOutputType | null
   }
@@ -2667,6 +2708,7 @@ export namespace Prisma {
     previewClip?: boolean
     userId?: boolean
     public?: boolean
+    popularitScore?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     uploadedBy?: boolean | userDefaultArgs<ExtArgs>
@@ -2684,6 +2726,7 @@ export namespace Prisma {
     previewClip?: boolean
     userId?: boolean
     public?: boolean
+    popularitScore?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     uploadedBy?: boolean | userDefaultArgs<ExtArgs>
@@ -2698,6 +2741,7 @@ export namespace Prisma {
     previewClip?: boolean
     userId?: boolean
     public?: boolean
+    popularitScore?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     uploadedBy?: boolean | userDefaultArgs<ExtArgs>
@@ -2712,11 +2756,12 @@ export namespace Prisma {
     previewClip?: boolean
     userId?: boolean
     public?: boolean
+    popularitScore?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type videoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "thumbnail" | "hlsMaterList" | "previewClip" | "userId" | "public" | "createdAt" | "updatedAt", ExtArgs["result"]["video"]>
+  export type videoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "thumbnail" | "hlsMaterList" | "previewClip" | "userId" | "public" | "popularitScore" | "createdAt" | "updatedAt", ExtArgs["result"]["video"]>
   export type videoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     uploadedBy?: boolean | userDefaultArgs<ExtArgs>
     videoProcessingTask?: boolean | video$videoProcessingTaskArgs<ExtArgs>
@@ -2746,6 +2791,7 @@ export namespace Prisma {
       previewClip: string | null
       userId: string
       public: boolean
+      popularitScore: number
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["video"]>
@@ -3182,6 +3228,7 @@ export namespace Prisma {
     readonly previewClip: FieldRef<"video", 'String'>
     readonly userId: FieldRef<"video", 'String'>
     readonly public: FieldRef<"video", 'Boolean'>
+    readonly popularitScore: FieldRef<"video", 'Int'>
     readonly createdAt: FieldRef<"video", 'DateTime'>
     readonly updatedAt: FieldRef<"video", 'DateTime'>
   }
@@ -5839,6 +5886,7 @@ export namespace Prisma {
     previewClip: 'previewClip',
     userId: 'userId',
     public: 'public',
+    popularitScore: 'popularitScore',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -5949,6 +5997,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
    * Reference to a field of type 'VideoProcessingStatus'
    */
   export type EnumVideoProcessingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VideoProcessingStatus'>
@@ -5963,16 +6025,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
+   * Reference to a field of type 'Float'
    */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
     
 
 
   /**
-   * Reference to a field of type 'Int[]'
+   * Reference to a field of type 'Float[]'
    */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
   /**
    * Deep Input Types
@@ -6094,6 +6156,7 @@ export namespace Prisma {
     previewClip?: StringNullableFilter<"video"> | string | null
     userId?: StringFilter<"video"> | string
     public?: BoolFilter<"video"> | boolean
+    popularitScore?: IntFilter<"video"> | number
     createdAt?: DateTimeFilter<"video"> | Date | string
     updatedAt?: DateTimeFilter<"video"> | Date | string
     uploadedBy?: XOR<UserScalarRelationFilter, userWhereInput>
@@ -6110,6 +6173,7 @@ export namespace Prisma {
     previewClip?: SortOrderInput | SortOrder
     userId?: SortOrder
     public?: SortOrder
+    popularitScore?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     uploadedBy?: userOrderByWithRelationInput
@@ -6129,6 +6193,7 @@ export namespace Prisma {
     previewClip?: StringNullableFilter<"video"> | string | null
     userId?: StringFilter<"video"> | string
     public?: BoolFilter<"video"> | boolean
+    popularitScore?: IntFilter<"video"> | number
     createdAt?: DateTimeFilter<"video"> | Date | string
     updatedAt?: DateTimeFilter<"video"> | Date | string
     uploadedBy?: XOR<UserScalarRelationFilter, userWhereInput>
@@ -6145,11 +6210,14 @@ export namespace Prisma {
     previewClip?: SortOrderInput | SortOrder
     userId?: SortOrder
     public?: SortOrder
+    popularitScore?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: videoCountOrderByAggregateInput
+    _avg?: videoAvgOrderByAggregateInput
     _max?: videoMaxOrderByAggregateInput
     _min?: videoMinOrderByAggregateInput
+    _sum?: videoSumOrderByAggregateInput
   }
 
   export type videoScalarWhereWithAggregatesInput = {
@@ -6164,6 +6232,7 @@ export namespace Prisma {
     previewClip?: StringNullableWithAggregatesFilter<"video"> | string | null
     userId?: StringWithAggregatesFilter<"video"> | string
     public?: BoolWithAggregatesFilter<"video"> | boolean
+    popularitScore?: IntWithAggregatesFilter<"video"> | number
     createdAt?: DateTimeWithAggregatesFilter<"video"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"video"> | Date | string
   }
@@ -6426,6 +6495,7 @@ export namespace Prisma {
     hlsMaterList?: string | null
     previewClip?: string | null
     public?: boolean
+    popularitScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedBy: userCreateNestedOneWithoutVideoInput
@@ -6442,6 +6512,7 @@ export namespace Prisma {
     previewClip?: string | null
     userId: string
     public?: boolean
+    popularitScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     videoProcessingTask?: videoProcessingTaskUncheckedCreateNestedManyWithoutVideoInput
@@ -6456,6 +6527,7 @@ export namespace Prisma {
     hlsMaterList?: NullableStringFieldUpdateOperationsInput | string | null
     previewClip?: NullableStringFieldUpdateOperationsInput | string | null
     public?: BoolFieldUpdateOperationsInput | boolean
+    popularitScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedBy?: userUpdateOneRequiredWithoutVideoNestedInput
@@ -6472,6 +6544,7 @@ export namespace Prisma {
     previewClip?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     public?: BoolFieldUpdateOperationsInput | boolean
+    popularitScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     videoProcessingTask?: videoProcessingTaskUncheckedUpdateManyWithoutVideoNestedInput
@@ -6487,6 +6560,7 @@ export namespace Prisma {
     previewClip?: string | null
     userId: string
     public?: boolean
+    popularitScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -6499,6 +6573,7 @@ export namespace Prisma {
     hlsMaterList?: NullableStringFieldUpdateOperationsInput | string | null
     previewClip?: NullableStringFieldUpdateOperationsInput | string | null
     public?: BoolFieldUpdateOperationsInput | boolean
+    popularitScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6512,6 +6587,7 @@ export namespace Prisma {
     previewClip?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     public?: BoolFieldUpdateOperationsInput | boolean
+    popularitScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6849,6 +6925,17 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type UserScalarRelationFilter = {
     is?: userWhereInput
     isNot?: userWhereInput
@@ -6873,8 +6960,13 @@ export namespace Prisma {
     previewClip?: SortOrder
     userId?: SortOrder
     public?: SortOrder
+    popularitScore?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type videoAvgOrderByAggregateInput = {
+    popularitScore?: SortOrder
   }
 
   export type videoMaxOrderByAggregateInput = {
@@ -6886,6 +6978,7 @@ export namespace Prisma {
     previewClip?: SortOrder
     userId?: SortOrder
     public?: SortOrder
+    popularitScore?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -6899,8 +6992,29 @@ export namespace Prisma {
     previewClip?: SortOrder
     userId?: SortOrder
     public?: SortOrder
+    popularitScore?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type videoSumOrderByAggregateInput = {
+    popularitScore?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type VideoScalarRelationFilter = {
@@ -7119,6 +7233,14 @@ export namespace Prisma {
     connectOrCreate?: uploadCreateOrConnectWithoutVideoInput | uploadCreateOrConnectWithoutVideoInput[]
     createMany?: uploadCreateManyVideoInputEnvelope
     connect?: uploadWhereUniqueInput | uploadWhereUniqueInput[]
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type userUpdateOneRequiredWithoutVideoNestedInput = {
@@ -7383,6 +7505,33 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type NestedEnumVideoProcessingStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.VideoProcessingStatus | EnumVideoProcessingStatusFieldRefInput<$PrismaModel>
     in?: $Enums.VideoProcessingStatus[] | ListEnumVideoProcessingStatusFieldRefInput<$PrismaModel>
@@ -7408,6 +7557,7 @@ export namespace Prisma {
     hlsMaterList?: string | null
     previewClip?: string | null
     public?: boolean
+    popularitScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     videoProcessingTask?: videoProcessingTaskCreateNestedManyWithoutVideoInput
@@ -7422,6 +7572,7 @@ export namespace Prisma {
     hlsMaterList?: string | null
     previewClip?: string | null
     public?: boolean
+    popularitScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     videoProcessingTask?: videoProcessingTaskUncheckedCreateNestedManyWithoutVideoInput
@@ -7492,6 +7643,7 @@ export namespace Prisma {
     previewClip?: StringNullableFilter<"video"> | string | null
     userId?: StringFilter<"video"> | string
     public?: BoolFilter<"video"> | boolean
+    popularitScore?: IntFilter<"video"> | number
     createdAt?: DateTimeFilter<"video"> | Date | string
     updatedAt?: DateTimeFilter<"video"> | Date | string
   }
@@ -7757,6 +7909,7 @@ export namespace Prisma {
     hlsMaterList?: string | null
     previewClip?: string | null
     public?: boolean
+    popularitScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedBy: userCreateNestedOneWithoutVideoInput
@@ -7772,6 +7925,7 @@ export namespace Prisma {
     previewClip?: string | null
     userId: string
     public?: boolean
+    popularitScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     videoProcessingTask?: videoProcessingTaskUncheckedCreateNestedManyWithoutVideoInput
@@ -7848,6 +8002,7 @@ export namespace Prisma {
     hlsMaterList?: NullableStringFieldUpdateOperationsInput | string | null
     previewClip?: NullableStringFieldUpdateOperationsInput | string | null
     public?: BoolFieldUpdateOperationsInput | boolean
+    popularitScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedBy?: userUpdateOneRequiredWithoutVideoNestedInput
@@ -7863,6 +8018,7 @@ export namespace Prisma {
     previewClip?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     public?: BoolFieldUpdateOperationsInput | boolean
+    popularitScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     videoProcessingTask?: videoProcessingTaskUncheckedUpdateManyWithoutVideoNestedInput
@@ -7876,6 +8032,7 @@ export namespace Prisma {
     hlsMaterList?: string | null
     previewClip?: string | null
     public?: boolean
+    popularitScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     uploadedBy: userCreateNestedOneWithoutVideoInput
@@ -7891,6 +8048,7 @@ export namespace Prisma {
     previewClip?: string | null
     userId: string
     public?: boolean
+    popularitScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     upload?: uploadUncheckedCreateNestedManyWithoutVideoInput
@@ -7920,6 +8078,7 @@ export namespace Prisma {
     hlsMaterList?: NullableStringFieldUpdateOperationsInput | string | null
     previewClip?: NullableStringFieldUpdateOperationsInput | string | null
     public?: BoolFieldUpdateOperationsInput | boolean
+    popularitScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     uploadedBy?: userUpdateOneRequiredWithoutVideoNestedInput
@@ -7935,6 +8094,7 @@ export namespace Prisma {
     previewClip?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     public?: BoolFieldUpdateOperationsInput | boolean
+    popularitScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     upload?: uploadUncheckedUpdateManyWithoutVideoNestedInput
@@ -7948,6 +8108,7 @@ export namespace Prisma {
     hlsMaterList?: string | null
     previewClip?: string | null
     public?: boolean
+    popularitScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -7968,6 +8129,7 @@ export namespace Prisma {
     hlsMaterList?: NullableStringFieldUpdateOperationsInput | string | null
     previewClip?: NullableStringFieldUpdateOperationsInput | string | null
     public?: BoolFieldUpdateOperationsInput | boolean
+    popularitScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     videoProcessingTask?: videoProcessingTaskUpdateManyWithoutVideoNestedInput
@@ -7982,6 +8144,7 @@ export namespace Prisma {
     hlsMaterList?: NullableStringFieldUpdateOperationsInput | string | null
     previewClip?: NullableStringFieldUpdateOperationsInput | string | null
     public?: BoolFieldUpdateOperationsInput | boolean
+    popularitScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     videoProcessingTask?: videoProcessingTaskUncheckedUpdateManyWithoutVideoNestedInput
@@ -7996,6 +8159,7 @@ export namespace Prisma {
     hlsMaterList?: NullableStringFieldUpdateOperationsInput | string | null
     previewClip?: NullableStringFieldUpdateOperationsInput | string | null
     public?: BoolFieldUpdateOperationsInput | boolean
+    popularitScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

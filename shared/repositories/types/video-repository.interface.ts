@@ -1,5 +1,5 @@
 import { video } from '@core-cast/prisma';
-import { IVideoCreationProps } from '@core-cast/types';
+import { IVideoCreationProps, VideoSearchRecord } from '@core-cast/types';
 
 export type videoWithPartialUser = {
 	uploadedBy: {
@@ -14,4 +14,9 @@ export interface IVideoRepository {
 	createVideo(videoProps: IVideoCreationProps, userId: string): Promise<video>;
 	deleteVideo(videoId: string): Promise<video>;
 	updateVideo(videoId: string, updates: Partial<video>): Promise<video>;
+
+	//Video discovery
+	getLatestPopularVideos(limit: number): Promise<VideoSearchRecord[]>;
+	getLatestVideos(limit: number): Promise<VideoSearchRecord[]>;
+	getMostPopularVideos(limit: number): Promise<VideoSearchRecord[]>;
 }

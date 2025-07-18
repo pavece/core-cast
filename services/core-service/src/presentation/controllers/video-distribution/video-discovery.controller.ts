@@ -5,7 +5,12 @@ import { handleApiError } from '../../../domain/errors/api-error';
 export class VideoDiscoveryController {
 	private videoDiscoveryService = new VideoDiscoveryService();
 
-	public getFeed = (req: Request, res: Response) => {};
+	public getFeed = (req: Request, res: Response) => {
+		this.videoDiscoveryService
+			.buildFeed()
+			.then(r => res.json({ message: 'Video feed', videos: r }))
+			.catch(e => handleApiError(e, res));
+	};
 
 	public searchVideo = (req: Request, res: Response) => {
 		const query = req.query.q;
@@ -26,6 +31,14 @@ export class VideoDiscoveryController {
 		this.videoDiscoveryService
 			.getSimilarVideos(videoId)
 			.then(r => res.json({ message: 'Similar videos', videos: r }))
+			.catch(e => handleApiError(e, res));
+	};
+
+	public getVideo = (req: Request, res: Response) => {
+		const videoId = req.params.id;
+		this.videoDiscoveryService
+			.getVideo(videoId)
+			.then(r => res.json({ message: 'Video', video: r }))
 			.catch(e => handleApiError(e, res));
 	};
 }

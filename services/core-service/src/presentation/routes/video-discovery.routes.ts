@@ -9,6 +9,7 @@ export class VideoDiscoveryRouter {
 		router.get('/feed', controller.getFeed);
 		router.get('/search', controller.searchVideo);
 		router.get('/similar/:id', controller.getSimilarVideos);
+		router.get('/video/:id', controller.getVideo);
 
 		return router;
 	}

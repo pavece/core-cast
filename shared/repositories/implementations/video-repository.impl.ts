@@ -1,5 +1,5 @@
 import { PrismaClient, video } from '@core-cast/prisma';
-import { IVideoCreationProps } from '@core-cast/types';
+import { IVideoCreationProps, VideoSearchRecord } from '@core-cast/types';
 import { IVideoRepository, videoWithPartialUser } from '../types/video-repository.interface';
 
 export class VideoRepository implements IVideoRepository {
@@ -22,5 +22,41 @@ export class VideoRepository implements IVideoRepository {
 	}
 	updateVideo(videoId: string, updates: Partial<video>): Promise<video> {
 		return this.prismaClient.video.update({ where: { id: videoId }, data: { ...updates, updatedAt: new Date() } });
+	}
+	async getLatestPopularVideos(limit: number): Promise<VideoSearchRecord[]> {
+		const result = await this.prismaClient.video.findMany({
+			take: limit,
+			where: { public: true, NOT: { hlsMaterList: null } },
+			orderBy: [{ popularitScore: 'asc' }, { updatedAt: 'desc' }],
+			include: { uploadedBy: { select: { username: true, id: true } } },
+		});
+
+		return result.map(v => {
+			return { username: v.uploadedBy.username, ...v } as VideoSearchRecord;
+		});
+	}
+	async getLatestVideos(limit: number): Promise<VideoSearchRecord[]> {
+		const result = await this.prismaClient.video.findMany({
+			take: limit,
+			where: { public: true, NOT: { hlsMaterList: null } },
+			orderBy: [{ updatedAt: 'desc' }],
+			include: { uploadedBy: { select: { username: true, id: true } } },
+		});
+
+		return result.map(v => {
+			return { username: v.uploadedBy.username, ...v } as VideoSearchRecord;
+		});
+	}
+	async getMostPopularVideos(limit: number): Promise<VideoSearchRecord[]> {
+		const result = await this.prismaClient.video.findMany({
+			take: limit,
+			where: { public: true, NOT: { hlsMaterList: null } },
+			orderBy: [{ popularitScore: 'asc' }],
+			include: { uploadedBy: { select: { username: true, id: true } } },
+		});
+
+		return result.map(v => {
+			return { username: v.uploadedBy.username, ...v } as VideoSearchRecord;
+		});
 	}
 }
