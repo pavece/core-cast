@@ -4004,14 +4004,14 @@ export namespace Prisma {
   }
 
   export type VideoInteractionsSumAggregateOutputType = {
-    viewCount: bigint | null
-    likeCount: bigint | null
+    viewCount: number | null
+    likeCount: number | null
   }
 
   export type VideoInteractionsMinAggregateOutputType = {
     id: string | null
-    viewCount: bigint | null
-    likeCount: bigint | null
+    viewCount: number | null
+    likeCount: number | null
     videoId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4019,8 +4019,8 @@ export namespace Prisma {
 
   export type VideoInteractionsMaxAggregateOutputType = {
     id: string | null
-    viewCount: bigint | null
-    likeCount: bigint | null
+    viewCount: number | null
+    likeCount: number | null
     videoId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4163,8 +4163,8 @@ export namespace Prisma {
 
   export type VideoInteractionsGroupByOutputType = {
     id: string
-    viewCount: bigint
-    likeCount: bigint
+    viewCount: number
+    likeCount: number
     videoId: string
     createdAt: Date
     updatedAt: Date
@@ -4246,8 +4246,8 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      viewCount: bigint
-      likeCount: bigint
+      viewCount: number
+      likeCount: number
       videoId: string
       createdAt: Date
       updatedAt: Date
@@ -4676,8 +4676,8 @@ export namespace Prisma {
    */
   interface videoInteractionsFieldRefs {
     readonly id: FieldRef<"videoInteractions", 'String'>
-    readonly viewCount: FieldRef<"videoInteractions", 'BigInt'>
-    readonly likeCount: FieldRef<"videoInteractions", 'BigInt'>
+    readonly viewCount: FieldRef<"videoInteractions", 'Int'>
+    readonly likeCount: FieldRef<"videoInteractions", 'Int'>
     readonly videoId: FieldRef<"videoInteractions", 'String'>
     readonly createdAt: FieldRef<"videoInteractions", 'DateTime'>
     readonly updatedAt: FieldRef<"videoInteractions", 'DateTime'>
@@ -8460,20 +8460,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'BigInt'
-   */
-  export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
-    
-
-
-  /**
-   * Reference to a field of type 'BigInt[]'
-   */
-  export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
-    
-
-
-  /**
    * Reference to a field of type 'VideoProcessingStatus'
    */
   export type EnumVideoProcessingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VideoProcessingStatus'>
@@ -8714,8 +8700,8 @@ export namespace Prisma {
     OR?: videoInteractionsWhereInput[]
     NOT?: videoInteractionsWhereInput | videoInteractionsWhereInput[]
     id?: StringFilter<"videoInteractions"> | string
-    viewCount?: BigIntFilter<"videoInteractions"> | bigint | number
-    likeCount?: BigIntFilter<"videoInteractions"> | bigint | number
+    viewCount?: IntFilter<"videoInteractions"> | number
+    likeCount?: IntFilter<"videoInteractions"> | number
     videoId?: StringFilter<"videoInteractions"> | string
     createdAt?: DateTimeFilter<"videoInteractions"> | Date | string
     updatedAt?: DateTimeFilter<"videoInteractions"> | Date | string
@@ -8738,8 +8724,8 @@ export namespace Prisma {
     AND?: videoInteractionsWhereInput | videoInteractionsWhereInput[]
     OR?: videoInteractionsWhereInput[]
     NOT?: videoInteractionsWhereInput | videoInteractionsWhereInput[]
-    viewCount?: BigIntFilter<"videoInteractions"> | bigint | number
-    likeCount?: BigIntFilter<"videoInteractions"> | bigint | number
+    viewCount?: IntFilter<"videoInteractions"> | number
+    likeCount?: IntFilter<"videoInteractions"> | number
     createdAt?: DateTimeFilter<"videoInteractions"> | Date | string
     updatedAt?: DateTimeFilter<"videoInteractions"> | Date | string
     video?: XOR<VideoScalarRelationFilter, videoWhereInput>
@@ -8764,8 +8750,8 @@ export namespace Prisma {
     OR?: videoInteractionsScalarWhereWithAggregatesInput[]
     NOT?: videoInteractionsScalarWhereWithAggregatesInput | videoInteractionsScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"videoInteractions"> | string
-    viewCount?: BigIntWithAggregatesFilter<"videoInteractions"> | bigint | number
-    likeCount?: BigIntWithAggregatesFilter<"videoInteractions"> | bigint | number
+    viewCount?: IntWithAggregatesFilter<"videoInteractions"> | number
+    likeCount?: IntWithAggregatesFilter<"videoInteractions"> | number
     videoId?: StringWithAggregatesFilter<"videoInteractions"> | string
     createdAt?: DateTimeWithAggregatesFilter<"videoInteractions"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"videoInteractions"> | Date | string
@@ -9184,8 +9170,8 @@ export namespace Prisma {
 
   export type videoInteractionsCreateInput = {
     id?: string
-    viewCount?: bigint | number
-    likeCount?: bigint | number
+    viewCount?: number
+    likeCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     video: videoCreateNestedOneWithoutVideoInteractionsInput
@@ -9193,8 +9179,8 @@ export namespace Prisma {
 
   export type videoInteractionsUncheckedCreateInput = {
     id?: string
-    viewCount?: bigint | number
-    likeCount?: bigint | number
+    viewCount?: number
+    likeCount?: number
     videoId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9202,8 +9188,8 @@ export namespace Prisma {
 
   export type videoInteractionsUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    viewCount?: BigIntFieldUpdateOperationsInput | bigint | number
-    likeCount?: BigIntFieldUpdateOperationsInput | bigint | number
+    viewCount?: IntFieldUpdateOperationsInput | number
+    likeCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     video?: videoUpdateOneRequiredWithoutVideoInteractionsNestedInput
@@ -9211,8 +9197,8 @@ export namespace Prisma {
 
   export type videoInteractionsUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    viewCount?: BigIntFieldUpdateOperationsInput | bigint | number
-    likeCount?: BigIntFieldUpdateOperationsInput | bigint | number
+    viewCount?: IntFieldUpdateOperationsInput | number
+    likeCount?: IntFieldUpdateOperationsInput | number
     videoId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9220,8 +9206,8 @@ export namespace Prisma {
 
   export type videoInteractionsCreateManyInput = {
     id?: string
-    viewCount?: bigint | number
-    likeCount?: bigint | number
+    viewCount?: number
+    likeCount?: number
     videoId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9229,16 +9215,16 @@ export namespace Prisma {
 
   export type videoInteractionsUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    viewCount?: BigIntFieldUpdateOperationsInput | bigint | number
-    likeCount?: BigIntFieldUpdateOperationsInput | bigint | number
+    viewCount?: IntFieldUpdateOperationsInput | number
+    likeCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type videoInteractionsUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    viewCount?: BigIntFieldUpdateOperationsInput | bigint | number
-    likeCount?: BigIntFieldUpdateOperationsInput | bigint | number
+    viewCount?: IntFieldUpdateOperationsInput | number
+    likeCount?: IntFieldUpdateOperationsInput | number
     videoId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9723,17 +9709,6 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type BigIntFilter<$PrismaModel = never> = {
-    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    not?: NestedBigIntFilter<$PrismaModel> | bigint | number
-  }
-
   export type VideoScalarRelationFilter = {
     is?: videoWhereInput
     isNot?: videoWhereInput
@@ -9774,22 +9749,6 @@ export namespace Prisma {
   export type videoInteractionsSumOrderByAggregateInput = {
     viewCount?: SortOrder
     likeCount?: SortOrder
-  }
-
-  export type BigIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    not?: NestedBigIntWithAggregatesFilter<$PrismaModel> | bigint | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedBigIntFilter<$PrismaModel>
-    _min?: NestedBigIntFilter<$PrismaModel>
-    _max?: NestedBigIntFilter<$PrismaModel>
   }
 
   export type videoLikeVideoIdUserIdCompoundUniqueInput = {
@@ -10229,14 +10188,6 @@ export namespace Prisma {
     connect?: videoWhereUniqueInput
   }
 
-  export type BigIntFieldUpdateOperationsInput = {
-    set?: bigint | number
-    increment?: bigint | number
-    decrement?: bigint | number
-    multiply?: bigint | number
-    divide?: bigint | number
-  }
-
   export type videoUpdateOneRequiredWithoutVideoInteractionsNestedInput = {
     create?: XOR<videoCreateWithoutVideoInteractionsInput, videoUncheckedCreateWithoutVideoInteractionsInput>
     connectOrCreate?: videoCreateOrConnectWithoutVideoInteractionsInput
@@ -10496,33 +10447,6 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type NestedBigIntFilter<$PrismaModel = never> = {
-    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    not?: NestedBigIntFilter<$PrismaModel> | bigint | number
-  }
-
-  export type NestedBigIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    in?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    notIn?: bigint[] | number[] | ListBigIntFieldRefInput<$PrismaModel>
-    lt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    lte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gt?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    gte?: bigint | number | BigIntFieldRefInput<$PrismaModel>
-    not?: NestedBigIntWithAggregatesFilter<$PrismaModel> | bigint | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedBigIntFilter<$PrismaModel>
-    _min?: NestedBigIntFilter<$PrismaModel>
-    _max?: NestedBigIntFilter<$PrismaModel>
   }
 
   export type NestedEnumVideoProcessingStatusFilter<$PrismaModel = never> = {
@@ -10812,16 +10736,16 @@ export namespace Prisma {
 
   export type videoInteractionsCreateWithoutVideoInput = {
     id?: string
-    viewCount?: bigint | number
-    likeCount?: bigint | number
+    viewCount?: number
+    likeCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type videoInteractionsUncheckedCreateWithoutVideoInput = {
     id?: string
-    viewCount?: bigint | number
-    likeCount?: bigint | number
+    viewCount?: number
+    likeCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -10968,8 +10892,8 @@ export namespace Prisma {
     OR?: videoInteractionsScalarWhereInput[]
     NOT?: videoInteractionsScalarWhereInput | videoInteractionsScalarWhereInput[]
     id?: StringFilter<"videoInteractions"> | string
-    viewCount?: BigIntFilter<"videoInteractions"> | bigint | number
-    likeCount?: BigIntFilter<"videoInteractions"> | bigint | number
+    viewCount?: IntFilter<"videoInteractions"> | number
+    likeCount?: IntFilter<"videoInteractions"> | number
     videoId?: StringFilter<"videoInteractions"> | string
     createdAt?: DateTimeFilter<"videoInteractions"> | Date | string
     updatedAt?: DateTimeFilter<"videoInteractions"> | Date | string
@@ -11637,8 +11561,8 @@ export namespace Prisma {
 
   export type videoInteractionsCreateManyVideoInput = {
     id?: string
-    viewCount?: bigint | number
-    likeCount?: bigint | number
+    viewCount?: number
+    likeCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -11697,24 +11621,24 @@ export namespace Prisma {
 
   export type videoInteractionsUpdateWithoutVideoInput = {
     id?: StringFieldUpdateOperationsInput | string
-    viewCount?: BigIntFieldUpdateOperationsInput | bigint | number
-    likeCount?: BigIntFieldUpdateOperationsInput | bigint | number
+    viewCount?: IntFieldUpdateOperationsInput | number
+    likeCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type videoInteractionsUncheckedUpdateWithoutVideoInput = {
     id?: StringFieldUpdateOperationsInput | string
-    viewCount?: BigIntFieldUpdateOperationsInput | bigint | number
-    likeCount?: BigIntFieldUpdateOperationsInput | bigint | number
+    viewCount?: IntFieldUpdateOperationsInput | number
+    likeCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type videoInteractionsUncheckedUpdateManyWithoutVideoInput = {
     id?: StringFieldUpdateOperationsInput | string
-    viewCount?: BigIntFieldUpdateOperationsInput | bigint | number
-    likeCount?: BigIntFieldUpdateOperationsInput | bigint | number
+    viewCount?: IntFieldUpdateOperationsInput | number
+    likeCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

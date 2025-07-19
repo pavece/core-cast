@@ -1,10 +1,11 @@
 import { IVideoCreationProps } from '@core-cast/types';
-import { VideoRepository } from '@core-cast/repositories';
+import { VideoInteractionsRepository, VideoRepository } from '@core-cast/repositories';
 import { ApiError } from '../errors/api-error';
 import { Prisma } from '@core-cast/prisma';
 
 export class VideoManagementService {
 	private videoRepository = new VideoRepository(Prisma.getInstance().prismaClient);
+	private videoInteractionsRepository = new VideoInteractionsRepository(Prisma.getInstance().prismaClient);
 
 	public async getVideo(userId: string, videoId: string) {
 		const video = await this.videoRepository.getVideoById(videoId);
@@ -20,9 +21,8 @@ export class VideoManagementService {
 
 	public async createVideo(userId: string, videoProps: IVideoCreationProps) {
 		const video = await this.videoRepository.createVideo(videoProps, userId);
+		await this.videoInteractionsRepository.createVideoInteractions(video.id);
 
-		//TODO: Create video metadata embeding (title + description) and upload to vector database
-		//TODO: Insert video search information into meilisearch (title + description)
 		return video;
 	}
 
@@ -31,6 +31,7 @@ export class VideoManagementService {
 
 		//TODO: Remove media from object store
 		//TODO: Remove pending tasks
+		//TODO: Remove meilisearch and qdrant records
 
 		await this.videoRepository.deleteVideo(videoId);
 		return video;

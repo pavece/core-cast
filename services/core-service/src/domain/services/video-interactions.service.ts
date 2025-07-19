@@ -1,9 +1,39 @@
+import { Prisma } from '@core-cast/prisma';
+import { RedisClient } from '@core-cast/redis';
+import { VideoInteractionsRepository } from '@core-cast/repositories';
+
 export class VideoInteractionsService {
-	public getVideoInteractions(videoId: string) {}
+	private redisClient = RedisClient.getInstance().getClient();
+	private videoInteractionsRepository = new VideoInteractionsRepository(Prisma.getInstance().prismaClient);
+	private redisDatabaseNumber = 3;
 
-	public getPersonalVideoInteractions(videoId: string, userId: string) {}
+	//TODO: Add cache
+	public getVideoInteractions(videoId: string) {
+		return this.videoInteractionsRepository.getVideoInteractions(videoId);
+	}
 
-	public toggleVideoLike(videoId: string, userId: string) {}
+	public async getPersonalVideoInteractions(videoId: string, userId: string) {
+		const videoLiked = await this.videoInteractionsRepository.isVideoLiked(videoId, userId);
+		return { videoLiked };
+	}
 
-	public registerView(videoId: string) {}
+	public async toggleVideoLike(videoId: string, userId: string) {
+		const videoLiked = await this.videoInteractionsRepository.isVideoLiked(videoId, userId);
+
+		await this.redisClient.select(this.redisDatabaseNumber);
+		await this.redisClient.incrby(`likes:${videoId}`, videoLiked ? -1 : 1);
+
+		if (videoLiked) {
+			await this.videoInteractionsRepository.removeVideoLike(videoId, userId);
+			return { videoLiked: false };
+		}
+
+		await this.videoInteractionsRepository.addVideoLike(videoId, userId);
+		return { videoLiked: true };
+	}
+
+	public async registerView(videoId: string) {
+		await this.redisClient.select(this.redisDatabaseNumber);
+		await this.redisClient.incr(`views:${videoId}`);
+	}
 }

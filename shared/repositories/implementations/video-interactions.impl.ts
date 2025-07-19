@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@core-cast/prisma';
+import { PrismaClient } from '@core-cast/prisma';
 import { IVideoInteractionsRepository, VideoInteractions } from '../types/video-interactions.type';
 
 export class VideoInteractionsRepository implements IVideoInteractionsRepository {
@@ -8,7 +8,7 @@ export class VideoInteractionsRepository implements IVideoInteractionsRepository
 		return this.prismaClient.videoInteractions.findFirst({ where: { videoId } });
 	}
 	async isVideoLiked(videoId: string, userId: string): Promise<boolean> {
-		return !!(await this.prismaClient.videoLike.findUnique({ where: { videoId_userId: { videoId, userId } } }));
+		return !!(await this.prismaClient.videoLike.findUnique({ where: { videoId_userId: { videoId, userId } } }))?.videoId;
 	}
 	async addVideoLike(videoId: string, userId: string): Promise<void> {
 		await this.prismaClient.videoLike.create({ data: { videoId, userId } });

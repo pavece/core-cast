@@ -1,6 +1,6 @@
 export interface VideoInteractions {
-	likeCount: BigInt;
-	viewCount: BigInt;
+	likeCount: Number;
+	viewCount: Number;
 }
 
 export interface IVideoInteractionsRepository {

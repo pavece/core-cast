@@ -8,7 +8,7 @@ export class VideoInteractionRouter {
 		const controller = new VideoInteractionsController();
 
 		router.get('/:videoId', controller.getVideoInteractions);
-		router.get('/personal/:videoId', controller.getPersonalVideoInteractions);
+		router.get('/personal/:videoId', validateSession, controller.getPersonalVideoInteractions);
 		router.post('/like/:videoId', validateSession, controller.toggleVideoLike);
 		router.put('/register-view/:videoId', controller.viewVideo);
 
