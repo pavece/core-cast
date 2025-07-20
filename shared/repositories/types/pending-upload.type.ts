@@ -6,5 +6,7 @@ export interface IUploadRepository {
 	getPendingUploadByVideoId(videoId: string): Promise<upload | null>;
 	getPendingUploadsByUser(userId: string): Promise<upload[]>;
 	deletePendingUploadById(id: string): Promise<upload>;
+	getStalledUploads(): Promise<upload[]>;
+	deleteStalledUploads(): Promise<void>;
 	deletePendingUploadByMultipartId(multipartId: string): Promise<upload>;
 }

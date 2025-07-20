@@ -18,6 +18,12 @@
 		"typescript": "^5.8.3"
 	},
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.848.0",
+		"@core-cast/object-store": "workspace:*",
+		"@core-cast/prisma": "workspace:*",
+		"@core-cast/redis": "workspace:*",
+		"@core-cast/repositories": "workspace:*",
+		"@core-cast/types": "workspace:*",
 		"cron": "^4.3.2",
 		"nodemon": "^3.1.10",
 		"pino": "^9.7.0",

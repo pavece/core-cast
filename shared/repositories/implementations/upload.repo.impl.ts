@@ -26,4 +26,18 @@ export class UploadRepository implements IUploadRepository {
 	async deletePendingUploadByMultipartId(multipartId: string): Promise<upload> {
 		return await this.prismaClient.upload.delete({ where: { multipartId } });
 	}
+
+	async getStalledUploads(): Promise<upload[]> {
+		const yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+
+		return await this.prismaClient.upload.findMany({ where: { createdAt: { lt: yesterday } } });
+	}
+
+	async deleteStalledUploads(): Promise<void> {
+		const yesterday = new Date();
+		yesterday.setDate(yesterday.getDate() - 1);
+
+		await this.prismaClient.upload.deleteMany({ where: { createdAt: { lt: yesterday } } });
+	}
 }
