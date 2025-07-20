@@ -5,4 +5,5 @@ export interface IVideoProcessingTaskRepository {
 	getTaskById(taskId: string): Promise<videoProcessingTask | null>;
 	markTaskAsStarted(taskId: string): Promise<videoProcessingTask | null>;
 	deleteTaskById(taskId: string): Promise<videoProcessingTask | null>;
+	getStalledTasks(): Promise<videoProcessingTask[]>;
 }

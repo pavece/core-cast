@@ -21,4 +21,13 @@ export class VideoProcessingTaskRepository implements IVideoProcessingTaskReposi
 	async deleteTaskById(taskId: string): Promise<videoProcessingTask | null> {
 		return await this.prismaClient.videoProcessingTask.delete({ where: { id: taskId } });
 	}
+
+	async getStalledTasks(): Promise<videoProcessingTask[]> {
+		const referenceTime = new Date();
+		referenceTime.setDate(referenceTime.getDate() - 5);
+
+		return await this.prismaClient.videoProcessingTask.findMany({
+			where: { updatedAt: { lte: referenceTime }, status: 'PROCESSING' },
+		});
+	}
 }

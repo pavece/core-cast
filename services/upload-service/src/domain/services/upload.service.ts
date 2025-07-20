@@ -9,7 +9,12 @@ import { Prometheus } from '../logging/prometheus';
 
 import { RabbitMQ } from '@core-cast/rabbitmq';
 import { ObjectStore } from '@core-cast/object-store';
-import { UploadRepository, VideoProcessingTaskRepository, MultipartUploadRepository, VideoRepository } from '@core-cast/repositories';
+import {
+	UploadRepository,
+	VideoProcessingTaskRepository,
+	MultipartUploadRepository,
+	VideoRepository,
+} from '@core-cast/repositories';
 
 import { Prisma } from '@core-cast/prisma';
 import { RedisClient } from '@core-cast/redis';
@@ -25,7 +30,7 @@ export class UploadService {
 	private logger = new Logger().getLogger();
 	private prometheus = new Prometheus();
 
-	private async validateUpload(videoId: string, userId: string){
+	private async validateUpload(videoId: string, userId: string) {
 		const video = await this.videoRepo.getVideoById(videoId);
 		const pendingUpload = await this.pendingUploadRepo.getPendingUploadByVideoId(videoId);
 
@@ -35,13 +40,18 @@ export class UploadService {
 		if (video.hlsMaterList) {
 			throw new ApiError(403, 'Video already contains media');
 		}
-		if(pendingUpload){
-			throw new ApiError(400, `Video contains a pending upload, please continue ${pendingUpload.multipartId}`)
+		if (pendingUpload) {
+			throw new ApiError(400, `Video contains a pending upload, please continue ${pendingUpload.multipartId}`);
 		}
 	}
 
-	public async initializeChunkedUpload(originalObjectName: string, totalChunks: number, videoId: string, userId: string) {
-		await this.validateUpload(videoId, userId)
+	public async initializeChunkedUpload(
+		originalObjectName: string,
+		totalChunks: number,
+		videoId: string,
+		userId: string
+	) {
+		await this.validateUpload(videoId, userId);
 
 		const objectName = crypto.randomUUID() + '-' + originalObjectName;
 
@@ -151,7 +161,8 @@ export class UploadService {
 
 			this.rabbitMQ?.videoProcessingChannel?.sendToQueue(
 				this.rabbitMQ.videoProcessingQueueName,
-				Buffer.from(JSON.stringify(videoProcessingMessage))
+				Buffer.from(JSON.stringify(videoProcessingMessage)),
+				{ persistent: true }
 			);
 		} catch (error) {
 			if (error instanceof ApiError) {

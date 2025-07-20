@@ -105,6 +105,9 @@ importers:
       '@core-cast/prisma':
         specifier: workspace:*
         version: link:../../shared/prisma
+      '@core-cast/rabbitmq':
+        specifier: workspace:*
+        version: link:../../shared/rabbitmq
       '@core-cast/redis':
         specifier: workspace:*
         version: link:../../shared/redis

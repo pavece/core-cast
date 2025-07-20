@@ -3,6 +3,7 @@ import { HousekeepingJobManager } from './domain/jobs/job-manager';
 import { Prisma } from '@core-cast/prisma';
 import { Logger } from './domain/logging/logger';
 import { RedisClient } from '@core-cast/redis';
+import { RabbitMQ } from '@core-cast/rabbitmq';
 
 async function main() {
 	await setupServices();
@@ -44,12 +45,12 @@ async function setupServices() {
 		logger.error({ message: 'Failed to connect to Redis', error });
 	}
 
-	// try {
-	// 	await RabbitMQ.getInstance().connect(process.env.RABBITMQ_CON_URL || 'amqp://localhost');
-	// 	logger.info('Connected to rabbitMQ message broker');
-	// } catch (error) {
-	// 	logger.error({ message: 'Failed to connect to rabbitMQ message broker', error });
-	// }
+	try {
+		await RabbitMQ.getInstance().connect(process.env.RABBITMQ_CON_URL || 'amqp://localhost');
+		logger.info('Connected to rabbitMQ message broker');
+	} catch (error) {
+		logger.error({ message: 'Failed to connect to rabbitMQ message broker', error });
+	}
 }
 
 main();

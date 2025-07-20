@@ -5,6 +5,9 @@ import { RedisClient } from '@core-cast/redis';
 import { MultipartUploadRepository, UploadRepository } from '@core-cast/repositories';
 import { Logger } from '../logging/logger';
 
+/* 
+	Clean abandoned uploads, user can reupload the video but will need to start from 0
+*/
 export async function stalledUploadCleanupJob() {
 	const pendingUploadRepo = new UploadRepository(Prisma.getInstance().prismaClient);
 	const multipartUploadRepo = new MultipartUploadRepository(RedisClient.getInstance().getClient());
