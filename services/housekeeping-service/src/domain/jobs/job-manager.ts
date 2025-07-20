@@ -1,23 +1,19 @@
 import { CronJob } from 'cron';
 import { Logger } from '../logging/logger';
 import { stalledUploadCleanupJob } from './stalled-upload-cleanup';
-import { cleanupStalledProcessingTasks } from './stalled-processing-cleanup';
+import { stalledProcessingTaskRecovery } from './stalled-processing-cleanup';
+import { videoInteractionsBatching } from './video-interactions-batching';
 
 export class HousekeepingJobManager {
 	private cronJobs: { [jobName: string]: CronJob } = {};
 	private logger = new Logger().getLogger();
 
 	private setupJobs() {
-		this.cronJobs['interactionBatching'] = new CronJob('*/5 * * * *', () => {}, null, false);
+		this.cronJobs['interactionBatching'] = new CronJob('*/5 * * * *', videoInteractionsBatching, null, false);
 
 		this.cronJobs['stalledUploadCleanup'] = new CronJob('0 */1 * * *', stalledUploadCleanupJob, null, false);
 
-		this.cronJobs['stalledProcessingJobCleanup'] = new CronJob(
-			'*/1 * * * *',
-			cleanupStalledProcessingTasks,
-			null,
-			false
-		);
+		this.cronJobs['stalledProcessingJobCleanup'] = new CronJob('0 */1 * * *', stalledProcessingTaskRecovery, null, false);
 	}
 
 	public start() {

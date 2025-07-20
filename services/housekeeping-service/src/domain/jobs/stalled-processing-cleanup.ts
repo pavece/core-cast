@@ -11,7 +11,7 @@ import { VideoProcessingTaskRepository } from '@core-cast/repositories';
 import { Upload } from '@core-cast/types';
 import { Logger } from '../logging/logger';
 
-export async function cleanupStalledProcessingTasks() {
+export async function stalledProcessingTaskRecovery() {
 	const processingTaskRepo = new VideoProcessingTaskRepository(Prisma.getInstance().prismaClient);
 	const rabbitMQ = RabbitMQ.getInstance();
 	const logger = new Logger().getLogger();
