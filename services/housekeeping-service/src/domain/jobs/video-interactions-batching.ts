@@ -3,12 +3,14 @@ import { RedisClient } from '@core-cast/redis';
 import Redis from 'ioredis';
 import { Logger } from '../logging/logger';
 import { ClickhouseClient } from '@core-cast/clickhouse';
+import { Prometheus } from '../logging/prometheus';
 
 export async function videoInteractionsBatching() {
 	const prismaClient = Prisma.getInstance().prismaClient;
 	const redisClient = RedisClient.getInstance().getClient();
 	const clichouseClient = ClickhouseClient.getInstance().getClient();
 	const logger = new Logger().getLogger();
+	const prometheusClient = new Prometheus();
 
 	try {
 		redisClient.select(3);
@@ -20,8 +22,10 @@ export async function videoInteractionsBatching() {
 		await redisClient.flushdb();
 
 		logger.info('Migrated dirty interaction records to postgres and clickhouse');
+		prometheusClient.completedTasks?.inc();
 	} catch (error) {
 		logger.error({ message: 'Failure during dirty interaction record migration', error });
+		prometheusClient.erroredTasks?.inc();
 	}
 }
 

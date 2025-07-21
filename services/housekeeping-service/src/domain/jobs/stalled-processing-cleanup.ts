@@ -10,23 +10,32 @@ import { RabbitMQ } from '@core-cast/rabbitmq';
 import { VideoProcessingTaskRepository } from '@core-cast/repositories';
 import { Upload } from '@core-cast/types';
 import { Logger } from '../logging/logger';
+import { Prometheus } from '../logging/prometheus';
 
 export async function stalledProcessingTaskRecovery() {
-	const processingTaskRepo = new VideoProcessingTaskRepository(Prisma.getInstance().prismaClient);
-	const rabbitMQ = RabbitMQ.getInstance();
 	const logger = new Logger().getLogger();
+	const prometheusClient = new Prometheus();
 
-	const stalledTasks = await processingTaskRepo.getStalledTasks();
-	for (const task of stalledTasks) {
-		const videoProcessingMessage: Upload.VideoProcessingTaskMessage = { processingTaskId: task.id };
-		rabbitMQ.videoProcessingChannel?.sendToQueue(
-			rabbitMQ.videoProcessingQueueName,
-			Buffer.from(JSON.stringify(videoProcessingMessage)),
-			{
-				persistent: true,
-			}
-		);
+	try {
+		const processingTaskRepo = new VideoProcessingTaskRepository(Prisma.getInstance().prismaClient);
+		const rabbitMQ = RabbitMQ.getInstance();
 
-		logger.info(`Requeuing stalled processing task ${task.id}`);
+		const stalledTasks = await processingTaskRepo.getStalledTasks();
+		for (const task of stalledTasks) {
+			const videoProcessingMessage: Upload.VideoProcessingTaskMessage = { processingTaskId: task.id };
+			rabbitMQ.videoProcessingChannel?.sendToQueue(
+				rabbitMQ.videoProcessingQueueName,
+				Buffer.from(JSON.stringify(videoProcessingMessage)),
+				{
+					persistent: true,
+				}
+			);
+
+			logger.info(`Requeuing stalled processing task ${task.id}`);
+		}
+		prometheusClient.completedTasks?.inc();
+	} catch (error) {
+		logger.error({ message: 'Stalled processing task cleanup task failed', error });
+		prometheusClient.erroredTasks?.inc();
 	}
 }
