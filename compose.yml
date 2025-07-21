@@ -60,6 +60,17 @@ services:
     volumes:
       - ./qdrant-data:/qdrant/stor
 
+  clickhouse:
+    image: clickhouse/clickhouse-server
+    ports:
+      - '8123:8123'
+      - '9004:9000'
+    volumes:
+      - ./clickhouse-data:/var/lib/clickhouse
+    environment:
+      - CLICKHOUSE_DB=corecast  
+      - CLICKHOUSE_USER=clickhouse
+
   # OPTIONAL: Explorer for postgreSQL
   adminer:
     image: adminer

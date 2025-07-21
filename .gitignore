@@ -9,5 +9,6 @@ minio-data
 pg-data
 meili-data
 qdrant-data
+clickhouse-data
 
 temp

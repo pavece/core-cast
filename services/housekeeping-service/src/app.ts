@@ -4,6 +4,7 @@ import { Prisma } from '@core-cast/prisma';
 import { Logger } from './domain/logging/logger';
 import { RedisClient } from '@core-cast/redis';
 import { RabbitMQ } from '@core-cast/rabbitmq';
+import { ClickhouseClient } from '@core-cast/clickhouse';
 
 async function main() {
 	await setupServices();
@@ -50,6 +51,19 @@ async function setupServices() {
 		logger.info('Connected to rabbitMQ message broker');
 	} catch (error) {
 		logger.error({ message: 'Failed to connect to rabbitMQ message broker', error });
+	}
+
+	//process.env.CLICKHOUSE_URL || '', Number(process.env.CLICKHOUSE_PORT), process.env.CLICKHOUSE_DATABASE || ""
+	try {
+		await ClickhouseClient.getInstance().connect({
+			database: process.env.CLICKHOUSE_DATABASE || '',
+			port: Number(process.env.CLICKHOUSE_PORT),
+			url: process.env.CLICKHOUSE_URL || '',
+			username: process.env.CLICKHOUSE_USER || '',
+		});
+		logger.info('Connected to clickhouse');
+	} catch (error) {
+		logger.error({ message: 'Failed to connect to clickhouse', error });
 	}
 }
 
