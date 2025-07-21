@@ -53,7 +53,6 @@ async function setupServices() {
 		logger.error({ message: 'Failed to connect to rabbitMQ message broker', error });
 	}
 
-	//process.env.CLICKHOUSE_URL || '', Number(process.env.CLICKHOUSE_PORT), process.env.CLICKHOUSE_DATABASE || ""
 	try {
 		await ClickhouseClient.getInstance().connect({
 			database: process.env.CLICKHOUSE_DATABASE || '',

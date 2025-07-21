@@ -9,7 +9,7 @@ export class HousekeepingJobManager {
 	private logger = new Logger().getLogger();
 
 	private setupJobs() {
-		this.cronJobs['interactionBatching'] = new CronJob('*/5 * * * *', videoInteractionsBatching, null, false);
+		this.cronJobs['interactionBatching'] = new CronJob('* * * * *', videoInteractionsBatching, null, false);
 
 		this.cronJobs['stalledUploadCleanup'] = new CronJob('0 */1 * * *', stalledUploadCleanupJob, null, false);
 

@@ -28,7 +28,7 @@ export class ClickhouseClient {
 	private async runInitialMigration() {
 		await this.client
 			?.query(
-				'CREATE TABLE IF NOT EXISTS video_views (video_id UUID, view_count UInt32, time DateTime) ENGINE = MergeTree ORDER BY (video_id, time)'
+				'CREATE TABLE IF NOT EXISTS video_views (video_id UUID, view_count UInt32, time DateTime DEFAULT now()) ENGINE = MergeTree ORDER BY (video_id, time)'
 			)
 			.toPromise();
 	}
