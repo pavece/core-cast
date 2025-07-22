@@ -8,6 +8,7 @@ import { ObjectStore, ObjectStoreConfigurationOptions } from '@core-cast/object-
 import { RedisClient } from '@core-cast/redis';
 import { Qdrant } from '@core-cast/qdrant';
 import { Meili } from '@core-cast/meilisearch';
+import { ClickhouseClient } from '@core-cast/clickhouse';
 
 async function main() {
 	const logger = new Logger().getLogger();
@@ -67,7 +68,18 @@ async function setupServices(logger: BaseLogger) {
 		await Meili.getInstance().connect(process.env.MEILISEARCH_URL || '', process.env.MEILISEARCH_APIKEY || '');
 		logger.info('Connected to Qdrant');
 	} catch (error) {
-		logger.error({ message: 'Failed to connect to meilisearcg', error });
+		logger.error({ message: 'Failed to connect to meilisearch', error });
+	}
+
+	try {
+		await ClickhouseClient.getInstance().connect({
+			database: process.env.CLICKHOUSE_DATABASE || '',
+			url: process.env.CLICKHOUSE_URL || '',
+			username: process.env.CLICKHOUSE_USER || '',
+		});
+		logger.info('Connected to clickhouse');
+	} catch (error) {
+		logger.error({ message: 'Failed to connect to clickhouse', error });
 	}
 }
 

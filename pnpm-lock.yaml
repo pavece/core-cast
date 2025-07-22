@@ -14,6 +14,9 @@ importers:
       '@aws-sdk/client-s3':
         specifier: ^3.844.0
         version: 3.846.0
+      '@clickhouse/client':
+        specifier: ^1.11.2
+        version: 1.11.2
       '@core-cast/clickhouse':
         specifier: workspace:*
         version: link:../../shared/clickhouse
@@ -401,6 +404,9 @@ importers:
 
   shared/repositories:
     dependencies:
+      '@clickhouse/client':
+        specifier: ^1.11.2
+        version: 1.11.2
       '@core-cast/prisma':
         specifier: workspace:*
         version: link:../prisma

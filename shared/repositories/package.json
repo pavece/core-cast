@@ -13,6 +13,7 @@
 		}
 	},
 	"dependencies": {
+		"@clickhouse/client": "^1.11.2",
 		"@core-cast/prisma": "workspace:*",
 		"@core-cast/types": "workspace:*",
 		"ioredis": "^5.6.1",
