@@ -5,6 +5,7 @@ import { UserRoouter } from './routes/user.routes';
 import { VideoManagementRoutes } from './routes/video-manegement.routes';
 import { VideoDiscoveryRouter } from './routes/video-discovery.routes';
 import { VideoInteractionRouter } from './routes/video-interaction.routes';
+import { VideoInteractionManagementRouter } from './routes/video-interactions-management.routes';
 
 export class ApiRouter {
 	public static get routes() {
@@ -16,6 +17,7 @@ export class ApiRouter {
 		const videoManagementRouter = VideoManagementRoutes.routes;
 		const videoDisoveryRouter = VideoDiscoveryRouter.routes;
 		const videoInteractionsRouter = VideoInteractionRouter.routes;
+		const videoInteractionManagementRouter = VideoInteractionManagementRouter.routes;
 
 		router.use('/api/auth', authRouter);
 		router.use('/api/admin/users', userManagementRouter);
@@ -23,6 +25,7 @@ export class ApiRouter {
 		router.use('/api/uploads', videoManagementRouter);
 		router.use('/api/discovery', videoDisoveryRouter);
 		router.use('/api/interactions', videoInteractionsRouter);
+		router.use('/api/manage-interactions', videoInteractionManagementRouter);
 
 		return router;
 	}
