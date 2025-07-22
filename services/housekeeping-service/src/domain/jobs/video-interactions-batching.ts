@@ -18,7 +18,7 @@ export async function videoInteractionsBatching() {
 		const views = await retrieveAndUpdateViews(redisClient, prismaClient);
 		await retrieveAndUpdateLikes(redisClient, prismaClient);
 
-		await clichouseClient.insert('INSERT INTO video_views (video_id, view_count)', views).toPromise();
+		await clichouseClient.insert({ table: 'video_views', values: views, format: 'JSONEachRow' });
 		await redisClient.flushdb();
 
 		logger.info('Migrated dirty interaction records to postgres and clickhouse');

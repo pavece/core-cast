@@ -1,8 +1,8 @@
-import { ClickHouse } from 'clickhouse';
+import { createClient } from '@clickhouse/client';
+import { NodeClickHouseClient } from '@clickhouse/client/dist/client';
 
 type clickhouseConnectionParams = {
 	url: string;
-	port: number;
 	database: string;
 	username: string;
 };
@@ -10,7 +10,7 @@ type clickhouseConnectionParams = {
 export class ClickhouseClient {
 	private static _instance: ClickhouseClient;
 
-	public client: ClickHouse | undefined;
+	public client: NodeClickHouseClient | undefined;
 
 	public static getInstance() {
 		if (!this._instance) {
@@ -20,17 +20,16 @@ export class ClickhouseClient {
 		return ClickhouseClient._instance;
 	}
 
-	public async connect({ url, port, database, username }: clickhouseConnectionParams) {
-		this.client = new ClickHouse({ url, port, config: { database }, basicAuth: { username } });
+	public async connect({ url, database, username }: clickhouseConnectionParams) {
+		this.client = createClient({ url, database, username });
 		await this.runInitialMigration();
 	}
 
 	private async runInitialMigration() {
-		await this.client
-			?.query(
-				'CREATE TABLE IF NOT EXISTS video_views (video_id UUID, view_count UInt32, time DateTime DEFAULT now()) ENGINE = MergeTree ORDER BY (video_id, time)'
-			)
-			.toPromise();
+		await this.client?.query({
+			query:
+				'CREATE TABLE IF NOT EXISTS video_views (video_id UUID, view_count UInt32, time DateTime DEFAULT now()) ENGINE = MergeTree ORDER BY (video_id, time)',
+		});
 	}
 
 	public getClient() {

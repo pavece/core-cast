@@ -63,7 +63,6 @@ async function setupServices() {
 	try {
 		await ClickhouseClient.getInstance().connect({
 			database: process.env.CLICKHOUSE_DATABASE || '',
-			port: Number(process.env.CLICKHOUSE_PORT),
 			url: process.env.CLICKHOUSE_URL || '',
 			username: process.env.CLICKHOUSE_USER || '',
 		});
