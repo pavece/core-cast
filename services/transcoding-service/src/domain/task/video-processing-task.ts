@@ -173,8 +173,10 @@ export class VideoProcessingTask {
 			userId: video.uploadedBy.id,
 		};
 
-		await this.meilisearchClient.index('videos').addDocuments([videoInfo] as VideoSearchRecord[]);
-		await generateStoreVideoEmbeding(videoInfo);
+		if (video.public) {
+			await this.meilisearchClient.index('videos').addDocuments([videoInfo] as VideoSearchRecord[]);
+			await generateStoreVideoEmbeding(videoInfo);
+		}
 	}
 
 	private async removeTaskRecord() {
