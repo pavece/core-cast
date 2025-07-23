@@ -183,6 +183,13 @@ exports.Prisma.VideoProcessingTaskScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.RegisterWhitelistScalarFieldEnum = {
+  id: 'id',
+  validUntil: 'validUntil',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -213,7 +220,8 @@ exports.Prisma.ModelName = {
   videoInteractions: 'videoInteractions',
   videoLike: 'videoLike',
   upload: 'upload',
-  videoProcessingTask: 'videoProcessingTask'
+  videoProcessingTask: 'videoProcessingTask',
+  registerWhitelist: 'registerWhitelist'
 };
 
 /**
