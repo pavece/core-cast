@@ -327,12 +327,18 @@ importers:
       '@types/node':
         specifier: ^24.0.15
         version: 24.0.15
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
 
   shared/meilisearch:
     dependencies:
       meilisearch:
         specifier: ^0.51.0
         version: 0.51.0
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
 
   shared/object-store:
     dependencies:
@@ -381,6 +387,9 @@ importers:
 
   shared/rabbitmq:
     dependencies:
+      '@types/node':
+        specifier: ^24.1.0
+        version: 24.1.0
       amqplib:
         specifier: ^0.10.8
         version: 0.10.8
@@ -1120,6 +1129,9 @@ packages:
 
   '@types/node@24.0.15':
     resolution: {integrity: sha512-oaeTSbCef7U/z7rDeJA138xpG3NuKc64/rZ2qmUFkFJmnMsAPaluIifqyWd8hSSMxyP9oie3dLAqYPblag9KgA==}
+
+  '@types/node@24.1.0':
+    resolution: {integrity: sha512-ut5FthK5moxFKH2T1CUOC6ctR67rQRvvHdFLCD2Ql6KXmMuCrjsSsRI9UsLCm9M18BMwClv4pn327UvB7eeO1w==}
 
   '@types/qs@6.14.0':
     resolution: {integrity: sha512-eOunJqu0K1923aExK6y8p6fsihYEn/BYuQ4g0CxAAgFc4b/ZLN4CrsRZ55srTdqoiLzU2B2evC+apEIxprEzkQ==}
@@ -4026,7 +4038,7 @@ snapshots:
 
   '@types/amqplib@0.10.7':
     dependencies:
-      '@types/node': 24.0.15
+      '@types/node': 24.1.0
 
   '@types/bcrypt@5.0.2':
     dependencies:
@@ -4083,6 +4095,10 @@ snapshots:
       undici-types: 7.8.0
 
   '@types/node@24.0.15':
+    dependencies:
+      undici-types: 7.8.0
+
+  '@types/node@24.1.0':
     dependencies:
       undici-types: 7.8.0
 
