@@ -72,8 +72,13 @@ export class VideoDiscoveryService {
 	}
 
 	public async getSimilarVideos(videoId: string) {
-		const { points } = await this.qdrantClient.query('videos', { query: videoId, with_payload: true });
-		return points.map(p => p.payload);
+		try {
+			const { points } = await this.qdrantClient.query('videos', { query: videoId, with_payload: true }).catch();
+
+			return points.map(p => p.payload);
+		} catch (error) {
+			return this.videoRepository.getLatestPopularVideos(20); //Fallback for private and unindexed videos
+		}
 	}
 
 	public async getVideo(videoId: string) {
