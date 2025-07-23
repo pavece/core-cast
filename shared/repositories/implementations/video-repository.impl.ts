@@ -1,5 +1,5 @@
 import { PrismaClient, video } from '@core-cast/prisma';
-import { IVideoCreationProps, VideoSearchRecord } from '@core-cast/types';
+import { VideoManagementResponses, VideoSearchRecord } from '@core-cast/types';
 import { IVideoRepository, videoWithPartialUser } from '../types/video-repository.interface';
 
 export class VideoRepository implements IVideoRepository {
@@ -14,7 +14,7 @@ export class VideoRepository implements IVideoRepository {
 	getUserVideos(userId: string): Promise<video[]> {
 		return this.prismaClient.video.findMany({ where: { userId } });
 	}
-	createVideo(videoProps: IVideoCreationProps, userId: string): Promise<video> {
+	createVideo(videoProps: VideoManagementResponses.IVideoCreationProps, userId: string): Promise<video> {
 		return this.prismaClient.video.create({ data: { uploadedBy: { connect: { id: userId } }, ...videoProps } });
 	}
 	deleteVideo(videoId: string): Promise<video> {

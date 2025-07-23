@@ -2,10 +2,16 @@ import { VideoManagementResponses } from '@core-cast/types';
 import { VideoInteractionsRepository, VideoRepository } from '@core-cast/repositories';
 import { ApiError } from '../errors/api-error';
 import { Prisma } from '@core-cast/prisma';
+import { Meili } from '@core-cast/meilisearch';
+import { Qdrant } from '@core-cast/qdrant';
+import { ObjectStore } from '@core-cast/object-store';
 
 export class VideoManagementService {
 	private videoRepository = new VideoRepository(Prisma.getInstance().prismaClient);
 	private videoInteractionsRepository = new VideoInteractionsRepository(Prisma.getInstance().prismaClient);
+	private milisearchCilent = Meili.getInstance().getClient();
+	private qdrantClient = Qdrant.getInstance().getClient();
+	private objectStore = ObjectStore.getInstance().s3Client;
 
 	public async getVideo(userId: string, videoId: string) {
 		const video = await this.videoRepository.getVideoById(videoId);
@@ -29,15 +35,21 @@ export class VideoManagementService {
 	public async removeVideo(userId: string, videoId: string) {
 		const video = await this.getVideo(userId, videoId); //Check ownership
 
-		//TODO: Remove media from object store
-		//TODO: Remove pending tasks
-		//TODO: Remove meilisearch and qdrant records
+		try {
+			//Silently ignore if records don't exist here
+			await this.milisearchCilent.deleteIndex(videoId);
+			await this.qdrantClient.delete('videos', { points: [videoId] }).catch();
+		} catch {}
 
 		await this.videoRepository.deleteVideo(videoId);
 		return video;
 	}
 
-	public async updateVideo(userId: string, videoId: string, videoProps: Partial<VideoManagementResponses.IVideoCreationProps>) {
+	public async updateVideo(
+		userId: string,
+		videoId: string,
+		videoProps: Partial<VideoManagementResponses.IVideoCreationProps>
+	) {
 		await this.getVideo(userId, videoId); //Check ownership
 
 		return await this.videoRepository.updateVideo(videoId, videoProps);
