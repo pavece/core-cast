@@ -4,4 +4,4 @@ export interface IGenericApiResponse {
 export * from './auth.types';
 export * from './user-management.types';
 export * from './user.types';
-export * from './video-manegement.types';
+export * as VideoManagementResponses from './video-manegement.types';

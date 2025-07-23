@@ -14,7 +14,8 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.VideoManagementResponses = void 0;
 __exportStar(require("./auth.types"), exports);
 __exportStar(require("./user-management.types"), exports);
 __exportStar(require("./user.types"), exports);
-__exportStar(require("./video-manegement.types"), exports);
+exports.VideoManagementResponses = require("./video-manegement.types");
