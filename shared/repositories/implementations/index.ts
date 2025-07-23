@@ -6,3 +6,4 @@ export * from './multipart-upload.repo.impl';
 export * from './auth-session.repository.impl';
 export * from './video-interactions.impl';
 export * from './view-events.repository.impl';
+export * from './register-whitelist.repository.impl';

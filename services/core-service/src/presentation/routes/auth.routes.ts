@@ -7,7 +7,7 @@ export class AuthRouter {
 		const router = Router();
 		const authController = new AuthController();
 
-		router.post('/register', authController.createAccount);
+		router.post('/register/:whitelistId', authController.createAccount);
 		router.post('/login', authController.login);
 
 		router.patch('/2fa/configure', validateSession, authController.configure2FA);

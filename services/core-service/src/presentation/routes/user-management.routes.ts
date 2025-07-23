@@ -14,6 +14,7 @@ export class UserManagementRouter {
 		router.put('/:id', validateSession, validateAdmin, userManagementController.updateUser);
 		router.patch('/toggle-ban/:id', validateSession, validateAdmin, userManagementController.banUser);
 		router.delete('/close-sessions/:id', validateSession, validateAdmin, userManagementController.closeSessions);
+		router.post("/register-whitelist", validateSession, validateAdmin, userManagementController.createRegisterWhitelist)
 
 		return router;
 	}

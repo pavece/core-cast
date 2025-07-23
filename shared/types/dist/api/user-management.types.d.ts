@@ -24,3 +24,6 @@ export interface IAdminGetUsersResponse extends IGenericApiResponse {
 }
 export interface IAdminCloseSessionsResponse extends IGenericApiResponse {
 }
+export interface ICreateWhitelistResponse extends IGenericApiResponse {
+    whitelistId: string;
+}

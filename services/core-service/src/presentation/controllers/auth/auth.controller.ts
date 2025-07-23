@@ -16,7 +16,7 @@ export class AuthController {
 		}
 
 		this.authService
-			.registerUser(parsedBody?.email, parsedBody?.username, parsedBody?.password)
+			.registerUser(req.params.whitelistId, parsedBody?.email, parsedBody?.username, parsedBody?.password)
 			.then(r => {
 				res.cookie('session_token', r.session, {
 					httpOnly: true,

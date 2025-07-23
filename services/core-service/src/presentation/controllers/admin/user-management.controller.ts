@@ -105,4 +105,11 @@ export class UserManagementController {
 			.then(r => res.json({ message: 'Sessions closed' } as UserManagementResponses.IAdminCloseSessionsResponse))
 			.catch(e => handleApiError(e, res));
 	};
+
+	public createRegisterWhitelist = (req: Request, res: Response) => {
+		this.userManagementService
+			.generateRegisterWhitelist()
+			.then(r => res.json({ message: 'Whitelist entry added', whitelistId: r.id } as UserManagementResponses.ICreateWhitelistResponse))
+			.catch(e => handleApiError(e, res));
+	};
 }

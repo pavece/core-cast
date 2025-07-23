@@ -1,7 +1,7 @@
 import { Prisma, Role } from '@core-cast/prisma';
 import { ApiError } from '../errors/api-error';
 import bcrypt from 'bcrypt';
-import { AuthSessionRepository } from '@core-cast/repositories';
+import { AuthSessionRepository, RegisterWhitelistRepository } from '@core-cast/repositories';
 import { AuthSession } from '@core-cast/repositories';
 import { authenticator } from 'otplib';
 import crypto from 'crypto';
@@ -13,16 +13,32 @@ const SALT_ROUNDS = 12;
 export class AuthService {
 	private userRepository = new UserRepository(Prisma.getInstance().prismaClient);
 	private sessionRepository = new AuthSessionRepository(RedisClient.getInstance().getClient(), 2);
+	private registerWhitelistRepository = new RegisterWhitelistRepository(Prisma.getInstance().prismaClient);
 
-	public async registerUser(email: string, name: string, password: string) {
+	private async validateWhitelist(whitelistId: string) {
+		const whitelistRecord = await this.registerWhitelistRepository.getRegisterWhitelistById(whitelistId);
+		if (!whitelistRecord) {
+			throw new ApiError(403, 'Invalid whitelist id');
+		}
+
+		if (whitelistRecord.validUntil.getMilliseconds() < new Date().getMilliseconds()) {
+			throw new ApiError(403, 'Whitelist expired, please ask an administrator for a new one');
+		}
+	}
+
+	public async registerUser(whitelistId: string, email: string, name: string, password: string) {
+		const databaseEmpty = await this.userRepository.isUserListEmpty();
 		const existingUser = await this.userRepository.areUsernameOrEmailAvailable(email, name);
+
+		if (!databaseEmpty) {
+			await this.validateWhitelist(whitelistId);
+		}
 
 		if (!existingUser) {
 			throw new ApiError(401, 'Username or email is already taken');
 		}
 
 		const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-		const databaseEmpty = await this.userRepository.isUserListEmpty();
 
 		const user = await this.userRepository.createUser({
 			email,
@@ -39,6 +55,9 @@ export class AuthService {
 			role: user.role,
 			lastUse: new Date().toISOString(),
 		});
+
+		await this.registerWhitelistRepository.deleteRegisterWhitelistById(whitelistId);
+
 		return { user, session: sessionToken };
 	}
 
