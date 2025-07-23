@@ -1,4 +1,4 @@
-import { IVideoCreationProps } from '@core-cast/types';
+import { VideoManagementResponses } from '@core-cast/types';
 import { VideoInteractionsRepository, VideoRepository } from '@core-cast/repositories';
 import { ApiError } from '../errors/api-error';
 import { Prisma } from '@core-cast/prisma';
@@ -19,7 +19,7 @@ export class VideoManagementService {
 		return this.videoRepository.getUserVideos(userId);
 	}
 
-	public async createVideo(userId: string, videoProps: IVideoCreationProps) {
+	public async createVideo(userId: string, videoProps: VideoManagementResponses.IVideoCreationProps) {
 		const video = await this.videoRepository.createVideo(videoProps, userId);
 		await this.videoInteractionsRepository.createVideoInteractions(video.id);
 
@@ -37,7 +37,7 @@ export class VideoManagementService {
 		return video;
 	}
 
-	public async updateVideo(userId: string, videoId: string, videoProps: Partial<IVideoCreationProps>) {
+	public async updateVideo(userId: string, videoId: string, videoProps: Partial<VideoManagementResponses.IVideoCreationProps>) {
 		await this.getVideo(userId, videoId); //Check ownership
 
 		return await this.videoRepository.updateVideo(videoId, videoProps);

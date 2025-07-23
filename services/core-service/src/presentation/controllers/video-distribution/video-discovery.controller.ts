@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { VideoDiscoveryService } from '../../../domain/services/video-discovery.service';
 import { handleApiError } from '../../../domain/errors/api-error';
-
+import { VideoDiscoveryResponses } from '@core-cast/types';
 export class VideoDiscoveryController {
 	private videoDiscoveryService = new VideoDiscoveryService();
 
@@ -14,7 +14,7 @@ export class VideoDiscoveryController {
 
 		this.videoDiscoveryService
 			.buildFeed(lastSeenVideos)
-			.then(r => res.json({ message: `${lastSeenVideos.length ? 'Warm' : 'Cold start'} feed`, videos: r }))
+			.then(r => res.json({ message: `${lastSeenVideos.length ? 'Warm' : 'Cold start'} feed`, videos: r } as VideoDiscoveryResponses.IGetFeedResponse))
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -27,7 +27,7 @@ export class VideoDiscoveryController {
 
 		this.videoDiscoveryService
 			.searchVideo(String(query))
-			.then(r => res.json({ message: 'Search results', videos: r }))
+			.then(r => res.json({ message: 'Search results', videos: r } as VideoDiscoveryResponses.ISearchVideoResponse))
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -36,7 +36,7 @@ export class VideoDiscoveryController {
 
 		this.videoDiscoveryService
 			.getSimilarVideos(videoId)
-			.then(r => res.json({ message: 'Similar videos', videos: r }))
+			.then(r => res.json({ message: 'Similar videos', videos: r } as unknown as VideoDiscoveryResponses.IGetSimilarVideosResponse))
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -44,7 +44,7 @@ export class VideoDiscoveryController {
 		const videoId = req.params.id;
 		this.videoDiscoveryService
 			.getVideo(videoId)
-			.then(r => res.json({ message: 'Video', video: r }))
+			.then(r => res.json({ message: 'Video', video: r } as VideoDiscoveryResponses.IGetVideoResponse))
 			.catch(e => handleApiError(e, res));
 	};
 }

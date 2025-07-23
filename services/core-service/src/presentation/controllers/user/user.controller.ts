@@ -4,12 +4,7 @@ import { cleanUser } from '../admin/user-management.controller';
 import { handleApiError } from '../../../domain/errors/api-error';
 import { updateUserValidator } from '../../../domain/validators/user.validators';
 import { UserManagementService } from '../../../domain/services/user-management.service';
-import {
-	ICloseUserSessionsResponse,
-	IGetUserReponse,
-	IRemoveUserResponse,
-	IUpdateUserResponse,
-} from '@core-cast/types';
+import { UserResponses } from '@core-cast/types';
 
 //User configuration / self management (settings)
 export class UserController {
@@ -24,7 +19,7 @@ export class UserController {
 
 		this.userManagementService
 			.getUser(userId)
-			.then(r => res.json({ message: 'User information', user: cleanUser(r) } as IGetUserReponse))
+			.then(r => res.json({ message: 'User information', user: cleanUser(r) } as UserResponses.IGetUserReponse))
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -42,7 +37,7 @@ export class UserController {
 
 		this.userManagementService
 			.updateUser(userId, parsedBody)
-			.then(r => res.status(214).json({ message: 'Updated user', user: cleanUser(r) } as IUpdateUserResponse))
+			.then(r => res.status(214).json({ message: 'Updated user', user: cleanUser(r) } as UserResponses.IUpdateUserResponse))
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -55,7 +50,7 @@ export class UserController {
 
 		this.userManagementService
 			.removeUser(userId)
-			.then(r => res.json({ message: 'Deleted user', user: cleanUser(r) } as IRemoveUserResponse))
+			.then(r => res.json({ message: 'Deleted user', user: cleanUser(r) } as UserResponses.IRemoveUserResponse))
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -68,7 +63,7 @@ export class UserController {
 
 		this.userManagementService
 			.closeSessions(userId)
-			.then(() => res.json({ message: 'Sessions closed' } as ICloseUserSessionsResponse))
+			.then(() => res.json({ message: 'Sessions closed' } as UserResponses.ICloseUserSessionsResponse))
 			.catch(e => handleApiError(e, res));
 	};
 

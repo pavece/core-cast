@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../../../domain/services/auth.service';
 import { createUserRequestValidator, loginValidator } from '../../../domain/validators/auth.validators';
-import { ICreateUserResponse, ILoginResponse } from '@core-cast/types';
+import { AuthResponses } from '@core-cast/types';
 import { handleApiError } from '../../../domain/errors/api-error';
 import { AuthRequest } from '../../middlewares/validate-session';
 
@@ -28,7 +28,7 @@ export class AuthController {
 				res.json({
 					message: 'User succesfully registered',
 					user: { email: r.user.email, role: r.user.role, username: r.user.username },
-				} as ICreateUserResponse);
+				} as AuthResponses.ICreateUserResponse);
 			})
 			.catch(err => handleApiError(err, res, 'Failed to create user'));
 	};
@@ -43,7 +43,7 @@ export class AuthController {
 		this.authService
 			.login(parsedBody.email, parsedBody.password, parsedBody.totp)
 			.then(r => {
-				if (r.requiresTotp) return res.status(401).json(r as ILoginResponse);
+				if (r.requiresTotp) return res.status(401).json(r as AuthResponses.ILoginResponse);
 
 				res.cookie('session_token', r.session, {
 					httpOnly: true,
@@ -55,7 +55,7 @@ export class AuthController {
 				res.json({
 					message: 'User succesfully logged in',
 					user: { email: r.user!.email, role: r.user!.role, username: r.user!.username },
-				} as ILoginResponse);
+				} as AuthResponses.ILoginResponse);
 			})
 			.catch(err => handleApiError(err, res, 'Failed to login user'));
 	};

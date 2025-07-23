@@ -3,16 +3,9 @@ import { UserManagementService } from '../../../domain/services/user-management.
 import { handleApiError } from '../../../domain/errors/api-error';
 import { adminUpdateUserValidator } from '../../../domain/validators/user.validators';
 import { user } from '@core-cast/prisma';
-import {
-	IAdminBanUserResponse,
-	IAdminCloseSessionsResponse,
-	IAdminGetUsersResponse,
-	IAdminRemoveUserResponse,
-	IAdminUpdateUserResponse,
-	PartialUser,
-} from '@core-cast/types';
+import { UserManagementResponses } from '@core-cast/types';
 
-export function cleanUser(original: user): PartialUser {
+export function cleanUser(original: user): UserManagementResponses.PartialUser {
 	return {
 		username: original.username,
 		email: original.email,
@@ -50,7 +43,9 @@ export class UserManagementController {
 			.getUsers()
 			.then(user => {
 				const cleanUsers = user.map(user => cleanUser(user));
-				res.status(200).json({ message: 'User list', users: cleanUsers } as IAdminGetUsersResponse);
+				res
+					.status(200)
+					.json({ message: 'User list', users: cleanUsers } as UserManagementResponses.IAdminGetUsersResponse);
 			})
 			.catch(e => handleApiError(e, res));
 	};
@@ -60,7 +55,12 @@ export class UserManagementController {
 
 		this.userManagementService
 			.removeUser(userId)
-			.then(r => res.json({ message: 'User removed successfully', user: cleanUser(r) } as IAdminRemoveUserResponse))
+			.then(r =>
+				res.json({
+					message: 'User removed successfully',
+					user: cleanUser(r),
+				} as UserManagementResponses.IAdminRemoveUserResponse)
+			)
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -69,7 +69,12 @@ export class UserManagementController {
 
 		this.userManagementService
 			.toggleUserBan(userId)
-			.then(r => res.json({ message: 'User banned successfully', user: cleanUser(r) } as IAdminBanUserResponse))
+			.then(r =>
+				res.json({
+					message: 'User banned successfully',
+					user: cleanUser(r),
+				} as UserManagementResponses.IAdminBanUserResponse)
+			)
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -84,7 +89,10 @@ export class UserManagementController {
 		this.userManagementService
 			.updateUser(userId, parsedBody)
 			.then(r => {
-				res.status(214).json({ message: 'User updated succesfully', user: cleanUser(r) } as IAdminUpdateUserResponse);
+				res.status(214).json({
+					message: 'User updated succesfully',
+					user: cleanUser(r),
+				} as UserManagementResponses.IAdminUpdateUserResponse);
 			})
 			.catch(e => handleApiError(e, res));
 	};
@@ -94,7 +102,7 @@ export class UserManagementController {
 
 		this.userManagementService
 			.closeSessions(userId)
-			.then(r => res.json({ message: 'Sessions closed' } as IAdminCloseSessionsResponse))
+			.then(r => res.json({ message: 'Sessions closed' } as UserManagementResponses.IAdminCloseSessionsResponse))
 			.catch(e => handleApiError(e, res));
 	};
 }

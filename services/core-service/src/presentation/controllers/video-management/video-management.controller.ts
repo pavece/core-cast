@@ -3,6 +3,7 @@ import { AuthRequest } from '../../middlewares/validate-session';
 import { VideoManagementService } from '../../../domain/services/video-mamagement.service';
 import { handleApiError } from '../../../domain/errors/api-error';
 import { createVideoValidator, updateVideoValidator } from '../../../domain/validators/video.validators';
+import { VideoManagementResponses } from '@core-cast/types';
 
 export class VideoManagementController {
 	private videoManagementService = new VideoManagementService();
@@ -17,7 +18,7 @@ export class VideoManagementController {
 
 		this.videoManagementService
 			.getVideo(userId, videoId)
-			.then(r => res.json({ message: 'Video information', video: r }))
+			.then(r => res.json({ message: 'Video information', video: r } as VideoManagementResponses.ICreateVideoResponse))
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -30,7 +31,7 @@ export class VideoManagementController {
 
 		this.videoManagementService
 			.getVideos(userId)
-			.then(r => res.json({ message: 'User videos', videos: r }))
+			.then(r => res.json({ message: 'User videos', videos: r } as VideoManagementResponses.IGetVideosResponse))
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -49,7 +50,12 @@ export class VideoManagementController {
 
 		this.videoManagementService
 			.createVideo(userId, parsedBody)
-			.then(r => res.json({ message: 'Video created, you can now upload media to be processed', video: r }))
+			.then(r =>
+				res.json({
+					message: 'Video created, you can now upload media to be processed',
+					video: r,
+				} as VideoManagementResponses.ICreateVideoResponse)
+			)
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -63,7 +69,7 @@ export class VideoManagementController {
 
 		this.videoManagementService
 			.removeVideo(userId, videoId)
-			.then(r => res.json({ message: 'Removed video', video: r }))
+			.then(r => res.json({ message: 'Removed video', video: r } as VideoManagementResponses.IRemoveVideoResponse))
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -82,7 +88,7 @@ export class VideoManagementController {
 
 		this.videoManagementService
 			.updateVideo(userId, videoId, parsedBody)
-			.then(r => res.json({ message: 'Video updated', video: r }))
+			.then(r => res.json({ message: 'Video updated', video: r } as VideoManagementResponses.IUpdateVideoResponse))
 			.catch(e => handleApiError(e, res));
 	};
 }
