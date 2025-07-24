@@ -6,7 +6,7 @@ export class ServiceRoutes {
 		const router = Router();
 
 		const uploadRoutes = UploadRoutes.routes;
-		router.use('/upload', uploadRoutes);
+		router.use('/api/upload', uploadRoutes);
 
 		return router;
 	}

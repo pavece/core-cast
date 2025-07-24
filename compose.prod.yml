@@ -13,6 +13,22 @@ volumes:
 
 services:
   # Proxy (API gateway)
+  traefik:
+    image: traefik:v3.5
+    container_name: traefik
+    command:
+      - --api.dashboard=true
+      - --providers.docker=true
+      - --api.insecure=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+    ports:
+      - '80:80' # Main backend entrypoint expose to end users
+      - '8088:8080' # Dashboard do NOT expose to end users
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - proxy-access
 
   # Corecast services
   core:
@@ -31,6 +47,11 @@ services:
     networks:
       - db-network
       - proxy-access
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.core.rule=PathPrefix(`/api/core`)'
+      - 'traefik.http.services.core.loadbalancer.server.port=8080'
+      - 'traefik.http.routers.core.entrypoints=web'
 
   upload:
     build:
@@ -47,6 +68,11 @@ services:
       - db-network
       - mq-network
       - proxy-access
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.upload.rule=PathPrefix(`/api/upload`)'
+      - 'traefik.http.services.upload.loadbalancer.server.port=8080'
+      - 'traefik.http.routers.upload.entrypoints=web'
 
   transcoding:
     build:

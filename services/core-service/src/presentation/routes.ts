@@ -19,13 +19,13 @@ export class ApiRouter {
 		const videoInteractionsRouter = VideoInteractionRouter.routes;
 		const videoInteractionManagementRouter = VideoInteractionManagementRouter.routes;
 
-		router.use('/api/auth', authRouter);
-		router.use('/api/admin/users', userManagementRouter);
-		router.use('/api/user', userRouter);
-		router.use('/api/uploads', videoManagementRouter);
-		router.use('/api/discovery', videoDisoveryRouter);
-		router.use('/api/interactions', videoInteractionsRouter);
-		router.use('/api/manage-interactions', videoInteractionManagementRouter);
+		router.use('/api/core/auth', authRouter);
+		router.use('/api/core/admin/users', userManagementRouter);
+		router.use('/api/core/user', userRouter);
+		router.use('/api/core/uploads', videoManagementRouter);
+		router.use('/api/core/discovery', videoDisoveryRouter);
+		router.use('/api/core/interactions', videoInteractionsRouter);
+		router.use('/api/core/manage-interactions', videoInteractionManagementRouter);
 
 		return router;
 	}
