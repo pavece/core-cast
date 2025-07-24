@@ -1,0 +1,226 @@
+networks:
+  db-network:
+  mq-network:
+  proxy-access:
+
+volumes:
+  minio-data:
+  pg-data:
+  redis-data:
+  meili-data:
+  qdrant-data:
+  clickhouse-data:
+
+services:
+  # Proxy (API gateway)
+
+  # Corecast services
+  core:
+    build:
+      context: .
+      target: core-service
+    ports:
+      - 3000:8080 # API (Exposed by proxy to the exterior)
+      - 4000:8081 # Prometheus
+    env_file:
+      - .env.docker
+    depends_on:
+      - housekeeping
+      - upload
+      - transcoding
+    networks:
+      - db-network
+      - proxy-access
+
+  upload:
+    build:
+      context: .
+      target: upload-service
+    ports:
+      - 3001:8080 # API (Exposed by proxy to the exterior)
+      - 4001:8081 # Prometheus
+    env_file:
+      - .env.docker
+    depends_on:
+      - housekeeping
+    networks:
+      - db-network
+      - mq-network
+      - proxy-access
+
+  transcoding:
+    build:
+      context: .
+      target: transcoding-service
+    ports:
+      - 4002:8081 # Prometheus
+    env_file:
+      - .env.docker
+    depends_on:
+      - housekeeping
+    networks:
+      - db-network
+      - mq-network
+      - proxy-access
+
+  housekeeping:
+    build:
+      context: .
+      target: housekeeping-service
+    ports:
+      - 4003:8081 # Prometheus
+    env_file:
+      - .env.docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      clickhouse:
+        condition: service_started
+      qdrant:
+        condition: service_started
+      meilisearch:
+        condition: service_started
+      minio:
+        condition: service_started
+      prisma-migrate:
+        condition: service_completed_successfully
+    networks:
+      - db-network
+      - mq-network
+      - proxy-access
+
+  # DB migration
+  prisma-migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env.docker
+    networks:
+      - db-network
+
+  # MQ
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - 5672:5672 # Do NOT expose without authenticatiuon properly configured
+      - 9091:15672 # Do NOT expose to end users
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', 'status']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - mq-network
+
+  # Databases
+  minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z-cpuv1 #This version includes the legacy web console, good for rebugging. Update to latest / use other object store for production
+    command: server /data --console-address ":9001"
+    ports:
+      - 9000:9000 #API (Needs to be exposed to end users, use solid credentials)
+      - 9001:9001 #Web UI (Do not expose to end users)
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    volumes:
+      - minio-data:/data
+    networks:
+      - db-network
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:9000/minio/health/live || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  redis:
+    image: redis:7-alpine
+    command: ['redis-server', '--appendonly', 'yes', '--requirepass', 'redis']
+    ports:
+      - 9002:6379 #Do NOT expose to end users
+    volumes:
+      - redis-data:/data
+    networks:
+      - db-network
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-a', 'redis', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  postgres:
+    image: postgres:17
+    ports:
+      - 5431:5432 #Do NOT expose to end users
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: core-cast
+    networks:
+      - db-network
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.15
+    environment:
+      - MEILI_MASTER_KEY=masterKey
+    ports:
+      - 7700:7700 # Do NOT expose to end users
+    volumes:
+      - meili-data:/meili_data
+    networks:
+      - db-network
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    ports:
+      - 6333:6333 # Do NOT expose to end users
+    expose:
+      - 6333
+    volumes:
+      - qdrant-data:/qdrant/stor
+    networks:
+      - db-network
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:6333/health || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  clickhouse:
+    image: clickhouse/clickhouse-server
+    ports:
+      - '8123:8123' # Do NOT expose to end users
+    volumes:
+      # Direct fs volume mappings won't work in windows see (https://github.com/ClickHouse/ClickHouse/issues/55638)
+      - clickhouse-data:/var/lib/clickhouse
+    environment:
+      - CLICKHOUSE_DB=corecast
+      - CLICKHOUSE_USER=clickhouse
+    networks:
+      - db-network
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:8123/ping || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s

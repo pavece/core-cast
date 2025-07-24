@@ -12,3 +12,5 @@ qdrant-data
 clickhouse-data
 
 temp
+
+.pnpm-store
