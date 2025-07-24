@@ -19,7 +19,7 @@ importers:
         version: 1.11.2
       '@core-cast/clickhouse':
         specifier: workspace:*
-        version: link:../../shared/clickhouse
+        version: file:shared/clickhouse
       '@core-cast/meilisearch':
         specifier: workspace:*
         version: link:../../shared/meilisearch
@@ -110,7 +110,7 @@ importers:
         version: 3.848.0
       '@core-cast/clickhouse':
         specifier: workspace:*
-        version: link:../../shared/clickhouse
+        version: file:shared/clickhouse
       '@core-cast/object-store':
         specifier: workspace:*
         version: file:shared/object-store
@@ -132,6 +132,9 @@ importers:
       cron:
         specifier: ^4.3.2
         version: 4.3.2
+      dotenv:
+        specifier: ^17.2.0
+        version: 17.2.0
       express:
         specifier: ^5.1.0
         version: 5.1.0
@@ -144,6 +147,9 @@ importers:
       pino:
         specifier: ^9.7.0
         version: 9.7.0
+      pino-pretty:
+        specifier: ^13.0.0
+        version: 13.0.0
       prom-client:
         specifier: ^15.1.3
         version: 15.1.3
@@ -657,6 +663,9 @@ packages:
   '@clickhouse/client@1.11.2':
     resolution: {integrity: sha512-ZE7Q1qxsDNXCkGPf1zqmhpZpwAKxKT+1s4Z432J1Mb2Gm26Y4tG/sJoug81AfAJTt6s7taO2vzNBAKfSR3SStg==}
     engines: {node: '>=16'}
+
+  '@core-cast/clickhouse@file:shared/clickhouse':
+    resolution: {directory: shared/clickhouse, type: directory}
 
   '@core-cast/object-store@file:shared/object-store':
     resolution: {directory: shared/object-store, type: directory}
@@ -3478,6 +3487,12 @@ snapshots:
     dependencies:
       '@clickhouse/client-common': 1.11.2
 
+  '@core-cast/clickhouse@file:shared/clickhouse':
+    dependencies:
+      '@clickhouse/client': 1.11.2
+      '@types/node': 24.1.0
+      typescript: 5.8.3
+
   '@core-cast/object-store@file:shared/object-store':
     dependencies:
       '@aws-sdk/client-s3': 3.848.0
@@ -4047,11 +4062,11 @@ snapshots:
   '@types/body-parser@1.19.6':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 24.0.15
+      '@types/node': 24.1.0
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 24.0.15
+      '@types/node': 24.1.0
 
   '@types/cookie-parser@1.4.9(@types/express@5.0.3)':
     dependencies:
@@ -4063,7 +4078,7 @@ snapshots:
 
   '@types/express-serve-static-core@5.0.7':
     dependencies:
-      '@types/node': 24.0.15
+      '@types/node': 24.1.0
       '@types/qs': 6.14.0
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.5
@@ -4109,12 +4124,12 @@ snapshots:
   '@types/send@0.17.5':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 24.0.15
+      '@types/node': 24.1.0
 
   '@types/serve-static@1.15.8':
     dependencies:
       '@types/http-errors': 2.0.5
-      '@types/node': 24.0.15
+      '@types/node': 24.1.0
       '@types/send': 0.17.5
 
   '@types/uuid@9.0.8': {}
@@ -5321,7 +5336,7 @@ snapshots:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/long': 4.0.2
-      '@types/node': 24.0.15
+      '@types/node': 24.1.0
       long: 4.0.0
 
   proxy-addr@2.0.7:
