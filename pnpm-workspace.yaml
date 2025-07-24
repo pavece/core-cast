@@ -1,6 +1,7 @@
 packages:
   - shared/*
   - services/*
+  - frontend
 
 injectWorkspacePackages: true
 
