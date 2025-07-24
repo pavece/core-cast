@@ -8,6 +8,7 @@ import { ClickhouseClient } from '@core-cast/clickhouse';
 import { PrometheusServer } from './presentation/prometheus-server';
 
 async function main() {
+	printInitialMessage();
 	await setupServices();
 
 	const jobManager = new HousekeepingJobManager();
@@ -70,6 +71,17 @@ async function setupServices() {
 	} catch (error) {
 		logger.error({ message: 'Failed to connect to clickhouse', error });
 	}
+}
+
+function printInitialMessage() {
+	console.log(`   ____               _  __
+  / ___|___  _ __ ___| |/ /___  ___ _ __  
+ | |   / _ \\| '__/ _ \\ ' // _ \\/ _ \\ '_ \\ 
+ | |__| (_) | | |  __/ . \\  __/  __/ |_) |
+  \\____\\___/|_|  \\___|_|\\_\\___|\\___| .__/ 
+                                   |_|    `);
+
+	console.log('Core cast housekeeping service');
 }
 
 main();

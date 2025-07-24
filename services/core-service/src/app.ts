@@ -13,6 +13,7 @@ import { ClickhouseClient } from '@core-cast/clickhouse';
 async function main() {
 	const logger = new Logger().getLogger();
 
+	printInitialMessage();
 	await setupServices(logger);
 
 	const router = ApiRouter.routes;
@@ -81,6 +82,16 @@ async function setupServices(logger: BaseLogger) {
 	} catch (error) {
 		logger.error({ message: 'Failed to connect to clickhouse', error });
 	}
+}
+
+function printInitialMessage() {
+	console.log(`   ____
+  / ___|___  _ __ ___ 
+ | |   / _ \\| '__/ _ \\
+ | |__| (_) | | |  __/
+  \\____\\___/|_|  \\___|`);
+
+	console.log('\n Core cast main service');
 }
 
 main();
