@@ -1,4 +1,5 @@
 import React from 'react';
+import { RegisterForm } from './register-form';
 
 type Props = {
 	params: Promise<{ token: string }>;
@@ -6,8 +7,13 @@ type Props = {
 
 const RegisterPage = async ({ params }: Props) => {
 	const { token } = await params;
+	//TODO: Validate token here too
 
-	return <div>Register: {token}</div>;
+	return (
+		<>
+			<RegisterForm token={token} />
+		</>
+	);
 };
 
 export default RegisterPage;
