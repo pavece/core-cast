@@ -56,7 +56,9 @@ export class AuthService {
 			lastUse: new Date().toISOString(),
 		});
 
-		await this.registerWhitelistRepository.deleteRegisterWhitelistById(whitelistId);
+		if (!databaseEmpty) {
+			await this.registerWhitelistRepository.deleteRegisterWhitelistById(whitelistId);
+		}
 
 		return { user, session: sessionToken };
 	}

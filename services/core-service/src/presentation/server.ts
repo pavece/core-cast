@@ -13,7 +13,7 @@ export class Server {
 
 		this.app.use(cookieParser());
 
-		this.app.use(cors({ origin: '*', methods: ['PUT', 'POST', 'GET'] }));
+		this.app.use(cors({ origin: process.env.CLIENT_BASE_URL || '*', credentials: true }));
 		this.app.use(this.routes);
 	}
 

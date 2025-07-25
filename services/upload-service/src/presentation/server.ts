@@ -16,7 +16,7 @@ export class Server {
 
 		this.app.use(cookieParser());
 
-		this.app.use(cors({ origin: process.env.CLIENT_BASE_URL || '*', methods: ['PUT', 'POST', 'GET'], credentials: true }));
+		this.app.use(cors({ origin: process.env.CLIENT_BASE_URL || '*', credentials: true }));
 
 		this.app.use('/api', this.routes);
 

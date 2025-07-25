@@ -7,7 +7,7 @@ FROM base AS build
 COPY . /app
 WORKDIR /app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run -r build
+RUN pnpm run -r --filter=!frontend build
 RUN pnpm deploy --filter=upload-service --prod /prod/upload-service
 RUN pnpm deploy --filter=transcoding-service --prod /prod/transcoding-service
 RUN pnpm deploy --filter=core-service --prod /prod/core-service
