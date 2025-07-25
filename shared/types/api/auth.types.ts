@@ -10,3 +10,11 @@ export interface ICreateUserResponse extends IGenericApiResponse {
 }
 
 export type ILoginResponse = ICreateUserResponse | (IGenericApiResponse & { requiresTotp: boolean });
+
+export interface IValidateSessionResponse extends IGenericApiResponse {
+	user: {
+		username: string;
+		userId: string;
+		role: 'ADMIN' | 'USER';
+	};
+}

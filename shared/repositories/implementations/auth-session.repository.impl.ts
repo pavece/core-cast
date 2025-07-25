@@ -31,7 +31,7 @@ export class AuthSessionRepository implements AuthSessionRepositoryInterface {
 
 	async deleteSession(token: string): Promise<void> {
 		await this.redis.select(this.redisDatabaseNumber);
-		await this.redis.hdel('session:' + token);
+		await this.redis.del('session:' + token);
 	}
 
 	async updateSession(token: string, updates: Partial<AuthSession>): Promise<AuthSession | null> {

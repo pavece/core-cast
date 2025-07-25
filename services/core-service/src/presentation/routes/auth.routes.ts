@@ -12,6 +12,8 @@ export class AuthRouter {
 
 		router.patch('/2fa/configure', validateSession, authController.configure2FA);
 		router.patch('/2fa/activate', validateSession, authController.activate2FA);
+		router.get('/check-session', validateSession, authController.checkSession);
+		router.delete('/logout', validateSession, authController.logout);
 
 		return router;
 	}

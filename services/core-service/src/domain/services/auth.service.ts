@@ -154,4 +154,8 @@ export class AuthService {
 	public async validateSession(sessionId: string) {
 		return await this.sessionRepository.updateSession(sessionId, { lastUse: new Date().toISOString() });
 	}
+
+	public async removeSession(sessionId: string) {
+		return await this.sessionRepository.deleteSession(sessionId);
+	}
 }

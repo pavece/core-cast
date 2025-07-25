@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { AuthService } from '../../../domain/services/auth.service';
 import { createUserRequestValidator, loginValidator } from '../../../domain/validators/auth.validators';
 import { AuthResponses } from '@core-cast/types';
-import { handleApiError } from '../../../domain/errors/api-error';
+import { ApiError, handleApiError } from '../../../domain/errors/api-error';
 import { AuthRequest } from '../../middlewares/validate-session';
 
 export class AuthController {
@@ -95,5 +95,35 @@ export class AuthController {
 				res.json({ message: '2FA enabled succesfully' });
 			})
 			.catch(e => handleApiError(e, res, 'Failed to enable 2FA'));
+	};
+
+	public checkSession = (req: AuthRequest, res: Response) => {
+		if (!req.session) {
+			throw new ApiError(401, 'Unauthorized');
+		}
+
+		res.json({
+			message: 'Valid session',
+			user: { username: req.session.username, userId: req.session.userId, role: req.session.role },
+		});
+	};
+
+	public logout = (req: AuthRequest, res: Response) => {
+		if (!req.session) {
+			throw new ApiError(401, 'Unauthorized');
+		}
+
+		this.authService
+			.removeSession(req.cookies['session_token'])
+			.then(() => {
+				res.cookie('session_token', '', {
+					httpOnly: true,
+					secure: true,
+					sameSite: 'strict',
+					expires: new Date(),
+				});
+				res.json({ message: 'Logged out' });
+			})
+			.catch(e => handleApiError(e, res));
 	};
 }
