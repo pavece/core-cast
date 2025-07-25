@@ -11,3 +11,7 @@ export const coreApiClient = axios.create({
 export const registerUser = (email: string, username: string, password: string, token: string) => {
 	return coreApiClient.post(`/auth/register/${token}`, { email, username, password });
 };
+
+export const loginUser = (email: string, password: string, totp?: string) => {
+	return coreApiClient.post('/auth/login', { email, password, totp });
+};
