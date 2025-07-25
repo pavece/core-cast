@@ -8,6 +8,9 @@ import z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { registerUser } from '@/api/coreApi';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 type Props = {
 	token: string;
@@ -26,6 +29,7 @@ const registerFormSchema = z
 	});
 
 export const RegisterForm = ({ token }: Props) => {
+	const router = useRouter();
 	const form = useForm<z.infer<typeof registerFormSchema>>({
 		resolver: zodResolver(registerFormSchema),
 		defaultValues: {
@@ -36,8 +40,14 @@ export const RegisterForm = ({ token }: Props) => {
 		},
 	});
 
-	function onSubmit(values: z.infer<typeof registerFormSchema>) {
-		console.log(values);
+	async function onSubmit({ email, username, password }: z.infer<typeof registerFormSchema>) {
+		try {
+			await registerUser(email, username, password, token);
+			router.push('/creator-pannel');
+		} catch (error: unknown) {
+			//TODO: Implement correct error handling
+			toast.error(`User registration failed`);
+		}
 	}
 
 	return (
