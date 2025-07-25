@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { registerUser } from '@/api/coreApi';
-import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { handleApiError } from '@/api/errors';
 
 type Props = {
 	token: string;
@@ -44,9 +44,8 @@ export const RegisterForm = ({ token }: Props) => {
 		try {
 			await registerUser(email, username, password, token);
 			router.push('/creator-pannel');
-		} catch (error: unknown) {
-			//TODO: Implement correct error handling
-			toast.error(`User registration failed`);
+		} catch (error) {
+			handleApiError(error);
 		}
 	}
 

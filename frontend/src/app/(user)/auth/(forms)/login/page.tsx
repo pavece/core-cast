@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 import { LoginOtpForm } from './login-otp-form';
 import { useRouter } from 'next/navigation';
+import { handleApiError } from '@/api/errors';
 
 const loginFormSchema = z.object({
 	email: z.email(),
@@ -41,8 +42,7 @@ const LoginPage = () => {
 				return;
 			}
 
-			//TODO: Implement correct error handling
-			toast.error(`Login failed: ${error}`);
+			handleApiError(error);
 		}
 	}
 
