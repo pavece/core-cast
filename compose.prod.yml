@@ -16,9 +16,6 @@ services:
   traefik:
     image: traefik:v3.5
     container_name: traefik
-    depends_on:
-      - core
-      - upload
     command:
       - --api.dashboard=true
       - --providers.docker=true
@@ -26,7 +23,7 @@ services:
       - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
       - --serversTransport.insecureSkipVerify=true
-      - --log.level=DEBUG  # Temporarily for debugging
+      - --log.level=DEBUG # Temporarily for debugging
     ports:
       - '80:80' # Main backend entrypoint expose to end users
       - '8088:8080' # Dashboard do NOT expose to end users
@@ -41,7 +38,7 @@ services:
       context: .
       target: core-service
     ports:
-      - 3001:8080 # API (Exposed by proxy to the exterior)
+      # - 3001:8080 # API (Exposed by proxy to the exterior)
       - 4000:8081 # Prometheus
     env_file:
       - .env.docker
@@ -63,7 +60,7 @@ services:
       context: .
       target: upload-service
     ports:
-      - 3002:8080 # API (Exposed by proxy to the exterior)
+      # - 3002:8080 # API (Exposed by proxy to the exterior)
       - 4001:8081 # Prometheus
     env_file:
       - .env.docker
@@ -119,6 +116,8 @@ services:
         condition: service_started
       prisma-migrate:
         condition: service_completed_successfully
+      traefik:
+        condition: service_started
     networks:
       - db-network
       - mq-network
@@ -153,6 +152,7 @@ services:
       - mq-network
 
   # Databases
+  # Remember to create a public access policy without directory listing for the CDN bucket
   minio:
     image: minio/minio:RELEASE.2025-04-22T22-12-26Z-cpuv1 #This version includes the legacy web console, good for rebugging. Update to latest / use other object store for production
     command: server /data --console-address ":9001"

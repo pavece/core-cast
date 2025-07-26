@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from './button';
 import { Search, User } from 'lucide-react';
 import { Input } from './input';
+import { UserProfile } from '../user/user-profile';
 
 export const Navbar = () => {
 	return (
@@ -19,9 +20,7 @@ export const Navbar = () => {
 				<Button className='md:hidden h-10' variant='secondary'>
 					<Search /> Search video
 				</Button>
-				<Button>
-					<User /> Login
-				</Button>
+				<UserProfile />
 			</div>
 		</nav>
 	);

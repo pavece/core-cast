@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
@@ -14,6 +14,7 @@ import { AxiosError } from 'axios';
 import { LoginOtpForm } from './login-otp-form';
 import { useRouter } from 'next/navigation';
 import { handleApiError } from '@/api/errors';
+import { useSession } from '@/hooks/use-get-session';
 
 const loginFormSchema = z.object({
 	email: z.email(),
@@ -21,7 +22,7 @@ const loginFormSchema = z.object({
 });
 
 const LoginPage = () => {
-	//TODO: Check if current user is logged in with a valid session
+	const { userSession } = useSession();
 	const router = useRouter();
 	const [requiresTOTP, setRequiresTOTP] = useState(false);
 	const form = useForm<z.infer<typeof loginFormSchema>>({
@@ -34,8 +35,8 @@ const LoginPage = () => {
 
 	async function onSubmit({ email, password }: z.infer<typeof loginFormSchema>) {
 		try {
-			const result = await loginUser(email, password);
-			console.log(result);
+			await loginUser(email, password);
+			router.push('/creator-pannel');
 		} catch (error) {
 			if (error instanceof AxiosError && error.response?.data.requiresTotp) {
 				setRequiresTOTP(true);
@@ -45,6 +46,10 @@ const LoginPage = () => {
 			handleApiError(error);
 		}
 	}
+
+	useEffect(() => {
+		if (userSession) router.push('/');
+	}, [userSession]);
 
 	return (
 		<div>

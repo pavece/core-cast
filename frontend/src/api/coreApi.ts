@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { AuthResponses } from '@core-cast/types';
 
 export const coreApiClient = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + '/core',
@@ -14,4 +15,12 @@ export const registerUser = (email: string, username: string, password: string, 
 
 export const loginUser = (email: string, password: string, totp?: string) => {
 	return coreApiClient.post('/auth/login', { email, password, totp });
+};
+
+export const checkSession = () => {
+	return coreApiClient.get<AuthResponses.IValidateSessionResponse>('/auth/check-session', { withCredentials: true });
+};
+
+export const closeSession = () => {
+	return coreApiClient.delete('/auth/logout', { withCredentials: true });
 };

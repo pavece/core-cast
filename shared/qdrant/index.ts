@@ -18,15 +18,14 @@ export class Qdrant {
 		const { collections } = await this.client.getCollections();
 		if (collections.find(c => c.name == 'videos')) {
 			console.log("Qdrant collection 'videos' already exists, skiping creation");
-			return;
+		} else {
+			await this.client.createCollection('videos', {
+				vectors: {
+					size: 384, //all-MiniLM-L6-v2
+					distance: 'Cosine',
+				},
+			});
 		}
-
-		await this.client.createCollection('videos', {
-			vectors: {
-				size: 384, //all-MiniLM-L6-v2
-				distance: 'Cosine',
-			},
-		});
 	}
 
 	public getClient() {

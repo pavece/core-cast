@@ -8,8 +8,9 @@
 	},
 	"exports": {
 		".": {
-			"require": "./dist/index.ts",
-			"import": "./dist/index.ts"
+			"types": "./dist/index.d.ts",
+			"require": "./dist/index.js",
+			"import": "./dist/index.js"
 		}
 	},
 	"dependencies": {
