@@ -17,10 +17,21 @@ export const loginUser = (email: string, password: string, totp?: string) => {
 	return coreApiClient.post('/auth/login', { email, password, totp });
 };
 
-export const checkSession = () => {
+export const checkSession = (sessionToken?: string) => {
+	if (sessionToken) {
+		return coreApiClient.get<AuthResponses.IValidateSessionResponse>('/auth/check-session', {
+			headers: { Cookie: `session_token=${sessionToken}` },
+		});
+	}
+
 	return coreApiClient.get<AuthResponses.IValidateSessionResponse>('/auth/check-session', { withCredentials: true });
 };
 
-export const closeSession = () => {
+export const closeSession = (sessionToken?: string) => {
+	if (sessionToken) {
+		return coreApiClient.delete<AuthResponses.IValidateSessionResponse>('/auth/logout', {
+			headers: { Cookie: `session_token=${sessionToken}` },
+		});
+	}
 	return coreApiClient.delete('/auth/logout', { withCredentials: true });
 };

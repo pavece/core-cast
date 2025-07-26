@@ -3,7 +3,6 @@
 import React from 'react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import { useSession } from '@/hooks/use-session';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
 	DropdownMenu,
@@ -14,24 +13,32 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { User } from 'lucide-react';
+import { closeSession } from '@/api/coreApi';
+import { useRouter } from 'next/navigation';
 
-export const UserProfile = () => {
-	const { userSession, logout } = useSession();
+type Props = {
+	username: string | null;
+};
 
-	async function onCloseSession() {
-		await logout();
-		window.location.reload();
-	}
+export const UserProfile = ({ username }: Props) => {
+	const router = useRouter();
+
+	const onCloseSession = async () => {
+		await closeSession();
+		window.sessionStorage.clear();
+
+		router.push('/');
+	};
 
 	return (
 		<>
-			{userSession ? (
+			{username?.length ? (
 				<div>
 					<DropdownMenu>
 						<DropdownMenuTrigger className='cursor-pointer'>
 							<Avatar className='w-11 h-11'>
 								<AvatarImage src={``}></AvatarImage>
-								<AvatarFallback>{userSession.username.slice(0, 2).toUpperCase()}</AvatarFallback>
+								<AvatarFallback>{username.slice(0, 2).toUpperCase()}</AvatarFallback>
 							</Avatar>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent className='mr-4 mt-2'>
@@ -45,7 +52,10 @@ export const UserProfile = () => {
 							<DropdownMenuItem>
 								<Link href='/auth/settings'>Settings</Link>
 							</DropdownMenuItem>
-							<DropdownMenuItem className='cursor-pointer' onClick={onCloseSession}>
+							<DropdownMenuItem
+								className='cursor-pointer text-red-400 hover:text-red-500 hover:bg-red-400/25'
+								onClick={onCloseSession}
+							>
 								Logout
 							</DropdownMenuItem>
 						</DropdownMenuContent>
