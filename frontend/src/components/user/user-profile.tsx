@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import { useSession } from '@/hooks/use-get-session';
+import { useSession } from '@/hooks/use-session';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
 	DropdownMenu,
@@ -34,8 +34,10 @@ export const UserProfile = () => {
 								<AvatarFallback>{userSession.username.slice(0, 2).toUpperCase()}</AvatarFallback>
 							</Avatar>
 						</DropdownMenuTrigger>
-						<DropdownMenuContent className='mr-2 mt-2'>
-							<DropdownMenuLabel>Account</DropdownMenuLabel>
+						<DropdownMenuContent className='mr-4 mt-2'>
+							<DropdownMenuLabel className='flex items-center gap-1'>
+								<User className='w-4' /> Account
+							</DropdownMenuLabel>
 							<DropdownMenuSeparator />
 							<DropdownMenuItem>
 								<Link href='/creator-pannel'>Creator pannel</Link>

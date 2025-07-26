@@ -7,7 +7,7 @@ import { UserProfile } from '../user/user-profile';
 export const Navbar = () => {
 	return (
 		<nav className='flex items-center justify-between p-4 gap-2'>
-			<img src='/logo.svg' alt='Core cast logo' className='w-[140px] w-[170px]' />
+			<img src='/logo.svg' alt='Core cast logo' className='w-[140px] w-[160px]' />
 			<div className='w-full justify-center hidden md:flex'>
 				<div className='flex w-full max-w-[550px]'>
 					<Input placeholder='Search videos' className='w-full rounded-tr-none rounded-br-none h-10' />

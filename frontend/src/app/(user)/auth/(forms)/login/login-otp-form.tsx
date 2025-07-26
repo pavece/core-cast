@@ -13,12 +13,16 @@ type Props = {
 
 export const LoginOtpForm = ({ email, password, onSuccess, onFailure }: Props) => {
 	const [OTP, setOTP] = useState('');
+	const [loading, setLoading] = useState(false);
 
 	async function onLogin() {
 		try {
+			setLoading(true);
 			await loginUser(email, password, OTP);
 			onSuccess();
+			setLoading(false);
 		} catch (error) {
+			setLoading(false);
 			onFailure();
 		}
 	}
@@ -39,8 +43,8 @@ export const LoginOtpForm = ({ email, password, onSuccess, onFailure }: Props) =
 					</InputOTPGroup>
 				</InputOTP>
 			</div>
-			<Button className='w-full mt-4' onClick={onLogin} disabled={OTP.length < 6}>
-				Login
+			<Button className='w-full mt-4' onClick={onLogin} disabled={OTP.length < 6 || loading}>
+				{loading ? 'Loading...' : 'Sign In'}
 			</Button>
 		</div>
 	);

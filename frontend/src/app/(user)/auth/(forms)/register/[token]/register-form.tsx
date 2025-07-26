@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
@@ -30,6 +30,7 @@ const registerFormSchema = z
 
 export const RegisterForm = ({ token }: Props) => {
 	const router = useRouter();
+	const [loading, setLoading] = useState(false);
 	const form = useForm<z.infer<typeof registerFormSchema>>({
 		resolver: zodResolver(registerFormSchema),
 		defaultValues: {
@@ -42,10 +43,12 @@ export const RegisterForm = ({ token }: Props) => {
 
 	async function onSubmit({ email, username, password }: z.infer<typeof registerFormSchema>) {
 		try {
+			setLoading(true);
 			await registerUser(email, username, password, token);
 			router.push('/creator-pannel');
 		} catch (error) {
 			handleApiError(error);
+			setLoading(false);
 		}
 	}
 
@@ -111,8 +114,8 @@ export const RegisterForm = ({ token }: Props) => {
 								</FormItem>
 							)}
 						/>
-						<Button type='submit' className='w-full'>
-							Sign Up
+						<Button type='submit' className='w-full' disabled={loading}>
+							{loading ? 'Loading...' : 'Sign Up'}
 						</Button>
 					</form>
 				</Form>
