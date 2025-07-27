@@ -15,6 +15,7 @@ import {
 import { SidebarUserProfile } from '@/components/user/sidebar-user-profile';
 import { LayoutList, Plus, Settings } from 'lucide-react';
 import { cookies } from 'next/headers';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import React from 'react';
 
@@ -43,8 +44,10 @@ export default async function CreatorPannelLayout({
 							<SidebarGroupContent>
 								<SidebarMenu>
 									<SidebarMenuItem>
-										<SidebarMenuButton className='cursor-pointer'>
-											<Settings /> Settings
+										<SidebarMenuButton className='cursor-pointer' asChild>
+											<Link href='/creator-pannel/settings'>
+												<Settings /> Settings
+											</Link>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 								</SidebarMenu>
@@ -73,7 +76,7 @@ export default async function CreatorPannelLayout({
 						<SidebarUserProfile username={validationResult.data.user.username} role={validationResult.data.user.role} />
 					</SidebarFooter>
 				</Sidebar>
-				<main className='p-4'>
+				<main className='p-4 w-full'>
 					<div>{children}</div>
 				</main>
 			</SidebarProvider>
