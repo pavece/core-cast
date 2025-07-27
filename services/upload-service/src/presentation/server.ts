@@ -30,7 +30,7 @@ export class Server {
 	public start() {
 		this.configure();
 
-		this.app.listen(this.port, err => {
+		this.app.listen(this.port, '0.0.0.0', err => {
 			if (err) {
 				console.error('Failed to start HTTP server: ', err);
 				return;

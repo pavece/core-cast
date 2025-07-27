@@ -1,7 +1,5 @@
 networks:
-  db-network:
-  mq-network:
-  proxy-access:
+  main-net:
 
 volumes:
   minio-data:
@@ -18,19 +16,20 @@ services:
     container_name: traefik
     command:
       - --api.dashboard=true
-      - --providers.docker=true
-      - --api.insecure=true
       - --providers.docker.exposedbydefault=false
+      - --providers.docker=true
+      - --providers.docker.watch=true
+      - --api.insecure=true
       - --entrypoints.web.address=:80
       - --serversTransport.insecureSkipVerify=true
-      - --log.level=DEBUG # Temporarily for debugging
+      - --log.level=DEBUG
     ports:
       - '80:80' # Main backend entrypoint expose to end users
       - '8088:8080' # Dashboard do NOT expose to end users
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
-      - proxy-access
+      - main-net
 
   # Corecast services
   core:
@@ -47,8 +46,7 @@ services:
       - upload
       - transcoding
     networks:
-      - db-network
-      - proxy-access
+      - main-net
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.core.rule=PathPrefix(`/api/core`)'
@@ -67,9 +65,7 @@ services:
     depends_on:
       - housekeeping
     networks:
-      - db-network
-      - mq-network
-      - proxy-access
+      - main-net
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.upload.rule=PathPrefix(`/api/upload`)'
@@ -87,9 +83,7 @@ services:
     depends_on:
       - housekeeping
     networks:
-      - db-network
-      - mq-network
-      - proxy-access
+      - main-net
 
   housekeeping:
     build:
@@ -116,12 +110,8 @@ services:
         condition: service_started
       prisma-migrate:
         condition: service_completed_successfully
-      traefik:
-        condition: service_started
     networks:
-      - db-network
-      - mq-network
-      - proxy-access
+      - main-net
 
   # DB migration
   prisma-migrate:
@@ -134,7 +124,7 @@ services:
     env_file:
       - .env.docker
     networks:
-      - db-network
+      - main-net
 
   # MQ
   rabbitmq:
@@ -149,7 +139,7 @@ services:
       retries: 5
       start_period: 15s
     networks:
-      - mq-network
+      - main-net
 
   # Databases
   # Remember to create a public access policy without directory listing for the CDN bucket
@@ -165,7 +155,7 @@ services:
     volumes:
       - minio-data:/data
     networks:
-      - db-network
+      - main-net
     healthcheck:
       test: ['CMD-SHELL', 'curl -f http://localhost:9000/minio/health/live || exit 1']
       interval: 10s
@@ -181,7 +171,7 @@ services:
     volumes:
       - redis-data:/data
     networks:
-      - db-network
+      - main-net
     healthcheck:
       test: ['CMD', 'redis-cli', '-a', 'redis', 'ping']
       interval: 10s
@@ -198,7 +188,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: core-cast
     networks:
-      - db-network
+      - main-net
     volumes:
       - pg-data:/var/lib/postgresql/data
     healthcheck:
@@ -217,7 +207,7 @@ services:
     volumes:
       - meili-data:/meili_data
     networks:
-      - db-network
+      - main-net
 
   qdrant:
     image: qdrant/qdrant:latest
@@ -229,7 +219,7 @@ services:
     volumes:
       - qdrant-data:/qdrant/stor
     networks:
-      - db-network
+      - main-net
     healthcheck:
       test: ['CMD-SHELL', 'curl -f http://localhost:6333/health || exit 1']
       interval: 10s
@@ -248,7 +238,7 @@ services:
       - CLICKHOUSE_DB=corecast
       - CLICKHOUSE_USER=clickhouse
     networks:
-      - db-network
+      - main-net
     healthcheck:
       test: ['CMD-SHELL', 'curl -f http://localhost:8123/ping || exit 1']
       interval: 10s

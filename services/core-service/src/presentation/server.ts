@@ -21,7 +21,7 @@ export class Server {
 		this.configure();
 
 		return new Promise((resolve, reject) => {
-			this.app.listen(this.port, err => {
+			this.app.listen(this.port, '0.0.0.0', err => {
 				if (err) {
 					reject(err);
 					return;
