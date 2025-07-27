@@ -54,7 +54,15 @@ export class UserController {
 
 		this.userManagementService
 			.removeUser(userId, SELF_ACTION_FLAG)
-			.then(r => res.json({ message: 'Deleted user', user: cleanUser(r) } as UserResponses.IRemoveUserResponse))
+			.then(r => {
+				res.cookie('session_token', '', {
+					httpOnly: true,
+					secure: true,
+					sameSite: 'strict',
+					expires: new Date(),
+				});
+				res.json({ message: 'Deleted user', user: cleanUser(r) } as UserResponses.IRemoveUserResponse);
+			})
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -67,7 +75,16 @@ export class UserController {
 
 		this.userManagementService
 			.closeSessions(userId, SELF_ACTION_FLAG)
-			.then(() => res.json({ message: 'Sessions closed' } as UserResponses.ICloseUserSessionsResponse))
+			.then(() => {
+				res.cookie('session_token', '', {
+					httpOnly: true,
+					secure: true,
+					sameSite: 'strict',
+					expires: new Date(),
+				});
+
+				res.json({ message: 'Sessions closed' } as UserResponses.ICloseUserSessionsResponse);
+			})
 			.catch(e => handleApiError(e, res));
 	};
 

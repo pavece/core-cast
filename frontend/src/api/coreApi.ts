@@ -27,6 +27,7 @@ export const checkSession = (sessionToken?: string) => {
 	return coreApiClient.get<AuthResponses.IValidateSessionResponse>('/auth/check-session', { withCredentials: true });
 };
 
+// Self user management
 export const closeSession = (sessionToken?: string) => {
 	if (sessionToken) {
 		return coreApiClient.delete<AuthResponses.IValidateSessionResponse>('/auth/logout', {
@@ -42,4 +43,12 @@ export const getPersonalUserInfo = () => {
 
 export const updatePersonalUserInfo = (userInfo: Partial<UserResponses.IUserUpdateProps>) => {
 	return coreApiClient.put<UserResponses.IUpdateUserResponse>('/user', { ...userInfo, withCredentials: true });
+};
+
+export const closeAllSessions = () => {
+	return coreApiClient.delete('/user/close-sessions', { withCredentials: true });
+};
+
+export const deleteAccount = () => {
+	return coreApiClient.delete('/user', { withCredentials: true });
 };
