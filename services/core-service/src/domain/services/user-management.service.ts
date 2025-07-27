@@ -7,6 +7,7 @@ import { ObjectStore } from '@core-cast/object-store';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 
 import 'dotenv/config';
+import path from 'path';
 
 export class UserManagementService {
 	private userRepository = new UserRepository(Prisma.getInstance().prismaClient);
@@ -57,7 +58,8 @@ export class UserManagementService {
 	public async updateUser(userId: string, updates: Partial<user>, selfAction: boolean = false) {
 		const user = await this.userRepository.getUserById(userId);
 		if (!user) throw new ApiError(404, 'User does not exist');
-		if (user.role == 'ADMIN' && !selfAction) throw new ApiError(403, 'Administrators cannot be updated by other administrators');
+		if (user.role == 'ADMIN' && !selfAction)
+			throw new ApiError(403, 'Administrators cannot be updated by other administrators');
 
 		const updated = await this.userRepository.updateUserById(userId, updates);
 
@@ -65,8 +67,9 @@ export class UserManagementService {
 	}
 
 	public async uploadPicture(userId: string, type: 'avatar' | 'cover', file: Express.Multer.File) {
-		const objectName = `${type}/${crypto.randomUUID()}${file.originalname}`;
-		const url = `${process.env.OBJECT_STORE_ENDPOINT}/${process.env.OBJECT_STORE_PUBLIC_BUCKET}/${objectName}`;
+		const fileExt = path.extname(file.originalname);
+		const objectName = `${type}/${userId}${fileExt}`;
+		const url = `${process.env.OBJECT_STORE_PUBLIC_BASE_PATH}/${process.env.OBJECT_STORE_PUBLIC_BUCKET}/${objectName}`;
 
 		await this.objectStore.send(
 			new PutObjectCommand({ Bucket: process.env.OBJECT_STORE_PUBLIC_BUCKET, Key: objectName, Body: file.buffer })

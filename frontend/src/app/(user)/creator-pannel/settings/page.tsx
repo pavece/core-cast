@@ -8,7 +8,9 @@ import { ActionsMenu } from './actions-menu';
 import { ImagesMenu } from './images-menu';
 
 export const UserSettingsPage = () => {
-	const { data: apiResponse } = useQuery({ queryKey: ['user'], queryFn: getPersonalUserInfo });
+	const { data: apiResponse, isLoading } = useQuery({ queryKey: ['user'], queryFn: getPersonalUserInfo });
+
+	if (isLoading) return <h1>Loading...</h1>;
 
 	return (
 		<>

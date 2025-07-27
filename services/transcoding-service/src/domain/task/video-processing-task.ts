@@ -146,7 +146,7 @@ export class VideoProcessingTask {
 	}
 
 	private async updateVideoRecord() {
-		const baseObjectStoreUrl = `${process.env.OBJECT_STORE_ENDPOINT}/${this.publicBucket}/${this.videoProcessingTaskRecord?.videoId}`;
+		const baseObjectStoreUrl = `${process.env.OBJECT_STORE_PUBLIC_BASE_PATH}/${this.publicBucket}/${this.videoProcessingTaskRecord?.videoId}`;
 		const thumbnailUrl = baseObjectStoreUrl + '/thumbnail.jpg';
 		const masterlistUrl = baseObjectStoreUrl + '/master.m3u8';
 		const previewClipUrl = baseObjectStoreUrl + '/preview.mp4';
