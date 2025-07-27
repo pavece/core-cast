@@ -17,11 +17,12 @@ export default async function CreatorPannelLayout({
 
 		const validationResult = await checkSession(sessionCookie.value);
 
-		if (!validationResult.data.user.username) return redirect('/');
+		if (!validationResult.data.user.username || validationResult.data.user.role !== 'ADMIN') return redirect('/');
 
 		return (
 			<SidebarProvider>
 				<LayoutSidebar username={validationResult.data.user.username} role={validationResult.data.user.role} />
+
 				<main className='p-4 w-full'>
 					<div>{children}</div>
 				</main>

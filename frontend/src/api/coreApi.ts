@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AuthResponses, UserResponses } from '@core-cast/types';
+import { AuthResponses, UserResponses, UserManagementResponses } from '@core-cast/types';
 
 export const coreApiClient = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + '/core',
@@ -73,4 +73,13 @@ export const updateCover = (image: File) => {
 			'Content-Type': 'multipart/form-data',
 		},
 	});
+};
+
+//User administration
+export const adminGetUsers = () => {
+	return coreApiClient.get<UserManagementResponses.IAdminGetUsersResponse>('/admin/users', { withCredentials: true });
+};
+
+export const adminGenerateWhitelistEntry = () => {
+	return coreApiClient.post<UserManagementResponses.ICreateWhitelistResponse>('/admin/users/register-whitelist', { withCredentials: true });
 };
