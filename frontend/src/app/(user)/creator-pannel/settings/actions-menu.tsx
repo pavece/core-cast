@@ -35,12 +35,12 @@ export const ActionsMenu = ({ otpEnabled }: Props) => {
 				</Link>
 			)}
 
-			<div className='flex items-center w-full flex-row gap-2 mt-2'>
+			<div className='flex items-center w-full flex-col lg:flex-row gap-2 mt-2'>
 				{/* TODO: Add confirmation dialog */}
-				<Button variant='destructive' className='flex-1' onClick={onDeleteAccount}>
+				<Button variant='destructive' className='flex-1 w-full' onClick={onDeleteAccount}>
 					<Trash /> Delete account
 				</Button>
-				<Button variant='destructive' className='flex-1' onClick={onCloseSessions}>
+				<Button variant='destructive' className='flex-1 w-full' onClick={onCloseSessions}>
 					<DoorClosedLocked /> Close active sessions
 				</Button>
 			</div>
