@@ -7,6 +7,8 @@ import { UserManagementService } from '../../../domain/services/user-management.
 import { UserResponses } from '@core-cast/types';
 
 //User configuration / self management (settings)
+
+const SELF_ACTION_FLAG = true;
 export class UserController {
 	private userManagementService = new UserManagementService();
 
@@ -36,8 +38,10 @@ export class UserController {
 		}
 
 		this.userManagementService
-			.updateUser(userId, parsedBody)
-			.then(r => res.status(214).json({ message: 'Updated user', user: cleanUser(r) } as UserResponses.IUpdateUserResponse))
+			.updateUser(userId, parsedBody, SELF_ACTION_FLAG)
+			.then(r =>
+				res.status(214).json({ message: 'Updated user', user: cleanUser(r) } as UserResponses.IUpdateUserResponse)
+			)
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -49,7 +53,7 @@ export class UserController {
 		}
 
 		this.userManagementService
-			.removeUser(userId)
+			.removeUser(userId, SELF_ACTION_FLAG)
 			.then(r => res.json({ message: 'Deleted user', user: cleanUser(r) } as UserResponses.IRemoveUserResponse))
 			.catch(e => handleApiError(e, res));
 	};
@@ -62,7 +66,7 @@ export class UserController {
 		}
 
 		this.userManagementService
-			.closeSessions(userId)
+			.closeSessions(userId, SELF_ACTION_FLAG)
 			.then(() => res.json({ message: 'Sessions closed' } as UserResponses.ICloseUserSessionsResponse))
 			.catch(e => handleApiError(e, res));
 	};

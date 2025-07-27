@@ -25,10 +25,10 @@ export class UserManagementService {
 		return (await this.userRepository.getUsers()).filter(u => u.role == 'USER');
 	}
 
-	public async removeUser(userId: string) {
+	public async removeUser(userId: string, selfAction: boolean = false) {
 		const user = await this.userRepository.getUserById(userId);
 		if (!user) throw new ApiError(404, 'User does not exist');
-		if (user.role == 'ADMIN') throw new ApiError(403, 'Administrators cannot be removed');
+		if (user.role == 'ADMIN' && !selfAction) throw new ApiError(403, 'Administrators cannot be removed');
 
 		await this.userRepository.deleteUserById(userId);
 
@@ -46,18 +46,18 @@ export class UserManagementService {
 		return bannedUser;
 	}
 
-	public async closeSessions(userId: string) {
+	public async closeSessions(userId: string, selfAction: boolean = false) {
 		const user = await this.userRepository.getUserById(userId);
 		if (!user) throw new ApiError(404, 'User does not exist');
-		if (user.role == 'ADMIN') throw new ApiError(403, 'Administrator sessions cannot be closed');
+		if (user.role == 'ADMIN' && !selfAction) throw new ApiError(403, 'Administrator sessions cannot be closed');
 
 		return this.authSessionRepository.clearUserSessions(userId);
 	}
 
-	public async updateUser(userId: string, updates: Partial<user>) {
+	public async updateUser(userId: string, updates: Partial<user>, selfAction: boolean = false) {
 		const user = await this.userRepository.getUserById(userId);
 		if (!user) throw new ApiError(404, 'User does not exist');
-		if (user.role == 'ADMIN') throw new ApiError(403, 'Administrators cannot be updated by other administrators');
+		if (user.role == 'ADMIN' && !selfAction) throw new ApiError(403, 'Administrators cannot be updated by other administrators');
 
 		const updated = await this.userRepository.updateUserById(userId, updates);
 
