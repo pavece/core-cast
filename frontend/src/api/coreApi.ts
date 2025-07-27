@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AuthResponses, UserManagementResponses, UserResponses } from '@core-cast/types';
+import { AuthResponses, UserResponses } from '@core-cast/types';
 
 export const coreApiClient = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + '/core',
@@ -51,4 +51,26 @@ export const closeAllSessions = () => {
 
 export const deleteAccount = () => {
 	return coreApiClient.delete('/user', { withCredentials: true });
+};
+
+export const updateAvatar = (image: File) => {
+	const formData = new FormData();
+	formData.append('image', image);
+	return coreApiClient.post('/user/image/avatar', formData, {
+		withCredentials: true,
+		headers: {
+			'Content-Type': 'multipart/form-data',
+		},
+	});
+};
+
+export const updateCover = (image: File) => {
+	const formData = new FormData();
+	formData.append('image', image);
+	return coreApiClient.post('/user/image/cover', formData, {
+		withCredentials: true,
+		headers: {
+			'Content-Type': 'multipart/form-data',
+		},
+	});
 };
