@@ -7,11 +7,12 @@ import { getPersonalUserInfo } from '@/api/coreApi';
 import { ActionsMenu } from './actions-menu';
 import { ImagesMenu } from './images-menu';
 import { SectionHeader } from '@/components/control-pannel/section-header';
+import { Loading } from '@/components/ui/loading';
 
 export const UserSettingsPage = () => {
-	const { data: apiResponse, isLoading } = useQuery({ queryKey: ['user'], queryFn: getPersonalUserInfo });
+	const { data: apiResponse, isLoading } = useQuery({ queryKey: ['user'], queryFn: () => getPersonalUserInfo() });
 
-	if (isLoading) return <h1>Loading...</h1>;
+	if (isLoading) return <Loading />;
 
 	return (
 		<>

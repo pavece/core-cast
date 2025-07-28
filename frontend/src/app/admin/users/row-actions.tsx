@@ -3,6 +3,7 @@
 import { adminCloseUserSessions, adminToggleUserBan } from '@/api/coreApi';
 import { handleApiError } from '@/api/errors';
 import { Button } from '@/components/ui/button';
+import { DestructiveAction } from '@/components/ui/destructive-action';
 import { Crosshair, DoorClosedLocked, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -34,9 +35,11 @@ export const RowActions = ({ userId }: { userId: string }) => {
 			<Button disabled={!userId} variant='destructive' onClick={() => onBanUser(userId)}>
 				<Crosshair /> Ban / unban
 			</Button>
-			<Button disabled={!userId} variant='destructive' onClick={() => onCloseSessions(userId)}>
-				<DoorClosedLocked /> Close sessions
-			</Button>
+			<DestructiveAction action={() => onCloseSessions(userId)}>
+				<Button disabled={!userId} variant='destructive'>
+					<DoorClosedLocked /> Close sessions
+				</Button>
+			</DestructiveAction>
 			<Button disabled={!userId} onClick={() => router.push(`/admin/users/${userId}`)}>
 				<Settings /> Edit
 			</Button>

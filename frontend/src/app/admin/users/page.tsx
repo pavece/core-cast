@@ -6,11 +6,12 @@ import React from 'react';
 import { UsersTable } from './users-table';
 import { columns } from './columns';
 import { SectionHeader } from '@/components/control-pannel/section-header';
+import { Loading } from '@/components/ui/loading';
 
 const AdminUsersPage = () => {
 	const { isLoading, data: apiResponse, refetch } = useQuery({ queryKey: ['admin', 'users'], queryFn: adminGetUsers });
 
-	if (isLoading) return <h1>Loading...</h1>;
+	if (isLoading) return <Loading />;
 
 	return (
 		<div>
