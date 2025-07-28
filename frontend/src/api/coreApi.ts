@@ -115,3 +115,7 @@ export const adminUpdateUser = (userId: string, updates: Partial<UserResponses.I
 		withCredentials: true,
 	});
 };
+
+export const adminDeleteAccount = (userId: string) => {
+	return coreApiClient.delete(`/admin/users/${userId}`, { withCredentials: true });
+};
