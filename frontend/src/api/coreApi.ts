@@ -80,14 +80,38 @@ export const adminGetUsers = () => {
 	return coreApiClient.get<UserManagementResponses.IAdminGetUsersResponse>('/admin/users', { withCredentials: true });
 };
 
+export const adminGetUser = (userId: string, sessionToken?: string) => {
+	if (sessionToken) {
+		return coreApiClient.get<UserManagementResponses.IAdminGetUserResponse>(`/admin/users/${userId}`, {
+			withCredentials: true,
+			headers: { Cookie: `session_token=${sessionToken}` },
+		});
+	}
+
+	return coreApiClient.get<UserManagementResponses.IAdminGetUserResponse>(`/admin/users/${userId}`, {
+		withCredentials: true,
+	});
+};
+
 export const adminGenerateWhitelistEntry = () => {
-	return coreApiClient.post<UserManagementResponses.ICreateWhitelistResponse>('/admin/users/register-whitelist', { withCredentials: true });
+	return coreApiClient.post<UserManagementResponses.ICreateWhitelistResponse>('/admin/users/register-whitelist', {
+		withCredentials: true,
+	});
 };
 
 export const adminCloseUserSessions = (userId: string) => {
-	return coreApiClient.delete<UserManagementResponses.IAdminCloseSessionsResponse>(`/admin/users/close-sessions/${userId}`)
-}
+	return coreApiClient.delete<UserManagementResponses.IAdminCloseSessionsResponse>(
+		`/admin/users/close-sessions/${userId}`
+	);
+};
 
 export const adminToggleUserBan = (userId: string) => {
-	return coreApiClient.patch<UserManagementResponses.IAdminBanUserResponse>(`/admin/users/toggle-ban/${userId}`)
-} 
+	return coreApiClient.patch<UserManagementResponses.IAdminBanUserResponse>(`/admin/users/toggle-ban/${userId}`);
+};
+
+export const adminUpdateUser = (userId: string, updates: Partial<UserResponses.IUserUpdateProps>) => {
+	return coreApiClient.put<UserManagementResponses.IAdminUpdateUserResponse>(`/admin/users/${userId}`, {
+		...updates,
+		withCredentials: true,
+	});
+};

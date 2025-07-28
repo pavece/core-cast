@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { UsersTable } from './users-table';
 import { columns } from './columns';
+import { SectionHeader } from '@/components/control-pannel/section-header';
 
 const AdminUsersPage = () => {
 	const { isLoading, data: apiResponse, refetch } = useQuery({ queryKey: ['admin', 'users'], queryFn: adminGetUsers });
@@ -13,10 +14,7 @@ const AdminUsersPage = () => {
 
 	return (
 		<div>
-			<div>
-				<h1 className='text-2xl'>Admin - users</h1>
-				<p className='text text-muted-foreground'>Manage users in the system</p>
-			</div>
+			<SectionHeader title='Manage users' subtitle='Manage users in the system' />
 
 			<section className='mt-4'>
 				<UsersTable data={apiResponse?.data.users || []} columns={columns} onRefresh={refetch} />

@@ -22,6 +22,9 @@ export interface IAdminBanUserResponse extends IGenericApiResponse {
 export interface IAdminGetUsersResponse extends IGenericApiResponse {
     users: PartialUser[];
 }
+export interface IAdminGetUserResponse extends IGenericApiResponse {
+    user: PartialUser;
+}
 export interface IAdminCloseSessionsResponse extends IGenericApiResponse {
 }
 export interface ICreateWhitelistResponse extends IGenericApiResponse {
