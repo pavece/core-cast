@@ -48,8 +48,10 @@ export const LayoutSidebar = ({ username, role }: Props) => {
 					<SidebarGroupContent>
 						<SidebarMenu>
 							<SidebarMenuItem>
-								<SidebarMenuButton className='cursor-pointer'>
-									<Plus /> Create video
+								<SidebarMenuButton className='cursor-pointer' asChild>
+									<Link href='/creator-pannel/create'>
+										<Plus /> Create video
+									</Link>
 								</SidebarMenuButton>
 							</SidebarMenuItem>
 							<SidebarMenuItem>

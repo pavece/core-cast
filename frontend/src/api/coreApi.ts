@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AuthResponses, UserResponses, UserManagementResponses } from '@core-cast/types';
+import { AuthResponses, UserResponses, UserManagementResponses, VideoManagementResponses } from '@core-cast/types';
 
 export const coreApiClient = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + '/core',
@@ -133,4 +133,9 @@ export const adminUpdateUser = (userId: string, updates: Partial<UserResponses.I
 
 export const adminDeleteAccount = (userId: string) => {
 	return coreApiClient.delete(`/admin/users/${userId}`, { withCredentials: true });
+};
+
+//Video management
+export const createVideo = (title: string, description: string, isPublic: boolean) => {
+	return coreApiClient.post<VideoManagementResponses.ICreateVideoResponse>('/uploads', { title, description, public: isPublic, withCredentials: true });
 };

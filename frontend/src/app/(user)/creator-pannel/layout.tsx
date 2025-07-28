@@ -22,9 +22,7 @@ export default async function CreatorPannelLayout({
 		return (
 			<SidebarProvider>
 				<LayoutSidebar username={validationResult.data.user.username} role={validationResult.data.user.role} />
-				<main className='p-4 w-full'>
-					<div>{children}</div>
-				</main>
+				<main className='p-4 w-full h-[100vh]'>{children}</main>
 			</SidebarProvider>
 		);
 	} catch {

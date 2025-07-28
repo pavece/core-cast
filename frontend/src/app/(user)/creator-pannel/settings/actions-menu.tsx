@@ -1,8 +1,9 @@
+'use client';
+
 import { closeAllSessions, deleteAccount } from '@/api/coreApi';
 import { Button } from '@/components/ui/button';
 import { DestructiveAction } from '@/components/ui/destructive-action';
 import { DoorClosedLocked, Lock, Trash } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { toast } from 'sonner';
