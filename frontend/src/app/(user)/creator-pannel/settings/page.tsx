@@ -18,7 +18,7 @@ export const UserSettingsPage = () => {
 			<SectionHeader title='User settings' subtitle='Manage your user and channel settings' />
 
 			<section className='w-full grid lg:grid-cols-2 gap-4 grid-cols-1'>
-				<div className='mt-6'>
+				<div>
 					<UserSettingsForm userInformation={apiResponse?.data.user} />
 					<ActionsMenu otpEnabled={apiResponse?.data.user.otpEnabled || false} />
 				</div>

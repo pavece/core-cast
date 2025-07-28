@@ -37,7 +37,14 @@ export const closeSession = (sessionToken?: string) => {
 	return coreApiClient.delete('/auth/logout', { withCredentials: true });
 };
 
-export const getPersonalUserInfo = () => {
+export const getPersonalUserInfo = (sessionToken?: string) => {
+	if (sessionToken) {
+		return coreApiClient.get<UserResponses.IGetUserReponse>('/user', {
+			headers: { Cookie: `session_token=${sessionToken}` },
+			withCredentials: true,
+		});
+	}
+
 	return coreApiClient.get<UserResponses.IGetUserReponse>('/user');
 };
 
@@ -73,6 +80,14 @@ export const updateCover = (image: File) => {
 			'Content-Type': 'multipart/form-data',
 		},
 	});
+};
+
+export const setup2FA = () => {
+	return coreApiClient.patch<AuthResponses.IConfigure2FAResponse>('/auth/2fa/configure', { withCredentials: true });
+};
+
+export const activate2FA = (totp: string) => {
+	return coreApiClient.patch('/auth/2fa/activate', { withCredentials: true, totp });
 };
 
 //User administration

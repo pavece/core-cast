@@ -22,12 +22,11 @@ const AdminUserPage = async ({ params }: Props) => {
 				title={`User - ${data.user.username}`}
 				subtitle={`Update and manage ${data.user.username} profile`}
 			/>
-			<section className='mt-4 grid grid-cols-1 md:grid-cols-2'>
-				<div>
+			<section className='flex items-center justify-start'>
+				<div className='max-w-[700px]  w-full'>
 					<EdtitUserForm userInformation={data.user} userId={userId} />
 					<ActionsMenu userId={userId} />
 				</div>
-				<div></div>
 			</section>
 		</div>
 	);

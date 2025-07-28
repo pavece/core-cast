@@ -15,8 +15,7 @@ const AdminUsersPage = () => {
 	return (
 		<div>
 			<SectionHeader title='Manage users' subtitle='Manage users in the system' />
-
-			<section className='mt-4'>
+			<section>
 				<UsersTable data={apiResponse?.data.users || []} columns={columns} onRefresh={refetch} />
 			</section>
 		</div>

@@ -17,3 +17,9 @@ export interface IValidateSessionResponse extends IGenericApiResponse {
         role: 'ADMIN' | 'USER';
     };
 }
+export interface IConfigure2FAResponse extends IGenericApiResponse {
+    authenticatorUri: {
+        otpAuthUri: string;
+        recoveryCode: string;
+    };
+}

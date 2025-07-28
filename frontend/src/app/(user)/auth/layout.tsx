@@ -1,5 +1,3 @@
-import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
 import React from 'react';
 
 const RegisterLoginLayout = async ({
@@ -7,13 +5,6 @@ const RegisterLoginLayout = async ({
 }: Readonly<{
 	children: React.ReactNode;
 }>) => {
-	const cookieStore = await cookies();
-	const session = cookieStore.get('session_token');
-
-	if (session?.value) {
-		redirect('/');
-	}
-
 	return (
 		<div className='grid grid-cols-2 min-h-[100vh]'>
 			<div className='hidden md:block f bg-[url(/login-background.webp)] bg-center bg-cover'>
