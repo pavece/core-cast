@@ -7,20 +7,23 @@ import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { RowActions } from './row-actions';
 import { User } from './columns';
+import { Button } from '@/components/ui/button';
+import { RefreshCcw } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
+	onRefresh: () => void;
 }
 
-export function UsersTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function UsersTable<TData, TValue>({ columns, data, onRefresh }: DataTableProps<TData, TValue>) {
 	const [searchText, setSearchText] = useState('');
 	const table = useReactTable({
 		data,
 		columns,
-        state: {
-            globalFilter: searchText
-        },
+		state: {
+			globalFilter: searchText,
+		},
 		getCoreRowModel: getCoreRowModel(),
 		onGlobalFilterChange: setSearchText,
 		globalFilterFn: 'includesString',
@@ -31,12 +34,17 @@ export function UsersTable<TData, TValue>({ columns, data }: DataTableProps<TDat
 	return (
 		<>
 			<div className='mb-2 mt-4 flex justify-between'>
-				<Input
-					placeholder='Search users...'
-					className='w-[300px]'
-					onChange={e => setSearchText(e.target.value)}
-					value={searchText}
-				/>
+				<div className='flex gap-2'>
+					<Button onClick={onRefresh}>
+						<RefreshCcw /> Refresh
+					</Button>
+					<Input
+						placeholder='Search users...'
+						className='w-[300px]'
+						onChange={e => setSearchText(e.target.value)}
+						value={searchText}
+					/>
+				</div>
 
 				<RowActions userId={(table.getSelectedRowModel().rows?.[0]?.original as User)?.id} />
 			</div>

@@ -1,17 +1,43 @@
+'use client';
+
+import { adminCloseUserSessions, adminToggleUserBan } from '@/api/coreApi';
+import { handleApiError } from '@/api/errors';
 import { Button } from '@/components/ui/button';
-import { DoorClosedLocked, Settings, Trash } from 'lucide-react';
+import { Crosshair, DoorClosedLocked, Settings } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React from 'react';
+import { toast } from 'sonner';
+
+async function onCloseSessions(userId: string) {
+	try {
+		await adminCloseUserSessions(userId);
+		toast.success('User sessions closed');
+	} catch (error) {
+		handleApiError(error);
+	}
+}
+
+async function onBanUser(userId: string) {
+	try {
+		const { data } = await adminToggleUserBan(userId);
+		toast.success(`User sucessfully ${data.user.banned ? 'banned' : 'unbanned'}`);
+	} catch (error) {
+		handleApiError(error);
+	}
+}
 
 export const RowActions = ({ userId }: { userId: string }) => {
+	const router = useRouter();
+
 	return (
 		<div className='flex gap-2'>
-			<Button disabled={!userId} variant='destructive'>
-				<Trash /> Delete user
+			<Button disabled={!userId} variant='destructive' onClick={() => onBanUser(userId)}>
+				<Crosshair /> Ban / unban
 			</Button>
-			<Button disabled={!userId} variant='destructive'>
+			<Button disabled={!userId} variant='destructive' onClick={() => onCloseSessions(userId)}>
 				<DoorClosedLocked /> Close sessions
 			</Button>
-			<Button disabled={!userId}>
+			<Button disabled={!userId} onClick={() => router.push(`/admin/users/${userId}`)}>
 				<Settings /> Edit
 			</Button>
 		</div>

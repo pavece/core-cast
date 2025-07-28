@@ -83,3 +83,11 @@ export const adminGetUsers = () => {
 export const adminGenerateWhitelistEntry = () => {
 	return coreApiClient.post<UserManagementResponses.ICreateWhitelistResponse>('/admin/users/register-whitelist', { withCredentials: true });
 };
+
+export const adminCloseUserSessions = (userId: string) => {
+	return coreApiClient.delete<UserManagementResponses.IAdminCloseSessionsResponse>(`/admin/users/close-sessions/${userId}`)
+}
+
+export const adminToggleUserBan = (userId: string) => {
+	return coreApiClient.patch<UserManagementResponses.IAdminBanUserResponse>(`/admin/users/toggle-ban/${userId}`)
+} 

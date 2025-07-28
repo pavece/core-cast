@@ -7,7 +7,7 @@ import { UsersTable } from './users-table';
 import { columns } from './columns';
 
 const AdminUsersPage = () => {
-	const { isLoading, data: apiResponse } = useQuery({ queryKey: ['admin', 'users'], queryFn: adminGetUsers });
+	const { isLoading, data: apiResponse, refetch } = useQuery({ queryKey: ['admin', 'users'], queryFn: adminGetUsers });
 
 	if (isLoading) return <h1>Loading...</h1>;
 
@@ -19,7 +19,7 @@ const AdminUsersPage = () => {
 			</div>
 
 			<section className='mt-4'>
-				<UsersTable data={apiResponse?.data.users || []} columns={columns} />
+				<UsersTable data={apiResponse?.data.users || []} columns={columns} onRefresh={refetch} />
 			</section>
 		</div>
 	);

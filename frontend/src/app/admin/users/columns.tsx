@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
+import { Avatar, AvatarImage } from '@radix-ui/react-avatar';
 
 export type User = {
 	id: string;
@@ -11,6 +11,7 @@ export type User = {
 	email: string;
 	avatar: string | null;
 	otpEnabled: boolean;
+	banned: boolean;
 };
 
 export const columns: ColumnDef<User>[] = [
@@ -57,6 +58,16 @@ export const columns: ColumnDef<User>[] = [
 				return <Badge className='bg-green-400'>Yes</Badge>;
 			}
 			return <Badge variant='destructive'>No</Badge>;
+		},
+	},
+	{
+		accessorKey: 'banned',
+		header: 'Banned',
+		cell: ({ row }) => {
+			if (row.getValue('banned')) {
+				return <Badge variant='destructive'>Yes</Badge>;
+			}
+			return <Badge className='bg-green-400'>No</Badge>;
 		},
 	},
 ];
