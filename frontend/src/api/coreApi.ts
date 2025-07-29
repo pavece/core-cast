@@ -139,3 +139,4 @@ export const adminDeleteAccount = (userId: string) => {
 export const createVideo = (title: string, description: string, isPublic: boolean) => {
 	return coreApiClient.post<VideoManagementResponses.ICreateVideoResponse>('/uploads', { title, description, public: isPublic, withCredentials: true });
 };
+
