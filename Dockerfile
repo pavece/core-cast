@@ -1,4 +1,4 @@
-FROM node:22-slim AS base
+FROM node:22-bullseye  AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
@@ -25,6 +25,7 @@ CMD [ "pnpm", "start" ]
 
 # Transcoding service image
 FROM base AS transcoding-service
+RUN apt-get update && apt-get install -y ffmpeg
 COPY --from=build /prod/transcoding-service /transcoding-service
 WORKDIR /transcoding-service
 ENV PROMETHEUS_SERVER_PORT=8081

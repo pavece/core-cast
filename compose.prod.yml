@@ -58,7 +58,7 @@ services:
       context: .
       target: upload-service
     ports:
-      # - 3002:8080 # API (Exposed by proxy to the exterior)
+      - 3002:8080 # API (Exposed by proxy to the exterior)
       - 4001:8081 # Prometheus
     env_file:
       - .env.docker
