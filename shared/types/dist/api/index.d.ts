@@ -8,3 +8,4 @@ export * as VideoManagementResponses from './video-manegement.types';
 export * as InteractionManagementResponses from './interaction-management.types';
 export * as VideoInteractionResponses from './interactions.types';
 export * as VideoDiscoveryResponses from './video-discovery.types';
+export * as UploadResponses from './upload.types';

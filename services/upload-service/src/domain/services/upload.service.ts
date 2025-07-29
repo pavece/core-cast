@@ -167,4 +167,22 @@ export class UploadService {
 
 		return modifiedPendingUploads;
 	}
+
+	public async getPendingUploadByVideoId(userId: string, videoId: string) {
+		const video = await this.videoRepo.getVideoById(videoId);
+
+		if (!video?.id) throw new ApiError(404, 'Video not found');
+		if (video.userId !== userId) throw new ApiError(403, 'You are not the owner of this video');
+
+		const pendingUpload = await this.pendingUploadRepo.getPendingUploadByVideoId(videoId);
+
+		if (!pendingUpload) return null;
+
+		const uploadedChunks = await this.multipartUploadRepo.getChunks(pendingUpload.multipartId);
+
+		return {
+			uploadedChunks: uploadedChunks.map(c => c.PartNumber),
+			uploadId: pendingUpload.multipartId,
+		};
+	}
 }

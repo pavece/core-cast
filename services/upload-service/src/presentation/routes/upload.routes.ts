@@ -13,6 +13,7 @@ export class UploadRoutes {
 		router.put('/upload-chunk', validateSession, upload.single('chunk'), uploadController.uploadChunk);
 		router.post('/finish-upload', validateSession, uploadController.finishUpload);
 		router.get('/pending', validateSession, uploadController.getPendingUploads);
+		router.get('/pending/video/:id', validateSession, uploadController.getPendingUploadByVideoId);
 
 		return router;
 	}

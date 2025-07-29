@@ -18,7 +18,7 @@ export class Server {
 
 		this.app.use(cors({ origin: process.env.CLIENT_BASE_URL || '*', credentials: true }));
 
-		this.app.use('/api', this.routes);
+		this.app.use('/', this.routes);
 
 		//Prometheus metrics endpoint
 		this.app.get('/metrics', async (req, res) => {

@@ -7,6 +7,7 @@ import {
 } from '../../domain/validation/upload-validators';
 import { handleApiError } from '../../domain/errors/api-error';
 import { AuthRequest } from '../middlewares/validate-session';
+import { UploadResponses } from '@core-cast/types';
 
 export class UploadController {
 	private uploadService = new UploadService();
@@ -31,7 +32,12 @@ export class UploadController {
 				parsedBody.data.videoId,
 				req.session.userId
 			)
-			.then(r => res.json({ message: 'Multipart init correct, you may now proceed uploading chunks.', uploadId: r }))
+			.then(r =>
+				res.json({
+					message: 'Multipart init correct, you may now proceed uploading chunks.',
+					uploadId: r,
+				} as UploadResponses.IInitUploadResponse)
+			)
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -53,7 +59,7 @@ export class UploadController {
 				parsedHeaders.data['x-coreupload-chunk-number'],
 				req.file.buffer
 			)
-			.then(r => res.status(200).json(r))
+			.then(r => res.status(200).json(r as UploadResponses.IUploadChunkResponse))
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -66,7 +72,7 @@ export class UploadController {
 
 		this.uploadService
 			.finishChunkedUpload(parsedBody.data.uploadId)
-			.then(() => res.status(200).json({ message: 'Upload finished' }))
+			.then(() => res.status(200).json({ message: 'Upload finished' } as UploadResponses.IFinishUploadResponse))
 			.catch(e => handleApiError(e, res));
 	};
 
@@ -79,7 +85,28 @@ export class UploadController {
 
 		this.uploadService
 			.getPendingUploads(userId)
-			.then(r => res.status(200).json(r))
+			.then(r =>
+				res.status(200).json({ message: 'Pending uploads', uploads: r } as UploadResponses.IGetpendingUploadsResponse)
+			)
+			.catch(e => handleApiError(e, res));
+	};
+
+	public getPendingUploadByVideoId = (req: AuthRequest, res: Response) => {
+		const videoId = req.params.id;
+		const userId = req.session?.userId;
+		if (!userId) {
+			res.status(401).json({ message: 'Invalid session' });
+			return;
+		}
+
+		this.uploadService
+			.getPendingUploadByVideoId(userId, videoId)
+			.then(r =>
+				res.status(200).json({
+					message: `Pending upload for video ${videoId}`,
+					upload: r,
+				} as UploadResponses.IGetpendingUploadByVideoIdResponse)
+			)
 			.catch(e => handleApiError(e, res));
 	};
 }
