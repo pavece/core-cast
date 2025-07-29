@@ -2,6 +2,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { cutString } from '@/lib/utils';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ColumnDef } from '@tanstack/react-table';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -21,6 +22,22 @@ const statusColors: { [key: string]: string } = {
 };
 
 export const columns: ColumnDef<Video>[] = [
+	{
+		id: 'select',
+		header: 'Select user',
+		cell: ({ row, table }) => {
+			return (
+				<Checkbox
+					checked={row.getIsSelected()}
+					onCheckedChange={value => {
+						if (!!value) table.toggleAllRowsSelected(false); //Only one row can be selected at a time
+						row.toggleSelected(!!value);
+					}}
+					aria-label='Select row'
+				/>
+			);
+		},
+	},
 	{ accessorKey: 'title', header: 'Video title' },
 	{
 		accessorKey: 'description',

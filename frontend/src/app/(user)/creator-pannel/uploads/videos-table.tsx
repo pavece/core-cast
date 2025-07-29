@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { RefreshCcw } from 'lucide-react';
 import { VideoActions } from './video-actions';
+import { Video } from './columns';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -45,7 +46,7 @@ export function VideosTable<TData, TValue>({ columns, data, onRefresh }: DataTab
 					/>
 				</div>
 				<div>
-					<VideoActions />
+					<VideoActions selectedVideoId={(table.getSelectedRowModel().rows?.[0]?.original as Video)?.id} />
 				</div>
 			</div>
 			<div className='overflow-hidden rounded-md border'>

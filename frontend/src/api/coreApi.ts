@@ -148,3 +148,7 @@ export const createVideo = (title: string, description: string, isPublic: boolea
 export const getUserVideos = () => {
 	return coreApiClient.get<VideoManagementResponses.IGetVideosResponse>('/uploads', { withCredentials: true });
 };
+
+export const deleteVideo = (videoId: string) => {
+	return coreApiClient.delete(`/uploads/${videoId}`, { withCredentials: true });
+};
