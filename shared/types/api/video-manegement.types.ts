@@ -12,7 +12,7 @@ export interface IGetVideoResponse extends IGenericApiResponse {
 }
 
 export interface IGetVideosResponse extends IGenericApiResponse {
-	videos: video[];
+	videos: (video & { videoProcessingTask: { id: string }[] })[];
 }
 
 export interface ICreateVideoResponse extends IGenericApiResponse {
@@ -25,4 +25,8 @@ export interface IRemoveVideoResponse extends IGenericApiResponse {
 
 export interface IUpdateVideoResponse extends IGenericApiResponse {
 	video: video;
+}
+
+export interface IGetFullVideoResponse extends IGenericApiResponse {
+	video: video & { videoProcessingTask: { id: string }[] };
 }

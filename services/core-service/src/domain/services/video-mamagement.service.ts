@@ -11,10 +11,9 @@ export class VideoManagementService {
 	private videoInteractionsRepository = new VideoInteractionsRepository(Prisma.getInstance().prismaClient);
 	private milisearchCilent = Meili.getInstance().getClient();
 	private qdrantClient = Qdrant.getInstance().getClient();
-	private objectStore = ObjectStore.getInstance().s3Client;
 
 	public async getVideo(userId: string, videoId: string) {
-		const video = await this.videoRepository.getVideoById(videoId);
+		const video = await this.videoRepository.getFullVideoById(videoId);
 		if (!video?.id) throw new ApiError(404, 'Video not found');
 		if (video?.userId !== userId) throw new ApiError(403, 'You dont own this video');
 
@@ -22,7 +21,7 @@ export class VideoManagementService {
 	}
 
 	public getVideos(userId: string) {
-		return this.videoRepository.getUserVideos(userId);
+		return this.videoRepository.getUserVideosFull(userId);
 	}
 
 	public async createVideo(userId: string, videoProps: VideoManagementResponses.IVideoCreationProps) {

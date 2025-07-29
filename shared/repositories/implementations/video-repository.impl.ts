@@ -1,9 +1,26 @@
 import { PrismaClient, video } from '@core-cast/prisma';
 import { VideoManagementResponses, VideoSearchRecord } from '@core-cast/types';
-import { IVideoRepository, videoWithPartialUser } from '../types/video-repository.interface';
+import {
+	IVideoRepository,
+	videoWithPartialUser,
+	VideoWithProcessingTaskRecord,
+} from '../types/video-repository.interface';
 
 export class VideoRepository implements IVideoRepository {
 	constructor(private prismaClient: PrismaClient) {}
+	getUserVideosFull(userId: string): Promise<VideoWithProcessingTaskRecord[]> {
+		return this.prismaClient.video.findMany({
+			where: { userId },
+			include: { videoProcessingTask: { select: { id: true } } },
+		});
+	}
+
+	getFullVideoById(videoId: string): Promise<VideoWithProcessingTaskRecord | null> {
+		return this.prismaClient.video.findUnique({
+			where: { id: videoId },
+			include: { videoProcessingTask: { select: { id: true } } },
+		});
+	}
 
 	getVideoById(videoId: string): Promise<videoWithPartialUser | null> {
 		return this.prismaClient.video.findUnique({

@@ -18,7 +18,7 @@ export class VideoManagementController {
 
 		this.videoManagementService
 			.getVideo(userId, videoId)
-			.then(r => res.json({ message: 'Video information', video: r } as VideoManagementResponses.ICreateVideoResponse))
+			.then(r => res.json({ message: 'Video information', video: r } as VideoManagementResponses.IGetFullVideoResponse))
 			.catch(e => handleApiError(e, res));
 	};
 

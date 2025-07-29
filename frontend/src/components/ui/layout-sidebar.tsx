@@ -25,7 +25,7 @@ type Props = {
 export const LayoutSidebar = ({ username, role }: Props) => {
 	return (
 		<Sidebar variant='floating'>
-			<SidebarHeader className='flex items-center'>
+			<SidebarHeader className='flex items-start'>
 				<img src='/logo.svg' alt='Core cast logo' className='w-[140px] md:w-[160px]' />
 			</SidebarHeader>
 			<SidebarContent>
