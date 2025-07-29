@@ -1,17 +1,19 @@
 'use client';
 
-import { getPendingUploadByVideo } from '@/api/uploadApi';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Loading } from '@/components/ui/loading';
-import { useMultipartUpload } from '@/hooks/use-multipart-upload';
-import { useQuery } from '@tanstack/react-query';
-import { Upload } from 'lucide-react';
-import { notFound } from 'next/navigation';
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useMultipartUpload } from '@/hooks/use-multipart-upload';
+import { UploadSuccessCard } from './success';
+import { Upload } from 'lucide-react';
 import { toast } from 'sonner';
+import { Progress } from '@/components/ui/progress';
+import { notFound } from 'next/navigation';
+import { Loading } from '@/components/ui/loading';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { getPendingUploadByVideo } from '@/api/uploadApi';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 type Props = {
 	videoId: string;
@@ -25,13 +27,10 @@ export const UploadVideoForm = ({ videoId }: Props) => {
 	} = useQuery({ queryFn: () => getPendingUploadByVideo(videoId), queryKey: ['pendingUpload', videoId] });
 
 	const [file, setFile] = useState<File | null>(null);
-	const { onConfirmUpload, totalChunks, uploadedChunks, uploading } = useMultipartUpload(
+	const { onConfirmUpload, totalChunks, uploadedChunks, uploading, finished } = useMultipartUpload(
 		videoId,
 		apiResponse?.data.upload || null
 	);
-
-	if (isLoading) return <Loading />;
-	if (isError) notFound();
 
 	const onUpload = async () => {
 		if (!file) {
@@ -41,6 +40,11 @@ export const UploadVideoForm = ({ videoId }: Props) => {
 		await onConfirmUpload(file);
 	};
 
+	if (isLoading) return <Loading />;
+	if (isError) notFound();
+
+	if (finished) return <UploadSuccessCard />;
+
 	return (
 		<Card className='max-w-[550px] w-full'>
 			<CardHeader>
@@ -49,9 +53,9 @@ export const UploadVideoForm = ({ videoId }: Props) => {
 			</CardHeader>
 			<CardContent>
 				{uploading ? (
-					<div className='mb-4'>
-						<h1>Uploading, please wait</h1>
-						<p>{(uploadedChunks / totalChunks) * 100} %</p>
+					<div className='mb-4 flex items-center justify-center flex-col gap-2'>
+						<p className='text-ms text-muted-foreground italic'>Uploading, please wait</p>
+						<Progress value={(uploadedChunks / totalChunks) * 100} />
 					</div>
 				) : (
 					<div className='mb-4'>
@@ -68,7 +72,7 @@ export const UploadVideoForm = ({ videoId }: Props) => {
 					</div>
 				)}
 
-				<Button className='w-full' disabled={file == null} onClick={onUpload}>
+				<Button className='w-full' disabled={file == null || uploading} onClick={onUpload}>
 					<Upload /> Upload video
 				</Button>
 			</CardContent>

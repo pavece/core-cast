@@ -11,6 +11,7 @@ export const useMultipartUpload = (videoId: string, currentUpload: null | Upload
 	const [uploadedChunks, setUploadedChunks] = useState(0);
 	const [totalChunks, setTotalChunks] = useState(0);
 	const [uploading, setUploading] = useState(false);
+	const [finished, setFinished] = useState(false);
 	const multipartIdRef = useRef<string>(currentUpload?.uploadId || '');
 
 	useEffect(() => {
@@ -39,14 +40,16 @@ export const useMultipartUpload = (videoId: string, currentUpload: null | Upload
 			handleApiError(error);
 			setUploading(false);
 		}
+
 		setUploading(false);
+		setFinished(true);
 	};
 
 	const generateUploadPromises = (file: File, totalChunks: number) => {
 		const uploadPromises = [];
 
 		for (let i = 0; i < totalChunks; i++) {
-			if (currentUpload?.uploadedChunks.includes(i)) continue;
+			if (currentUpload?.uploadedChunks.includes(i + 1)) continue;
 			const chunk = file.slice(CHUNK_SIZE * i, CHUNK_SIZE * (i + 1));
 			uploadPromises.push(
 				uploadChunk(chunk, multipartIdRef.current || '', i + 1).then(r => setUploadedChunks(prev => prev + 1))
@@ -56,7 +59,7 @@ export const useMultipartUpload = (videoId: string, currentUpload: null | Upload
 		return uploadPromises;
 	};
 
-	return { onConfirmUpload, uploadedChunks, totalChunks, uploading };
+	return { onConfirmUpload, uploadedChunks, totalChunks, uploading, finished };
 };
 
 const createMultipartUpload = async (file: File, videoId: string, totalChunks: number) => {
