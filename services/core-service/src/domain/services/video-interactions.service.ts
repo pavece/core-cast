@@ -5,7 +5,6 @@ import { VideoInteractionsRepository } from '@core-cast/repositories';
 export class VideoInteractionsService {
 	private redisClient = RedisClient.getInstance().getClient();
 	private videoInteractionsRepository = new VideoInteractionsRepository(Prisma.getInstance().prismaClient);
-	private redisDatabaseNumber = 3;
 
 	//TODO: Add cache
 	public getVideoInteractions(videoId: string) {
@@ -20,7 +19,6 @@ export class VideoInteractionsService {
 	public async toggleVideoLike(videoId: string, userId: string) {
 		const videoLiked = await this.videoInteractionsRepository.isVideoLiked(videoId, userId);
 
-		await this.redisClient.select(this.redisDatabaseNumber);
 		await this.redisClient.incrby(`likes:${videoId}`, videoLiked ? -1 : 1);
 
 		if (videoLiked) {
@@ -33,7 +31,6 @@ export class VideoInteractionsService {
 	}
 
 	public async registerView(videoId: string) {
-		await this.redisClient.select(this.redisDatabaseNumber);
 		await this.redisClient.incr(`views:${videoId}`);
 	}
 }

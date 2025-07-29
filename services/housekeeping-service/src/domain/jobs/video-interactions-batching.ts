@@ -19,7 +19,6 @@ export async function videoInteractionsBatching() {
 		await retrieveAndUpdateLikes(redisClient, prismaClient);
 
 		await clichouseClient.insert({ table: 'video_views', values: views, format: 'JSONEachRow' });
-		await redisClient.flushdb();
 
 		logger.info('Migrated dirty interaction records to postgres and clickhouse');
 		prometheusClient.completedTasks?.inc();
@@ -50,6 +49,8 @@ async function retrieveAndUpdateViews(redisClient: Redis, prismaClient: PrismaCl
 			','
 		)}) AS v(id, value) WHERE t."videoId" = v.id;`;
 		await prismaClient.$executeRawUnsafe(sqlQuery);
+
+		await redisClient.del(...results);
 	} while (cursor !== '0');
 
 	return views;
@@ -75,5 +76,6 @@ async function retrieveAndUpdateLikes(redisClient: Redis, prismaClient: PrismaCl
 			','
 		)}) AS v(id, value) WHERE t."videoId" = v.id;`;
 		await prismaClient.$executeRawUnsafe(sqlQuery);
+		await redisClient.del(...results);
 	} while (cursor !== '0');
 }

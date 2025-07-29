@@ -12,7 +12,7 @@ const SALT_ROUNDS = 12;
 
 export class AuthService {
 	private userRepository = new UserRepository(Prisma.getInstance().prismaClient);
-	private sessionRepository = new AuthSessionRepository(RedisClient.getInstance().getClient(), 2);
+	private sessionRepository = new AuthSessionRepository(RedisClient.getInstance().getClient());
 	private registerWhitelistRepository = new RegisterWhitelistRepository(Prisma.getInstance().prismaClient);
 
 	private async validateWhitelist(whitelistId: string) {

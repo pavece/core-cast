@@ -3,10 +3,9 @@ import { AuthSession, AuthSessionRepositoryInterface } from '../types/auth-sessi
 import { randomBytes } from 'crypto';
 
 export class AuthSessionRepository implements AuthSessionRepositoryInterface {
-	constructor(private redis: Redis, private redisDatabaseNumber: number = 2) {}
+	constructor(private redis: Redis) {}
 
 	async getSession(token: string): Promise<AuthSession | null> {
-		await this.redis.select(this.redisDatabaseNumber);
 		const session = await this.redis.hgetall('session:' + token);
 
 		if (!session.userId) return null;
@@ -14,7 +13,6 @@ export class AuthSessionRepository implements AuthSessionRepositoryInterface {
 	}
 
 	async createSession(session: AuthSession): Promise<string> {
-		await this.redis.select(this.redisDatabaseNumber);
 		const sessionToken = randomBytes(48).toString('hex');
 		await this.redis.hset(`session:${session.userId}:${sessionToken}`, session);
 
@@ -22,7 +20,6 @@ export class AuthSessionRepository implements AuthSessionRepositoryInterface {
 	}
 
 	async clearUserSessions(id: string): Promise<void> {
-		await this.redis.select(this.redisDatabaseNumber);
 		const stream = await this.redis.scanStream({ match: `session:${id}:*` });
 		stream.on('data', async keys => {
 			if (keys.length) await this.redis.del(...keys);
@@ -30,12 +27,10 @@ export class AuthSessionRepository implements AuthSessionRepositoryInterface {
 	}
 
 	async deleteSession(token: string): Promise<void> {
-		await this.redis.select(this.redisDatabaseNumber);
 		await this.redis.del('session:' + token);
 	}
 
 	async updateSession(token: string, updates: Partial<AuthSession>): Promise<AuthSession | null> {
-		await this.redis.select(this.redisDatabaseNumber);
 		const session = await this.redis.hgetall(`session:${token}`);
 		if (!session.userId) return null;
 
