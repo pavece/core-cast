@@ -1,10 +1,9 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+	return twMerge(clsx(inputs));
 }
-
 
 export async function batchPromises(promises: Promise<any>[], maxConcurrent: number) {
 	let currentBatch = 0;
@@ -25,3 +24,8 @@ export async function batchPromises(promises: Promise<any>[], maxConcurrent: num
 		currentBatch++;
 	}
 }
+
+export const cutString = (str: string, length: number) => {
+	const ext = str.length > length ? '...' : '';
+	return str.slice(0, length) + ext;
+};

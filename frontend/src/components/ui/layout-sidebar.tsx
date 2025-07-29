@@ -55,8 +55,10 @@ export const LayoutSidebar = ({ username, role }: Props) => {
 								</SidebarMenuButton>
 							</SidebarMenuItem>
 							<SidebarMenuItem>
-								<SidebarMenuButton className='cursor-pointer'>
-									<LayoutList /> Manage videos
+								<SidebarMenuButton className='cursor-pointer' asChild>
+									<Link href='/creator-pannel/uploads'>
+										<LayoutList /> Manage videos
+									</Link>
 								</SidebarMenuButton>
 							</SidebarMenuItem>
 						</SidebarMenu>
