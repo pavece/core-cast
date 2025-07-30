@@ -21,6 +21,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
 				<div className='col-span-7'>
 					<VideoPlayer hlsMasterList={getVideoResponse.video.hlsMaterList!} videoId={getVideoResponse.video.id} />
 					<VideoInformationContainer
+						videoId={videoId}
 						title={getVideoResponse.video.title}
 						description={getVideoResponse.video.description}
 						likes={getVideoInteractionsResponse.interactions.likeCount as number}

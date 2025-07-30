@@ -177,3 +177,11 @@ export const getVideoInteractions = (videoId: string) => {
 export const registerView = (videoId: string) => {
 	return coreApiClient.put(`/interactions/register-view/${videoId}`);
 };
+
+export const getPersonalVideoInteractions = (videoId: string) => {
+	return coreApiClient.get<VideoInteractionResponses.IGetPersonalVideoInteractionsResponse>(`/interactions/personal/${videoId}`, { withCredentials: true });
+};
+
+export const giveLike = (videoId: string) => {
+	return coreApiClient.post<VideoInteractionResponses.IToggleLikeResponse>(`/interactions/like/${videoId}`, {}, { withCredentials: true });
+};
