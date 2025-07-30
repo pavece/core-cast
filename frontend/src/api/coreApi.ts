@@ -165,5 +165,5 @@ export const discoveryGetVideo = (videoId: string) => {
 };
 
 export const discoveryRelatedVideos = (videoId: string) => {
-	return coreApiClient.get(`/discovery/similar/${videoId}`);
+	return coreApiClient.get<VideoDiscoveryResponses.IGetSimilarVideosResponse>(`/discovery/similar/${videoId}`);
 };
