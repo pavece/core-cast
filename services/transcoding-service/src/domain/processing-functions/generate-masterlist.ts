@@ -10,7 +10,7 @@ export function generateMasterList(currentMediaPath: string, tiers: Tier[]) {
     
     for (const tier of tiers) {
         const horizontalRes = Math.floor(tier.vr * (16 / 9))
-        const variantHeader = `#EXT-X-STREAM-INF:BANDWIDTH=${tier.br * 1000},RESOLUTION=${horizontalRes}x${tier.vr},CODECS="avc1.42e01e,mp4a.40.`;
+        const variantHeader = `#EXT-X-STREAM-INF:BANDWIDTH=${tier.br * 1000},RESOLUTION=${horizontalRes}x${tier.vr},CODECS="avc1.42e01e,mp4a.40.2"`;
         const listName = `${tier.vr}p.m3u8`
 
         fileContent.push(variantHeader)
