@@ -13,8 +13,6 @@ export async function videoInteractionsBatching() {
 	const prometheusClient = new Prometheus();
 
 	try {
-		redisClient.select(3);
-
 		const views = await retrieveAndUpdateViews(redisClient, prismaClient);
 		await retrieveAndUpdateLikes(redisClient, prismaClient);
 
