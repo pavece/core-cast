@@ -1,5 +1,11 @@
 import axios from 'axios';
-import { AuthResponses, UserResponses, UserManagementResponses, VideoManagementResponses } from '@core-cast/types';
+import {
+	AuthResponses,
+	UserResponses,
+	UserManagementResponses,
+	VideoManagementResponses,
+	VideoDiscoveryResponses,
+} from '@core-cast/types';
 
 export const coreApiClient = axios.create({
 	baseURL: process.env.NEXT_PUBLIC_API_BASE_URL + '/core',
@@ -151,4 +157,13 @@ export const getUserVideos = () => {
 
 export const deleteVideo = (videoId: string) => {
 	return coreApiClient.delete(`/uploads/${videoId}`, { withCredentials: true });
+};
+
+//Video discovery
+export const discoveryGetVideo = (videoId: string) => {
+	return coreApiClient.get<VideoDiscoveryResponses.IGetVideoResponse>(`/discovery/video/${videoId}`);
+};
+
+export const discoveryRelatedVideos = (videoId: string) => {
+	return coreApiClient.get(`/discovery/similar/${videoId}`);
 };
