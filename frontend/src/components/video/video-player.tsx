@@ -1,5 +1,6 @@
 'use client';
 
+import { registerView } from '@/api/coreApi';
 import { Ref, useEffect, useRef } from 'react';
 import videojs from 'video.js';
 import Player from 'video.js/dist/types/player';
@@ -7,9 +8,14 @@ import 'video.js/dist/video-js.css';
 
 type Props = {
 	hlsMasterList: string;
+	videoId: string;
 };
 
-export const VideoPlayer = ({ hlsMasterList }: Props) => {
+const onRegisterView = async (videoId: string) => {
+	await registerView(videoId);
+};
+
+export const VideoPlayer = ({ hlsMasterList, videoId }: Props) => {
 	const videoRef = useRef<HTMLVideoElement | string>('');
 	const playerRef = useRef<Player | null>(null);
 
@@ -39,9 +45,13 @@ export const VideoPlayer = ({ hlsMasterList }: Props) => {
 		};
 	}, [hlsMasterList]);
 
+	useEffect(() => {
+		onRegisterView(videoId);
+	}, [videoId]);
+
 	return (
 		<div data-vjs-player>
-			<video ref={videoRef as Ref<HTMLVideoElement>} className='video-js vjs-default-skin' />
+			<video ref={videoRef as Ref<HTMLVideoElement>} className='video-js vjs-default-skin' autoPlay />
 		</div>
 	);
 };

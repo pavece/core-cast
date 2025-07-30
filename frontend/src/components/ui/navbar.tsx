@@ -18,7 +18,7 @@ export const Navbar = async () => {
 	} catch {}
 
 	return (
-		<nav className='flex items-center justify-between p-4 gap-2'>
+		<nav className='flex items-center justify-between p-4 gap-2 sticky top-0 z-50 bg-background'>
 			<img src='/logo.svg' alt='Core cast logo' className='w-[140px] md:w-[160px]' />
 			<div className='w-full justify-center hidden md:flex'>
 				<div className='flex w-full max-w-[550px]'>

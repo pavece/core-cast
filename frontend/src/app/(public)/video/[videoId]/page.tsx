@@ -1,5 +1,6 @@
-import { discoveryGetVideo, discoveryRelatedVideos } from '@/api/coreApi';
+import { discoveryGetVideo, discoveryRelatedVideos, getVideoInteractions } from '@/api/coreApi';
 import { RecommendationVideoCard } from '@/components/video/recomendation-video-card';
+import { VideoInformationContainer } from '@/components/video/video-information-container';
 import { VideoPlayer } from '@/components/video/video-player';
 import { notFound } from 'next/navigation';
 import React from 'react';
@@ -13,11 +14,18 @@ export default async function VideoPage({ params }: VideoPageProps) {
 	try {
 		const { data: getVideoResponse } = await discoveryGetVideo(videoId);
 		const { data: getSimilarResponse } = await discoveryRelatedVideos(videoId);
+		const { data: getVideoInteractionsResponse } = await getVideoInteractions(videoId);
 
 		return (
 			<section className='grid grid-cols-1 md:grid-cols-10 gap-4'>
 				<div className='col-span-7'>
-					<VideoPlayer hlsMasterList={getVideoResponse.video.hlsMaterList!} />
+					<VideoPlayer hlsMasterList={getVideoResponse.video.hlsMaterList!} videoId={getVideoResponse.video.id} />
+					<VideoInformationContainer
+						title={getVideoResponse.video.title}
+						description={getVideoResponse.video.description}
+						likes={getVideoInteractionsResponse.interactions.likeCount as number}
+						views={getVideoInteractionsResponse.interactions.viewCount as number}
+					/>
 				</div>
 				<div className='col-span-3'>
 					{getSimilarResponse.videos.map(v => {
@@ -29,7 +37,6 @@ export default async function VideoPage({ params }: VideoPageProps) {
 			</section>
 		);
 	} catch (error) {
-		console.log(error);
-		notFound(); //TODO: Add video does not exists fallback
+		notFound(); //TODO: Add video does not exist fallback
 	}
 }

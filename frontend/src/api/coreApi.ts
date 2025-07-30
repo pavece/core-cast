@@ -5,6 +5,7 @@ import {
 	UserManagementResponses,
 	VideoManagementResponses,
 	VideoDiscoveryResponses,
+	VideoInteractionResponses,
 } from '@core-cast/types';
 
 export const coreApiClient = axios.create({
@@ -166,4 +167,13 @@ export const discoveryGetVideo = (videoId: string) => {
 
 export const discoveryRelatedVideos = (videoId: string) => {
 	return coreApiClient.get<VideoDiscoveryResponses.IGetSimilarVideosResponse>(`/discovery/similar/${videoId}`);
+};
+
+//Video interactions
+export const getVideoInteractions = (videoId: string) => {
+	return coreApiClient.get<VideoInteractionResponses.IGetVideoInteractionsResponse>(`/interactions/${videoId}`);
+};
+
+export const registerView = (videoId: string) => {
+	return coreApiClient.put(`/interactions/register-view/${videoId}`);
 };
