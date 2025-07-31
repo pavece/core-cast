@@ -21,11 +21,9 @@ import {
 	DropdownMenuContent,
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
-	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuCheckboxItem,
 } from '../ui/dropdown-menu';
-import { Check } from 'lucide-react';
 
 type Props = {
 	hlsMasterList: string;

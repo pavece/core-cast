@@ -47,7 +47,7 @@ export const UserProfile = ({ username }: Props) => {
 							</DropdownMenuLabel>
 							<DropdownMenuSeparator />
 							<DropdownMenuItem>
-								<Link href='/creator-pannel'>Creator pannel</Link>
+								<Link href='/creator-pannel/uploads'>Creator pannel</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem>
 								<Link href='/auth/settings'>Settings</Link>

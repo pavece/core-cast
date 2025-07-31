@@ -5,6 +5,7 @@ import { Input } from './input';
 import { UserProfile } from '../user/user-profile';
 import { cookies } from 'next/headers';
 import { checkSession } from '@/api/coreApi';
+import Link from 'next/link';
 
 export const Navbar = async () => {
 	let userProfile: { username: string } = { username: '' };
@@ -19,7 +20,9 @@ export const Navbar = async () => {
 
 	return (
 		<nav className='flex items-center justify-between p-4 gap-2 sticky top-0 z-50 bg-background'>
-			<img src='/logo.svg' alt='Core cast logo' className='w-[140px] md:w-[160px]' />
+			<Link href='/'>
+				<img src='/logo.svg' alt='Core cast logo' className='w-[1340px] md:w-[170px]' />
+			</Link>
 			<div className='w-full justify-center hidden md:flex'>
 				<div className='flex w-full max-w-[550px]'>
 					<Input placeholder='Search videos' className='w-full rounded-tr-none rounded-br-none h-10' />
