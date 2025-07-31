@@ -169,6 +169,14 @@ export const discoveryRelatedVideos = (videoId: string) => {
 	return coreApiClient.get<VideoDiscoveryResponses.IGetSimilarVideosResponse>(`/discovery/similar/${videoId}`);
 };
 
+export const getDiscoveryFeed = (watchedVideosCookie?: string) => {
+	return coreApiClient.get<VideoDiscoveryResponses.IGetFeedResponse>('/discovery/feed', {
+		headers: {
+			Cookie: 'last_videos=' + watchedVideosCookie,
+		},
+	});
+};
+
 //Video interactions
 export const getVideoInteractions = (videoId: string) => {
 	return coreApiClient.get<VideoInteractionResponses.IGetVideoInteractionsResponse>(`/interactions/${videoId}`);
@@ -179,9 +187,16 @@ export const registerView = (videoId: string) => {
 };
 
 export const getPersonalVideoInteractions = (videoId: string) => {
-	return coreApiClient.get<VideoInteractionResponses.IGetPersonalVideoInteractionsResponse>(`/interactions/personal/${videoId}`, { withCredentials: true });
+	return coreApiClient.get<VideoInteractionResponses.IGetPersonalVideoInteractionsResponse>(
+		`/interactions/personal/${videoId}`,
+		{ withCredentials: true }
+	);
 };
 
 export const giveLike = (videoId: string) => {
-	return coreApiClient.post<VideoInteractionResponses.IToggleLikeResponse>(`/interactions/like/${videoId}`, {}, { withCredentials: true });
+	return coreApiClient.post<VideoInteractionResponses.IToggleLikeResponse>(
+		`/interactions/like/${videoId}`,
+		{},
+		{ withCredentials: true }
+	);
 };

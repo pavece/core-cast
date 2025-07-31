@@ -3,7 +3,7 @@
 import { registerView } from '@/api/coreApi';
 import Hls, { Level } from 'hls.js';
 import { CSSProperties, Ref, useEffect, useRef, useState } from 'react';
-
+import { getCookie, setCookie } from 'cookies-next/client';
 import {
 	MediaController,
 	MediaControlBar,
@@ -43,6 +43,12 @@ const variables = {
 } as CSSProperties;
 
 const onRegisterView = async (videoId: string) => {
+	const lastVideos = JSON.parse(getCookie('last_videos') || '[]') as string[];
+	if (lastVideos.length > 2) {
+		lastVideos.pop();
+	}
+	lastVideos.unshift(videoId);
+	setCookie('last_videos', lastVideos);
 	await registerView(videoId);
 };
 
@@ -109,7 +115,7 @@ export const VideoPlayer = ({ hlsMasterList, videoId }: Props) => {
 					playsInline
 					preload='metadata'
 					className='w-full h-full object-contain rounded-md'
-					crossOrigin='anonymous'
+					tabIndex={-1}
 				/>
 
 				<MediaControlBar className='gap-2 bg-background rounded-md'>
@@ -125,7 +131,7 @@ export const VideoPlayer = ({ hlsMasterList, videoId }: Props) => {
 							<DropdownMenuLabel>Quality</DropdownMenuLabel>
 							<DropdownMenuSeparator />
 							{qualityLevels.map((l, i) => (
-								<DropdownMenuCheckboxItem checked={currentLevel == i} onClick={() => onQualityChange(i)}>
+								<DropdownMenuCheckboxItem checked={currentLevel == i} onClick={() => onQualityChange(i)} key={i}>
 									{l.height}p
 								</DropdownMenuCheckboxItem>
 							))}

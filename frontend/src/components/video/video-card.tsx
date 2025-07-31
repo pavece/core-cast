@@ -1,7 +1,6 @@
 'use client';
 
 import { cutString } from '@/lib/utils';
-import { User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useRef, useState } from 'react';
 
@@ -14,7 +13,7 @@ type Props = {
 	username: string;
 };
 
-export const RecommendationVideoCard = ({ thumbnail, title, description, username, id, previewClip }: Props) => {
+export const VideoCard = ({ thumbnail, title, description, username, id, previewClip }: Props) => {
 	const videoRef = useRef<HTMLVideoElement | null>(null);
 	const [shouldLoad, setShouldLoad] = useState(false);
 	const router = useRouter();
@@ -33,9 +32,9 @@ export const RecommendationVideoCard = ({ thumbnail, title, description, usernam
 	};
 
 	return (
-		<article className='flex gap-2 w-full cursor-pointer' onClick={() => router.push(`/video/${id}`)}>
+		<article className='flex gap-2 w-full flex-col cursor-pointer' onClick={() => router.push(`/video/${id}`)}>
 			<div
-				className='w-[40%] min-w-[150px] aspect-video rounded-md !bg-cover !bg-center bg-no-repeat'
+				className='w-full aspect-video rounded-md !bg-cover !bg-center bg-no-repeat'
 				style={{ background: `url(${thumbnail})` }}
 			>
 				<video

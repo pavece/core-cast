@@ -21,7 +21,7 @@ export const Navbar = async () => {
 	return (
 		<nav className='flex items-center justify-between p-4 gap-2 sticky top-0 z-50 bg-background'>
 			<Link href='/'>
-				<img src='/logo.svg' alt='Core cast logo' className='w-[1340px] md:w-[170px]' />
+				<img src='/logo.svg' alt='Core cast logo' className='w-[130px] md:w-[170px]' />
 			</Link>
 			<div className='w-full justify-center hidden md:flex'>
 				<div className='flex w-full max-w-[550px]'>

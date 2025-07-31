@@ -16,6 +16,8 @@ export default async function VideoPage({ params }: VideoPageProps) {
 		const { data: getSimilarResponse } = await discoveryRelatedVideos(videoId);
 		const { data: getVideoInteractionsResponse } = await getVideoInteractions(videoId);
 
+		if (!getVideoResponse.video.hlsMaterList) return notFound();
+
 		return (
 			<section className='grid grid-cols-1 md:grid-cols-10 gap-4'>
 				<div className='col-span-7'>
@@ -28,7 +30,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
 						views={getVideoInteractionsResponse.interactions.viewCount as number}
 					/>
 				</div>
-				<div className='col-span-3'>
+				<div className='col-span-3 flex gap-4 flex-col'>
 					{getSimilarResponse.videos.map(v => {
 						if (v.id !== getVideoResponse.video.id) {
 							return <RecommendationVideoCard key={v.id} {...v} />;
