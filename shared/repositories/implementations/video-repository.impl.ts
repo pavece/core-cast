@@ -11,7 +11,9 @@ export class VideoRepository implements IVideoRepository {
 	getUserVideosFull(userId: string): Promise<VideoWithProcessingTaskRecord[]> {
 		return this.prismaClient.video.findMany({
 			where: { userId },
-			include: { videoProcessingTask: { select: { id: true } } },
+			include: {
+				videoProcessingTask: { select: { id: true } },
+			},
 		});
 	}
 
@@ -25,7 +27,7 @@ export class VideoRepository implements IVideoRepository {
 	getVideoById(videoId: string): Promise<videoWithPartialUser | null> {
 		return this.prismaClient.video.findUnique({
 			where: { id: videoId },
-			include: { uploadedBy: { select: { username: true, id: true } } },
+			include: { uploadedBy: { select: { username: true, id: true, avatar: true } } },
 		});
 	}
 	getUserVideos(userId: string): Promise<video[]> {

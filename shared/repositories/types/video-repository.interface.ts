@@ -4,6 +4,7 @@ import { VideoManagementResponses, VideoSearchRecord } from '@core-cast/types';
 export type videoWithPartialUser = {
 	uploadedBy: {
 		username: string;
+		avatar?: string | null;
 		id: string;
 	};
 } & video;

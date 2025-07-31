@@ -28,6 +28,9 @@ export default async function VideoPage({ params }: VideoPageProps) {
 						description={getVideoResponse.video.description}
 						likes={getVideoInteractionsResponse.interactions.likeCount as number}
 						views={getVideoInteractionsResponse.interactions.viewCount as number}
+						creatorAvatar={getVideoResponse.video.uploadedBy.avatar || ''}
+						creatorName={getVideoResponse.video.uploadedBy.username}
+						creatorId={getVideoResponse.video.uploadedBy.id}
 					/>
 				</div>
 				<div className='col-span-3 flex gap-4 flex-col'>

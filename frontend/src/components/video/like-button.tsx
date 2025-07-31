@@ -36,7 +36,7 @@ export const LikeButton = ({ likes, videoId }: Props) => {
 
 	return (
 		<div
-			className='bg-card flex gap-2 items-center text-md rounded-md p-2 text-md cursor-pointer'
+			className='bg-card flex gap-2 items-center text-md rounded-full px-4 p-2 text-md cursor-pointer border'
 			onClick={onLikeVideo}
 		>
 			<ThumbsUp fill={liked ? 'white' : ''} className='w-6' /> {likes}

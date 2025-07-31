@@ -37,7 +37,7 @@ const LoginPage = () => {
 		try {
 			setLoading(true);
 			await loginUser(email, password);
-			router.push('/creator-pannel');
+			router.push('/creator-pannel/uploads');
 		} catch (error) {
 			setLoading(false);
 			if (error instanceof AxiosError && error.response?.data.requiresTotp) {
@@ -101,7 +101,7 @@ const LoginPage = () => {
 					password={form.getValues('password')}
 					email={form.getValues('email')}
 					onFailure={() => toast.error('Invalid OTP code')}
-					onSuccess={() => router.push('/creator-pannel')}
+					onSuccess={() => router.push('/creator-pannel/uploads')}
 				/>
 			)}
 		</div>

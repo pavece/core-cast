@@ -45,7 +45,7 @@ export const RegisterForm = ({ token }: Props) => {
 		try {
 			setLoading(true);
 			await registerUser(email, username, password, token);
-			router.push('/creator-pannel');
+			router.push('/creator-pannel/uploads');
 		} catch (error) {
 			handleApiError(error);
 			setLoading(false);
