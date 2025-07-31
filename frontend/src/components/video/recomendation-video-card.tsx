@@ -1,5 +1,6 @@
 'use client';
 
+import { cutString } from '@/lib/utils';
 import { User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useRef, useState } from 'react';
@@ -34,7 +35,7 @@ export const RecommendationVideoCard = ({ thumbnail, title, description, usernam
 	return (
 		<article className='flex gap-2 w-full cursor-pointer' onClick={() => router.push(`/video/${id}`)}>
 			<div
-				className='w-[40%]  aspect-video rounded-md !bg-cover !bg-center bg-no-repeat'
+				className='w-[40%] min-w-[150px] aspect-video rounded-md !bg-cover !bg-center bg-no-repeat'
 				style={{ background: `url(${thumbnail})` }}
 			>
 				<video
@@ -51,7 +52,7 @@ export const RecommendationVideoCard = ({ thumbnail, title, description, usernam
 			</div>
 			<div>
 				<h2 className='text-md font-medium'>{title}</h2>
-				<p className='text-sm text-muted-foreground'>{description}</p>
+				<p className='text-sm text-muted-foreground'>{cutString(description, 30)}</p>
 				<p className='mt-2 text-muted-foreground flex gap-1'>
 					<User className='w-5' />
 					{username}
