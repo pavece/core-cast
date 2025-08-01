@@ -8,7 +8,7 @@ export default async function Home() {
 		const videoFeed = await getDiscoveryFeed(watchedVideosCokie);
 
 		return (
-			<div className='grid grid-cols-1 md:grid-cols-[repeat(auto-fit,_minmax(200px,_300px))] justify-center gap-4'>
+			<div className='grid grid-cols-1 md:grid-cols-[repeat(auto-fit,_minmax(250px,_350px))] justify-center gap-4'>
 				{videoFeed.data.videos.map(v => {
 					return <VideoCard {...v} key={v.id} />;
 				})}

@@ -35,11 +35,27 @@ export const LikeButton = ({ likes, videoId }: Props) => {
 	};
 
 	return (
-		<div
-			className='bg-card flex gap-2 items-center text-md rounded-full px-4 p-2 text-md cursor-pointer border'
+		<button
+			className={`group bg-card hover:bg-muted/50 border border-border hover:border-primary/20 
+				flex items-center gap-3 rounded-full px-5 py-3 font-medium transition-all duration-300 
+				shadow-sm hover:shadow-md cursor-pointer
+				${liked ? 'bg-primary/5 border-primary/20' : ''}
+			`}
 			onClick={onLikeVideo}
 		>
-			<ThumbsUp fill={liked ? 'white' : ''} className='w-6' /> {likes}
-		</div>
+			<ThumbsUp
+				fill={liked ? 'currentColor' : 'none'}
+				className={`w-5 h-5 transition-colors duration-200 ${
+					liked ? 'text-primary' : 'text-muted-foreground group-hover:text-primary'
+				}`}
+			/>
+			<span
+				className={`font-semibold transition-colors duration-200 ${
+					liked ? 'text-primary' : 'text-foreground group-hover:text-primary'
+				}`}
+			>
+				{likes}
+			</span>
+		</button>
 	);
 };
