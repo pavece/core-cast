@@ -177,6 +177,10 @@ export const getDiscoveryFeed = (watchedVideosCookie?: string) => {
 	});
 };
 
+export const searchVideos = (query: string) => {
+	return coreApiClient.get<VideoDiscoveryResponses.ISearchVideoResponse>(`/discovery/search?q=${query}`);
+};
+
 //Video interactions
 export const getVideoInteractions = (videoId: string) => {
 	return coreApiClient.get<VideoInteractionResponses.IGetVideoInteractionsResponse>(`/interactions/${videoId}`);
