@@ -11,7 +11,7 @@ async function generateEmbeding(text: string) {
 
 async function storeEmbeding(embeding: DataArray, videoInfo: VideoSearchRecord) {
 	const qdrantClient = Qdrant.getInstance().getClient();
-	qdrantClient.upsert('videos', { points: [{ id: videoInfo.id, vector: Array.from(embeding), payload: {...videoInfo} }] });
+	qdrantClient.upsert('videos', { points: [{ id: videoInfo.id, vector: Array.from(embeding), payload: {...videoInfo}, }] });
 }
 
 export async function generateStoreVideoEmbeding(videoInfo: VideoSearchRecord) {

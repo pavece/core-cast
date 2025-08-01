@@ -200,6 +200,7 @@ services:
 
   meilisearch:
     image: getmeili/meilisearch:v1.15
+    command: meilisearch --db-path /meili_data
     environment:
       - MEILI_MASTER_KEY=masterKey
     ports:

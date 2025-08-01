@@ -23,6 +23,7 @@ export class Qdrant {
 				vectors: {
 					size: 384, //all-MiniLM-L6-v2
 					distance: 'Cosine',
+					on_disk: true
 				},
 			});
 		}
