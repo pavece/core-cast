@@ -10,6 +10,7 @@ import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Eye } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type Props = {
 	videoId: string;
@@ -23,9 +24,7 @@ export const BasicInfoContainer = ({ videoId }: Props) => {
 		isError,
 	} = useQuery({ queryFn: () => discoveryGetVideo(videoId), queryKey: ['video', videoId] });
 
-	if (isLoading) {
-		return <Loading />;
-	}
+	if (isLoading) return <BasicInfoSkeleton />;
 
 	if (isError) return notFound();
 
@@ -45,4 +44,8 @@ export const BasicInfoContainer = ({ videoId }: Props) => {
 			</CardFooter>
 		</Card>
 	);
+};
+
+const BasicInfoSkeleton = () => {
+	return <Skeleton className='w-full rounded-md h-[350px]' />;
 };

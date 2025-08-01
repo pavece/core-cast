@@ -24,9 +24,10 @@ export const useMultipartUpload = (videoId: string, currentUpload: null | Upload
 		const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
 		setTotalChunks(totalChunks);
 
+
 		if (!multipartIdRef.current) {
 			try {
-				multipartIdRef.current = await createMultipartUpload(file, videoId, totalChunks);
+				multipartIdRef.current = await createMultipartUpload({...file, name: file.name.replaceAll(" ", "-")}, videoId, totalChunks);
 			} catch (error) {
 				handleApiError(error);
 			}

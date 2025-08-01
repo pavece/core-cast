@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { getPendingUploadByVideo } from '@/api/uploadApi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type Props = {
 	videoId: string;
@@ -40,7 +41,7 @@ export const UploadVideoForm = ({ videoId }: Props) => {
 		await onConfirmUpload(file);
 	};
 
-	if (isLoading) return <Loading />;
+	if (isLoading) return <Skeleton className='w-full max-w-[550px] h-[300px]' />;
 	if (isError) notFound();
 
 	if (finished) return <UploadSuccessCard />;

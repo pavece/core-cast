@@ -8,6 +8,7 @@ import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { ChartConfig } from '@/components/ui/chart';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { SelectTrigger, SelectValue, Select, SelectContent, SelectItem } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type Props = {
 	videoId: string;
@@ -45,15 +46,7 @@ export const ViewsChart = ({ videoId }: Props) => {
 		setSelectedDays(value);
 	};
 
-	if (isLoading) {
-		return (
-			<div className='rounded-md border p-4 bg-card'>
-				<div className='h-[300px] flex items-center justify-center'>
-					<div className='text-muted-foreground'>Loading chart...</div>
-				</div>
-			</div>
-		);
-	}
+	if (isLoading) return <ChartSkeleton />;
 
 	if (error) {
 		return (
@@ -146,4 +139,8 @@ export const ViewsChart = ({ videoId }: Props) => {
 			</CardContent>
 		</Card>
 	);
+};
+
+export const ChartSkeleton = () => {
+	return <Skeleton className='w-full h-[600px]' />;
 };
