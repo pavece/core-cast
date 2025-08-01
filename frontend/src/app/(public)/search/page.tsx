@@ -2,7 +2,6 @@
 
 import { searchVideos } from '@/api/coreApi';
 import { Loading } from '@/components/ui/loading';
-import { RecommendationVideoCard } from '@/components/video/recomendation-video-card';
 import { VideoCard } from '@/components/video/video-card';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
@@ -32,7 +31,7 @@ const SearchPage = () => {
 	return (
 		<div className='grid grid-cols-1 md:grid-cols-[repeat(auto-fit,_minmax(200px,_300px))] justify-center gap-4'>
 			{searchResults.data.videos.map(v => (
-				<VideoCard className='max-w-[400px]' {...v} key={v.id} />
+				<VideoCard {...v} key={v.id} />
 			))}
 		</div>
 	);

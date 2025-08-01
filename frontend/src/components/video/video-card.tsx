@@ -2,7 +2,7 @@
 
 import { cutString } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import React, { CSSProperties, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 type Props = {
 	title: string;
@@ -34,7 +34,7 @@ export const VideoCard = ({ thumbnail, title, description, username, id, preview
 
 	return (
 		<article
-			className={`flex gap-2 w-full flex-col cursor-pointer ${className}`}
+			className={`flex gap-2 w-full flex-col cursor-pointer bg-card rounded-md border p-4 ${className}`}
 			onClick={() => router.push(`/video/${id}`)}
 		>
 			<div
@@ -54,7 +54,7 @@ export const VideoCard = ({ thumbnail, title, description, username, id, preview
 				></video>
 			</div>
 			<div>
-				<h2 className='text-md font-medium'>{cutString(title, 35)}</h2>
+				<h2 className='text-md font-medium capitalize'>{cutString(title, 35)}</h2>
 				<p className='text-sm text-muted-foreground'>{cutString(description, 30)}</p>
 				<p className='mt-1 text-muted-foreground flex gap-1 italic'>{username}</p>
 			</div>

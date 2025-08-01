@@ -66,6 +66,7 @@ export const VideoPlayer = ({ hlsMasterList, videoId }: Props) => {
 				hlsRef.current = new Hls({
 					debug: false,
 					enableWorker: true,
+					startLevel: 2,
 				});
 
 				hlsRef.current.loadSource(hlsMasterList);
