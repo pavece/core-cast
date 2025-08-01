@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { deleteVideo } from '@/api/coreApi';
-import { ExternalLink, Pen, Trash } from 'lucide-react';
+import { ChartSpline, ExternalLink, Trash } from 'lucide-react';
 import { DestructiveAction } from '../../../../components/ui/destructive-action';
 import { Button } from '@/components/ui/button';
 import { handleApiError } from '@/api/errors';
@@ -30,10 +30,10 @@ export const VideoActions = ({ selectedVideoId }: Props) => {
 			<Button
 				disabled={!selectedVideoId}
 				onClick={() => {
-					router.push(`/uploads/${selectedVideoId}`);
+					router.push(`/creator-pannel/uploads/${selectedVideoId}`);
 				}}
 			>
-				<Pen /> Edit
+				<ChartSpline /> Details
 			</Button>
 			<Button
 				disabled={!selectedVideoId}

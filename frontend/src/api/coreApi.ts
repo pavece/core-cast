@@ -6,6 +6,7 @@ import {
 	VideoManagementResponses,
 	VideoDiscoveryResponses,
 	VideoInteractionResponses,
+	InteractionManagementResponses,
 } from '@core-cast/types';
 
 export const coreApiClient = axios.create({
@@ -201,6 +202,14 @@ export const giveLike = (videoId: string) => {
 	return coreApiClient.post<VideoInteractionResponses.IToggleLikeResponse>(
 		`/interactions/like/${videoId}`,
 		{},
+		{ withCredentials: true }
+	);
+};
+
+//Video interaction management
+export const getVideoMetrics = (videoId: string, days: number) => {
+	return coreApiClient.get<InteractionManagementResponses.IGetVideoStatsResponse>(
+		`/manage-interactions/${videoId}?days=${days}`,
 		{ withCredentials: true }
 	);
 };
