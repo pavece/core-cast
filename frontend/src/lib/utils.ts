@@ -5,12 +5,12 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export async function batchPromises(promises: Promise<any>[], maxConcurrent: number) {
+export async function batchPromises(promises: Promise<any>[], maxConcurrent: number) { // eslint-disable-line
 	let currentBatch = 0;
 	const totalBatches = Math.ceil(promises.length / maxConcurrent);
 
 	for (let i = 0; i < totalBatches; i++) {
-		const batch: Promise<any>[] = [];
+		const batch: Promise<any>[] = []; // eslint-disable-line
 
 		for (
 			let j = maxConcurrent * currentBatch;

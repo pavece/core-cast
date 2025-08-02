@@ -20,14 +20,16 @@ const formSchema = z.object({
 	role: z.enum(['ADMIN', 'USER']),
 });
 
+type UserInformation = {
+	username: string;
+	channelDescription: string | null;
+	email: string;
+	role: 'ADMIN' | 'USER';
+};
+
 type Props = {
 	userId: string;
-	userInformation?: {
-		username: string;
-		channelDescription: string | null;
-		email: string;
-		role: 'ADMIN' | 'USER';
-	};
+	userInformation?: UserInformation;
 };
 
 export const EdtitUserForm = ({ userId, userInformation }: Props) => {
@@ -52,7 +54,7 @@ export const EdtitUserForm = ({ userId, userInformation }: Props) => {
 
 	useEffect(() => {
 		if (userInformation) userInformation.channelDescription = userInformation.channelDescription || '';
-		form.reset(userInformation as any);
+		form.reset(userInformation as UserInformation & { channelDescription: string });
 	}, [userInformation]);
 
 	return (

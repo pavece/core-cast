@@ -44,7 +44,7 @@ export const AddUserModal = ({ children }: Props) => {
 						<Link className='text-blue-500' href={`/auth/register/${whitelistId}`}>
 							{whitelistId && <p>/auth/register/{whitelistId}</p>}
 						</Link>
-						<p className='text-sm italic text-muted-foreground'>Copy this link, you can't access it later</p>
+						<p className='text-sm italic text-muted-foreground'>Copy this link, you can{"'"}t access it later</p>
 					</div>
 				</AlertDialogHeader>
 				<AlertDialogFooter>

@@ -9,7 +9,7 @@ import { ImagesMenu } from './images-menu';
 import { SectionHeader } from '@/components/control-pannel/section-header';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export const UserSettingsPage = () => {
+const UserSettingsPage = () => {
 	const { data: apiResponse, isLoading } = useQuery({ queryKey: ['user'], queryFn: () => getPersonalUserInfo() });
 
 	if (isLoading) return <SettingsSkeleton />;

@@ -18,12 +18,15 @@ const formSchema = z.object({
 	channelDescription: z.string().optional(),
 });
 
+type UserInformation = {
+	username: string;
+	channelDescription: string | null;
+	email: string;
+	role: 'ADMIN' | 'USER';
+};
+
 type Props = {
-	userInformation?: {
-		username: string;
-		channelDescription: string | null;
-		email: string;
-	};
+	userInformation?: UserInformation;
 };
 
 export const UserSettingsForm = ({ userInformation }: Props) => {
@@ -48,7 +51,7 @@ export const UserSettingsForm = ({ userInformation }: Props) => {
 
 	useEffect(() => {
 		if (userInformation) userInformation.channelDescription = userInformation.channelDescription || '';
-		form.reset(userInformation as any);
+		form.reset(userInformation as UserInformation & { channelDescription: string });
 	}, [userInformation]);
 
 	return (

@@ -119,14 +119,14 @@ export const VideoPlayer = ({ hlsMasterList, videoId }: Props) => {
 					tabIndex={-1}
 				/>
 
-				<MediaControlBar className='gap-2 bg-background rounded-md'>
-					<MediaPlayButton />
-					<MediaTimeDisplay />
-					<MediaMuteButton />
-					<MediaTimeRange />
+				<MediaControlBar className='gap-2  p-2 px-4 bg-card/90 backdrop-blur-sm rounded-full w-[95%] mx-auto mb-2'>
+					<MediaPlayButton className='bg-transparent' />
+					<MediaTimeDisplay className='bg-transparent' />
+					<MediaMuteButton className='bg-transparent' />
+					<MediaTimeRange className='bg-transparent' />
 					<DropdownMenu modal>
 						<DropdownMenuTrigger>
-							<MediaRenditionMenuButton />
+							<MediaRenditionMenuButton className='bg-transparent' />
 						</DropdownMenuTrigger>
 						<DropdownMenuContent side='top'>
 							<DropdownMenuLabel>Quality</DropdownMenuLabel>
@@ -138,8 +138,8 @@ export const VideoPlayer = ({ hlsMasterList, videoId }: Props) => {
 							))}
 						</DropdownMenuContent>
 					</DropdownMenu>
-					<MediaPipButton />
-					<MediaFullscreenButton />
+					<MediaPipButton className='bg-transparent' />
+					<MediaFullscreenButton className='bg-transparent' />
 				</MediaControlBar>
 			</MediaController>
 		</div>

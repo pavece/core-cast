@@ -92,7 +92,7 @@ export const VideoCreationForm = () => {
 								</div>
 							</FormControl>
 							<FormDescription>
-								If not public the video won't be listed in any recomendation or search. But it will be accessible by
+								If not public the video won{"'"}t be listed in any recomendation or search. But it will be accessible by
 								link.
 							</FormDescription>
 							<FormMessage />
