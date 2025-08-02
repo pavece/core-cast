@@ -7,6 +7,7 @@ import {
 	VideoDiscoveryResponses,
 	VideoInteractionResponses,
 	InteractionManagementResponses,
+	ChannelDiscoveryResponses,
 } from '@core-cast/types';
 
 export const coreApiClient = axios.create({
@@ -212,4 +213,9 @@ export const getVideoMetrics = (videoId: string, days: number) => {
 		`/manage-interactions/${videoId}?days=${days}`,
 		{ withCredentials: true }
 	);
+};
+
+//Channel discovery
+export const getChannel = (userId: string) => {
+	return coreApiClient.get<ChannelDiscoveryResponses.GetChannelResponse>(`/channel/${userId}`);
 };

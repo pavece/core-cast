@@ -10,11 +10,12 @@ type Props = {
 	id: string;
 	thumbnail: string;
 	previewClip: string;
-	username: string;
+	username?: string;
 	className?: string;
+	skipCreator?: boolean;
 };
 
-export const VideoCard = ({ thumbnail, title, username, id, previewClip, className }: Props) => {
+export const VideoCard = ({ thumbnail, title, username, id, previewClip, className, skipCreator }: Props) => {
 	const videoRef = useRef<HTMLVideoElement | null>(null);
 	const [shouldLoad, setShouldLoad] = useState(false);
 	const [isHovered, setIsHovered] = useState(false);
@@ -70,11 +71,13 @@ export const VideoCard = ({ thumbnail, title, username, id, previewClip, classNa
 			</div>
 
 			<div className='flex gap-3 mt-4'>
-				<div className='flex-shrink-0'>
-					<div className='w-10 h-10 rounded-full bg-card flex items-center justify-center shadow-md'>
-						<User className='w-5 h-5 text-white' />
+				{!skipCreator && (
+					<div className='flex-shrink-0'>
+						<div className='w-10 h-10 rounded-full bg-card flex items-center justify-center shadow-md'>
+							<User className='w-5 h-5 text-white' />
+						</div>
 					</div>
-				</div>
+				)}
 
 				<div className='flex-1 min-w-0'>
 					<h3 className='font-semibold text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-200'>
