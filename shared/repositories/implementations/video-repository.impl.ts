@@ -8,6 +8,7 @@ import {
 
 export class VideoRepository implements IVideoRepository {
 	constructor(private prismaClient: PrismaClient) {}
+
 	getUserVideosFull(userId: string): Promise<VideoWithProcessingTaskRecord[]> {
 		return this.prismaClient.video.findMany({
 			where: { userId },
@@ -77,5 +78,9 @@ export class VideoRepository implements IVideoRepository {
 		return result.map(v => {
 			return { username: v.uploadedBy.username, ...v } as VideoSearchRecord;
 		});
+	}
+
+	getUserPublicVideos(userId: string): Promise<video[]> {
+		return this.prismaClient.video.findMany({ where: { userId, public: true, NOT: { hlsMaterList: null } } });
 	}
 }

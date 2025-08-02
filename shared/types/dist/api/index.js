@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UploadResponses = exports.VideoDiscoveryResponses = exports.VideoInteractionResponses = exports.InteractionManagementResponses = exports.VideoManagementResponses = exports.UserResponses = exports.UserManagementResponses = exports.AuthResponses = void 0;
+exports.ChannelDiscoveryResponses = exports.UploadResponses = exports.VideoDiscoveryResponses = exports.VideoInteractionResponses = exports.InteractionManagementResponses = exports.VideoManagementResponses = exports.UserResponses = exports.UserManagementResponses = exports.AuthResponses = void 0;
 exports.AuthResponses = require("./auth.types");
 exports.UserManagementResponses = require("./user-management.types");
 exports.UserResponses = require("./user.types");
@@ -9,3 +9,4 @@ exports.InteractionManagementResponses = require("./interaction-management.types
 exports.VideoInteractionResponses = require("./interactions.types");
 exports.VideoDiscoveryResponses = require("./video-discovery.types");
 exports.UploadResponses = require("./upload.types");
+exports.ChannelDiscoveryResponses = require("./channel-discovery.types");

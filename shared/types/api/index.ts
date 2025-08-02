@@ -10,3 +10,4 @@ export * as InteractionManagementResponses from './interaction-management.types'
 export * as VideoInteractionResponses from './interactions.types';
 export * as VideoDiscoveryResponses from './video-discovery.types';
 export * as UploadResponses from './upload.types';
+export * as ChannelDiscoveryResponses from './channel-discovery.types';

@@ -28,4 +28,5 @@ export interface IVideoRepository {
 	getLatestPopularVideos(limit: number): Promise<VideoSearchRecord[]>;
 	getLatestVideos(limit: number): Promise<VideoSearchRecord[]>;
 	getMostPopularVideos(limit: number): Promise<VideoSearchRecord[]>;
+	getUserPublicVideos(userId: string): Promise<video[]>;
 }
