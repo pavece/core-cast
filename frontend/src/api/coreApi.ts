@@ -18,62 +18,93 @@ export const coreApiClient = axios.create({
 	},
 });
 
+const serversideCoreApiClient = axios.create({
+	baseURL: 'http://traefik:80/api' + '/core',
+	withCredentials: true,
+	headers: {
+		'Content-Type': 'application/json',
+	},
+});
+
+const getAPIClient = () => {
+	if (typeof window === 'undefined') {
+		return serversideCoreApiClient;
+	}
+	return coreApiClient;
+};
+
 export const registerUser = (email: string, username: string, password: string, token: string) => {
-	return coreApiClient.post(`/auth/register/${token}`, { email, username, password });
+	const apiClient = getAPIClient();
+
+	return apiClient.post(`/auth/register/${token}`, { email, username, password });
 };
 
 export const loginUser = (email: string, password: string, totp?: string) => {
-	return coreApiClient.post('/auth/login', { email, password, totp });
+	const apiClient = getAPIClient();
+
+	return apiClient.post('/auth/login', { email, password, totp });
 };
 
 export const checkSession = (sessionToken?: string) => {
+	const apiClient = getAPIClient();
+
 	if (sessionToken) {
-		return coreApiClient.get<AuthResponses.IValidateSessionResponse>('/auth/check-session', {
+		return apiClient.get<AuthResponses.IValidateSessionResponse>('/auth/check-session', {
 			headers: { Cookie: `session_token=${sessionToken}` },
 		});
 	}
 
-	return coreApiClient.get<AuthResponses.IValidateSessionResponse>('/auth/check-session', { withCredentials: true });
+	return apiClient.get<AuthResponses.IValidateSessionResponse>('/auth/check-session');
 };
 
 // Self user management
 export const closeSession = (sessionToken?: string) => {
+	const apiClient = getAPIClient();
+
 	if (sessionToken) {
-		return coreApiClient.delete<AuthResponses.IValidateSessionResponse>('/auth/logout', {
+		return apiClient.delete<AuthResponses.IValidateSessionResponse>('/auth/logout', {
 			headers: { Cookie: `session_token=${sessionToken}` },
 		});
 	}
-	return coreApiClient.delete('/auth/logout', { withCredentials: true });
+	return apiClient.delete('/auth/logout');
 };
 
 export const getPersonalUserInfo = (sessionToken?: string) => {
+	const apiClient = getAPIClient();
+
 	if (sessionToken) {
-		return coreApiClient.get<UserResponses.IGetUserReponse>('/user', {
+		return apiClient.get<UserResponses.IGetUserReponse>('/user', {
 			headers: { Cookie: `session_token=${sessionToken}` },
-			withCredentials: true,
 		});
 	}
 
-	return coreApiClient.get<UserResponses.IGetUserReponse>('/user');
+	return apiClient.get<UserResponses.IGetUserReponse>('/user');
 };
 
 export const updatePersonalUserInfo = (userInfo: Partial<UserResponses.IUserUpdateProps>) => {
-	return coreApiClient.put<UserResponses.IUpdateUserResponse>('/user', { ...userInfo, withCredentials: true });
+	const apiClient = getAPIClient();
+
+	return apiClient.put<UserResponses.IUpdateUserResponse>('/user', { ...userInfo, withCredentials: true });
 };
 
 export const closeAllSessions = () => {
-	return coreApiClient.delete('/user/close-sessions', { withCredentials: true });
+	const apiClient = getAPIClient();
+
+	return apiClient.delete('/user/close-sessions');
 };
 
 export const deleteAccount = () => {
-	return coreApiClient.delete('/user', { withCredentials: true });
+	const apiClient = getAPIClient();
+
+	return apiClient.delete('/user');
 };
 
 export const updateAvatar = (image: File) => {
+	const apiClient = getAPIClient();
+
 	const formData = new FormData();
 	formData.append('image', image);
-	return coreApiClient.post('/user/image/avatar', formData, {
-		withCredentials: true,
+	return apiClient.post('/user/image/avatar', formData, {
 		headers: {
 			'Content-Type': 'multipart/form-data',
 		},
@@ -81,10 +112,11 @@ export const updateAvatar = (image: File) => {
 };
 
 export const updateCover = (image: File) => {
+	const apiClient = getAPIClient();
+
 	const formData = new FormData();
 	formData.append('image', image);
-	return coreApiClient.post('/user/image/cover', formData, {
-		withCredentials: true,
+	return apiClient.post('/user/image/cover', formData, {
 		headers: {
 			'Content-Type': 'multipart/form-data',
 		},
@@ -92,87 +124,108 @@ export const updateCover = (image: File) => {
 };
 
 export const setup2FA = () => {
-	return coreApiClient.patch<AuthResponses.IConfigure2FAResponse>('/auth/2fa/configure', { withCredentials: true });
+	const apiClient = getAPIClient();
+
+	return apiClient.patch<AuthResponses.IConfigure2FAResponse>('/auth/2fa/configure');
 };
 
 export const activate2FA = (totp: string) => {
-	return coreApiClient.patch('/auth/2fa/activate', { withCredentials: true, totp });
+	const apiClient = getAPIClient();
+
+	return apiClient.patch('/auth/2fa/activate', { totp });
 };
 
 //User administration
 export const adminGetUsers = () => {
-	return coreApiClient.get<UserManagementResponses.IAdminGetUsersResponse>('/admin/users', { withCredentials: true });
+	const apiClient = getAPIClient();
+
+	return apiClient.get<UserManagementResponses.IAdminGetUsersResponse>('/admin/users');
 };
 
 export const adminGetUser = (userId: string, sessionToken?: string) => {
+	const apiClient = getAPIClient();
+
 	if (sessionToken) {
-		return coreApiClient.get<UserManagementResponses.IAdminGetUserResponse>(`/admin/users/${userId}`, {
-			withCredentials: true,
+		return apiClient.get<UserManagementResponses.IAdminGetUserResponse>(`/admin/users/${userId}`, {
 			headers: { Cookie: `session_token=${sessionToken}` },
 		});
 	}
 
-	return coreApiClient.get<UserManagementResponses.IAdminGetUserResponse>(`/admin/users/${userId}`, {
-		withCredentials: true,
-	});
+	return apiClient.get<UserManagementResponses.IAdminGetUserResponse>(`/admin/users/${userId}`, {});
 };
 
 export const adminGenerateWhitelistEntry = () => {
-	return coreApiClient.post<UserManagementResponses.ICreateWhitelistResponse>('/admin/users/register-whitelist', {
-		withCredentials: true,
-	});
+	const apiClient = getAPIClient();
+
+	return apiClient.post<UserManagementResponses.ICreateWhitelistResponse>('/admin/users/register-whitelist', {});
 };
 
 export const adminCloseUserSessions = (userId: string) => {
-	return coreApiClient.delete<UserManagementResponses.IAdminCloseSessionsResponse>(
-		`/admin/users/close-sessions/${userId}`
-	);
+	const apiClient = getAPIClient();
+
+	return apiClient.delete<UserManagementResponses.IAdminCloseSessionsResponse>(`/admin/users/close-sessions/${userId}`);
 };
 
 export const adminToggleUserBan = (userId: string) => {
-	return coreApiClient.patch<UserManagementResponses.IAdminBanUserResponse>(`/admin/users/toggle-ban/${userId}`);
+	const apiClient = getAPIClient();
+
+	return apiClient.patch<UserManagementResponses.IAdminBanUserResponse>(`/admin/users/toggle-ban/${userId}`);
 };
 
 export const adminUpdateUser = (userId: string, updates: Partial<UserResponses.IUserUpdateProps>) => {
-	return coreApiClient.put<UserManagementResponses.IAdminUpdateUserResponse>(`/admin/users/${userId}`, {
+	const apiClient = getAPIClient();
+
+	return apiClient.put<UserManagementResponses.IAdminUpdateUserResponse>(`/admin/users/${userId}`, {
 		...updates,
-		withCredentials: true,
 	});
 };
 
 export const adminDeleteAccount = (userId: string) => {
-	return coreApiClient.delete(`/admin/users/${userId}`, { withCredentials: true });
+	const apiClient = getAPIClient();
+
+	return apiClient.delete(`/admin/users/${userId}`);
 };
 
 //Video management
 export const createVideo = (title: string, description: string, isPublic: boolean) => {
-	return coreApiClient.post<VideoManagementResponses.ICreateVideoResponse>('/uploads', {
+	const apiClient = getAPIClient();
+
+	return apiClient.post<VideoManagementResponses.ICreateVideoResponse>('/uploads', {
 		title,
 		description,
 		public: isPublic,
-		withCredentials: true,
 	});
 };
 
 export const getUserVideos = () => {
-	return coreApiClient.get<VideoManagementResponses.IGetVideosResponse>('/uploads', { withCredentials: true });
+	const apiClient = getAPIClient();
+
+	return apiClient.get<VideoManagementResponses.IGetVideosResponse>('/uploads');
 };
 
 export const deleteVideo = (videoId: string) => {
-	return coreApiClient.delete(`/uploads/${videoId}`, { withCredentials: true });
+	const apiClient = getAPIClient();
+
+	return apiClient.delete(`/uploads/${videoId}`);
 };
 
 //Video discovery
 export const discoveryGetVideo = (videoId: string) => {
-	return coreApiClient.get<VideoDiscoveryResponses.IGetVideoResponse>(`/discovery/video/${videoId}`);
+	const apiClient = getAPIClient();
+
+	return apiClient.get<VideoDiscoveryResponses.IGetVideoResponse>(`/discovery/video/${videoId}`);
 };
 
 export const discoveryRelatedVideos = (videoId: string) => {
-	return coreApiClient.get<VideoDiscoveryResponses.IGetSimilarVideosResponse>(`/discovery/similar/${videoId}`);
+	const apiClient = getAPIClient();
+
+	return apiClient.get<VideoDiscoveryResponses.IGetSimilarVideosResponse>(`/discovery/similar/${videoId}`);
 };
 
 export const getDiscoveryFeed = (watchedVideosCookie?: string) => {
-	return coreApiClient.get<VideoDiscoveryResponses.IGetFeedResponse>('/discovery/feed', {
+	const apiClient = getAPIClient();
+
+	return apiClient.get<VideoDiscoveryResponses.IGetFeedResponse>('/discovery/feed', {
 		headers: {
 			Cookie: 'last_videos=' + watchedVideosCookie,
 		},
@@ -180,42 +233,50 @@ export const getDiscoveryFeed = (watchedVideosCookie?: string) => {
 };
 
 export const searchVideos = (query: string) => {
-	return coreApiClient.get<VideoDiscoveryResponses.ISearchVideoResponse>(`/discovery/search?q=${query}`);
+	const apiClient = getAPIClient();
+
+	return apiClient.get<VideoDiscoveryResponses.ISearchVideoResponse>(`/discovery/search?q=${query}`);
 };
 
 //Video interactions
 export const getVideoInteractions = (videoId: string) => {
-	return coreApiClient.get<VideoInteractionResponses.IGetVideoInteractionsResponse>(`/interactions/${videoId}`);
+	const apiClient = getAPIClient();
+
+	return apiClient.get<VideoInteractionResponses.IGetVideoInteractionsResponse>(`/interactions/${videoId}`);
 };
 
 export const registerView = (videoId: string) => {
-	return coreApiClient.put(`/interactions/register-view/${videoId}`);
+	const apiClient = getAPIClient();
+
+	return apiClient.put(`/interactions/register-view/${videoId}`);
 };
 
 export const getPersonalVideoInteractions = (videoId: string) => {
-	return coreApiClient.get<VideoInteractionResponses.IGetPersonalVideoInteractionsResponse>(
-		`/interactions/personal/${videoId}`,
-		{ withCredentials: true }
+	const apiClient = getAPIClient();
+
+	return apiClient.get<VideoInteractionResponses.IGetPersonalVideoInteractionsResponse>(
+		`/interactions/personal/${videoId}`
 	);
 };
 
 export const giveLike = (videoId: string) => {
-	return coreApiClient.post<VideoInteractionResponses.IToggleLikeResponse>(
-		`/interactions/like/${videoId}`,
-		{},
-		{ withCredentials: true }
-	);
+	const apiClient = getAPIClient();
+
+	return apiClient.post<VideoInteractionResponses.IToggleLikeResponse>(`/interactions/like/${videoId}`, {});
 };
 
 //Video interaction management
 export const getVideoMetrics = (videoId: string, days: number) => {
-	return coreApiClient.get<InteractionManagementResponses.IGetVideoStatsResponse>(
-		`/manage-interactions/${videoId}?days=${days}`,
-		{ withCredentials: true }
+	const apiClient = getAPIClient();
+
+	return apiClient.get<InteractionManagementResponses.IGetVideoStatsResponse>(
+		`/manage-interactions/${videoId}?days=${days}`
 	);
 };
 
 //Channel discovery
 export const getChannel = (userId: string) => {
-	return coreApiClient.get<ChannelDiscoveryResponses.GetChannelResponse>(`/channel/${userId}`);
+	const apiClient = getAPIClient();
+
+	return apiClient.get<ChannelDiscoveryResponses.GetChannelResponse>(`/channel/${userId}`);
 };

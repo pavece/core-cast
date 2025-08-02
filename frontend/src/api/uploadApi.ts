@@ -1,4 +1,4 @@
-import { Upload, UploadResponses } from '@core-cast/types';
+import { UploadResponses } from '@core-cast/types';
 import axios from 'axios';
 
 export const uploadApiClient = axios.create({
@@ -9,10 +9,25 @@ export const uploadApiClient = axios.create({
 	},
 });
 
+const serversideUploadApiClient = axios.create({
+	baseURL: process.env.SERVER_SIDE_API + '/upload',
+	withCredentials: true,
+	headers: {
+		'Content-Type': 'application/json',
+	},
+});
+
+const getAPIClient = () => {
+	if (typeof window === 'undefined') {
+		return serversideUploadApiClient;
+	}
+	return uploadApiClient;
+};
+
 export const getPendingUploadByVideo = (videoId: string) => {
-	return uploadApiClient.get<UploadResponses.IGetpendingUploadByVideoIdResponse>(`/pending/video/${videoId}`, {
-		withCredentials: true,
-	});
+	const apiClient = getAPIClient();
+
+	return apiClient.get<UploadResponses.IGetpendingUploadByVideoIdResponse>(`/pending/video/${videoId}`);
 };
 
 export const initMultipartUpload = (params: {
@@ -21,18 +36,18 @@ export const initMultipartUpload = (params: {
 	totalChunks: number;
 	chunkSizeMiB: number;
 }) => {
-	return uploadApiClient.post<UploadResponses.IInitUploadResponse>(
-		'/init-upload',
-		{ ...params },
-		{ withCredentials: true }
-	);
+	const apiClient = getAPIClient();
+
+	return apiClient.post<UploadResponses.IInitUploadResponse>('/init-upload', { ...params });
 };
 
 export const uploadChunk = (chunk: Blob, multipartId: string, chunkNumber: number) => {
+	const apiClient = getAPIClient();
+
 	const formData = new FormData();
 	formData.append('chunk', chunk);
 
-	return uploadApiClient.put<UploadResponses.IUploadChunkResponse>('/upload-chunk', formData, {
+	return apiClient.put<UploadResponses.IUploadChunkResponse>('/upload-chunk', formData, {
 		withCredentials: true,
 		headers: {
 			'Content-Type': 'multipart/form-data',
@@ -43,5 +58,7 @@ export const uploadChunk = (chunk: Blob, multipartId: string, chunkNumber: numbe
 };
 
 export const finishMultuipartUpload = (multipartId: string) => {
-	return uploadApiClient.post('/finish-upload', { uploadId: multipartId }, { withCredentials: true });
+	const apiClient = getAPIClient();
+
+	return apiClient.post('/finish-upload', { uploadId: multipartId }, { withCredentials: true });
 };

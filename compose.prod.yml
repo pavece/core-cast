@@ -24,10 +24,30 @@ services:
       - --serversTransport.insecureSkipVerify=true
       - --log.level=DEBUG
     ports:
-      - '80:80' # Main backend entrypoint expose to end users
-      - '8088:8080' # Dashboard do NOT expose to end users
+      - '80:80' # Public entrypoint
+      - '8088:8080' # Traefik dashboard (internal use only)
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - main-net
+
+  # Corecast frontend
+  frontend:
+    build:
+      context: .
+      target: frontend
+    depends_on:
+      - core
+    environment:
+      - SERVER_SIDE_API=http://traefik:80/api #Used by server components
+    ports:
+      - '3000:3000'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`)'
+      - 'traefik.http.routers.frontend.entrypoints=web'
+      - 'traefik.http.routers.frontend.priority=10'
+      - 'traefik.http.services.frontend.loadbalancer.server.port=3000'
     networks:
       - main-net
 
@@ -37,7 +57,6 @@ services:
       context: .
       target: core-service
     ports:
-      # - 3001:8080 # API (Exposed by proxy to the exterior)
       - 4000:8081 # Prometheus
     env_file:
       - .env.docker
@@ -50,15 +69,16 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.core.rule=PathPrefix(`/api/core`)'
-      - 'traefik.http.services.core.loadbalancer.server.port=8080'
       - 'traefik.http.routers.core.entrypoints=web'
+      - 'traefik.http.routers.core.priority=30'
+      - 'traefik.http.services.core.loadbalancer.server.port=8080'
 
   upload:
     build:
       context: .
       target: upload-service
     ports:
-      - 3002:8080 # API (Exposed by proxy to the exterior)
+      - 3002:8080 # API (proxied)
       - 4001:8081 # Prometheus
     env_file:
       - .env.docker
@@ -69,8 +89,9 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.upload.rule=PathPrefix(`/api/upload`)'
-      - 'traefik.http.services.upload.loadbalancer.server.port=8080'
       - 'traefik.http.routers.upload.entrypoints=web'
+      - 'traefik.http.routers.upload.priority=20'
+      - 'traefik.http.services.upload.loadbalancer.server.port=8080'
 
   transcoding:
     build:
