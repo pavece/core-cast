@@ -77,9 +77,7 @@ export const RecommendationVideoCard = ({ thumbnail, title, username, id, previe
 					<div className='w-6 h-6 rounded-full bg-card flex items-center justify-center shadow-sm flex-shrink-0 capitalize'>
 						<User className='w-3 h-3 text-muted-foreground' />
 					</div>
-					<p className='text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 truncate'>
-						{username}
-					</p>
+					<p className='text-sm text-muted-foreground truncate'>{username}</p>
 				</div>
 			</div>
 		</article>

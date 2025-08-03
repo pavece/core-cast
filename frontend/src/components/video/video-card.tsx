@@ -84,9 +84,7 @@ export const VideoCard = ({ thumbnail, title, username, id, previewClip, classNa
 						{cutString(title, 30)}
 					</h3>
 
-					<p className='text-sm text-muted-foreground mt-1 hover:text-foreground transition-colors duration-200'>
-						{username}
-					</p>
+					{!skipCreator && <p className='text-sm text-muted-foreground mt-1'>{username}</p>}
 				</div>
 			</div>
 		</article>

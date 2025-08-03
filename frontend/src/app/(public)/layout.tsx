@@ -3,6 +3,7 @@ import '../globals.css';
 import { Navbar } from '@/components/ui/navbar';
 import { cookies } from 'next/headers';
 import { checkSession } from '@/api/coreApi';
+import { Footer } from '@/components/ui/footer';
 
 export const metadata: Metadata = {
 	title: 'Core Cast',
@@ -22,10 +23,15 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
 	return (
 		<>
-			<Navbar userProfile={userProfile} />
-			<main className='p-4 w-full flex justify-center'>
-				<div className='w-full max-w-[1800px]'>{children}</div>
-			</main>
+			<div className='min-h-[100vh] flex flex-col justify-between'>
+				<div>
+					<Navbar userProfile={userProfile} />
+					<main className='p-4 w-full flex justify-center'>
+						<div className='w-full max-w-[1800px]'>{children}</div>
+					</main>
+				</div>
+				<Footer />
+			</div>
 		</>
 	);
 }
