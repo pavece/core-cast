@@ -7,6 +7,7 @@ import { Server } from './presentation/server';
 import 'dotenv/config';
 import { Logger } from './domain/logging/logger';
 import { RedisClient } from '@core-cast/redis';
+import { PrometheusServer } from './presentation/prometheus-server';
 
 async function main() {
 	printWelcomeMessage();
@@ -22,6 +23,12 @@ async function main() {
 
 async function setupServices() {
 	const logger = new Logger().getLogger();
+
+	if (process.env.PROMETHEUS_SERVER_PORT) {
+		new PrometheusServer(Number(process.env.PROMETHEUS_SERVER_PORT)).start();
+	} else {
+		logger.warn("No PROMETHEUS_SERVER_PORT specified, won't start prometheus HTTP server");
+	}
 
 	const objectStoreConfig: ObjectStoreConfigurationOptions = {
 		region: process.env.OBJECT_STORE_REGION || 'minio',

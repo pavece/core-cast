@@ -8,6 +8,7 @@ volumes:
   meili-data:
   qdrant-data:
   clickhouse-data:
+  prometheus-data:
 
 services:
   # Proxy (API gateway)
@@ -32,32 +33,30 @@ services:
       - main-net
 
   # Corecast frontend
-  # frontend:
-  #   build:
-  #     context: .
-  #     target: frontend
-  #   depends_on:
-  #     - core
-  #   environment:
-  #     - SERVER_SIDE_API=http://traefik:80/api #Used by server components
-  #   ports:
-  #     - '3000:3000'
-  #   labels:
-  #     - 'traefik.enable=true'
-  #     - 'traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`)'
-  #     - 'traefik.http.routers.frontend.entrypoints=web'
-  #     - 'traefik.http.routers.frontend.priority=10'
-  #     - 'traefik.http.services.frontend.loadbalancer.server.port=3000'
-  #   networks:
-  #     - main-net
+  frontend:
+    build:
+      context: .
+      target: frontend
+    depends_on:
+      - core
+    environment:
+      - SERVER_SIDE_API=http://traefik:80/api #Used by server components
+    ports:
+      - '3000:3000'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`)'
+      - 'traefik.http.routers.frontend.entrypoints=web'
+      - 'traefik.http.routers.frontend.priority=10'
+      - 'traefik.http.services.frontend.loadbalancer.server.port=3000'
+    networks:
+      - main-net
 
   # Corecast services
   core:
     build:
       context: .
       target: core-service
-    ports:
-      - 4000:8081 # Prometheus
     env_file:
       - .env.docker
     depends_on:
@@ -267,3 +266,15 @@ services:
       timeout: 5s
       retries: 5
       start_period: 15s
+
+  # Monitoring
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - '9090:9090'
+    command: "echo "
+    volumes:
+      - ./prometheus-config:/etc/prometheus
+      - prometheus-data:/prometheus
+    networks:
+      - main-net
