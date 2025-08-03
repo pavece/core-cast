@@ -2,14 +2,33 @@ import { discoveryGetVideo, discoveryRelatedVideos, getVideoInteractions } from 
 import { RecommendationVideoCard } from '@/components/video/recomendation-video-card';
 import { VideoInformationContainer } from '@/components/video/video-information-container';
 import { VideoPlayer } from '@/components/video/video-player';
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import React from 'react';
 
-type VideoPageProps = {
+type Props = {
 	params: Promise<{ videoId: string }>;
 };
 
-export default async function VideoPage({ params }: VideoPageProps) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const { videoId } = await params;
+
+	const {
+		data: { video },
+	} = await discoveryGetVideo(videoId);
+
+	return {
+		title: 'Video - ' + video.title,
+		description: video.description,
+		openGraph: {
+			images: [video.thumbnail || ''],
+			description: video.description,
+			title: video.title,
+		},
+	};
+}
+
+export default async function VideoPage({ params }: Props) {
 	const { videoId } = await params;
 	try {
 		const { data: getVideoResponse } = await discoveryGetVideo(videoId);

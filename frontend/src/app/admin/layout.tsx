@@ -2,10 +2,15 @@ import { checkSession } from '@/api/coreApi';
 import { CreatorPannelNavbar } from '@/components/control-pannel/navbar';
 import { LayoutSidebar } from '@/components/ui/layout-sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { Metadata } from 'next';
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import React from 'react';
+
+export const metadata: Metadata = {
+	title: 'Core Cast - Admin',
+};
 
 export default async function CreatorPannelLayout({
 	children,

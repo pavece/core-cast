@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
 import { SearchSkeleton } from './search-skeleton';
+import { Metadata } from 'next';
 
 const SearchContent = () => {
 	const searchParams = useSearchParams();

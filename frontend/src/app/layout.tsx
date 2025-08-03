@@ -17,6 +17,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
 	title: 'Core Cast',
 	description: 'The VOD distribution platform',
+	openGraph: {
+		images: ['/og.jpg'],
+		title: 'Core Cast',
+		description: 'The VOD distribution platform',
+	},
 };
 
 export default function RootLayout({

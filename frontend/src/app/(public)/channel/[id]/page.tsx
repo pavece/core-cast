@@ -2,10 +2,26 @@ import { getChannel } from '@/api/coreApi';
 import React from 'react';
 import { ChannelHeader } from './channel-header';
 import { VideoCard } from '@/components/video/video-card';
+import { Metadata } from 'next';
 
 type Props = {
 	params: Promise<{ id: string }>;
 };
+
+export async function  generateMetadata({ params }: Props): Promise<Metadata> {
+	const { id } = await params;
+	const { data: {user} } = await getChannel(id);
+
+	return {
+		title: "Channel - " + user.username,
+		description: user.channelDescription,
+		openGraph: {
+			images: [user.channelCover || ""],
+			description: user.channelDescription,
+			title: "Channel - " + user.username
+		}
+	}
+}
 
 const ChannelPage = async ({ params }: Props) => {
 	const { id } = await params;
