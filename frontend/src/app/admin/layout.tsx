@@ -1,4 +1,5 @@
 import { checkSession } from '@/api/coreApi';
+import { CreatorPannelNavbar } from '@/components/control-pannel/navbar';
 import { LayoutSidebar } from '@/components/ui/layout-sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
@@ -22,9 +23,9 @@ export default async function CreatorPannelLayout({
 		return (
 			<SidebarProvider>
 				<LayoutSidebar username={validationResult.data.user.username} role={validationResult.data.user.role} />
-
-				<main className='p-4 w-full'>
-					<div>{children}</div>
+				<main className='p-4 w-full min-h-[100vh] '>
+					<CreatorPannelNavbar />
+					{children}
 				</main>
 			</SidebarProvider>
 		);

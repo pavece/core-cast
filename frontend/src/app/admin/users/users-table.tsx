@@ -33,7 +33,7 @@ export function UsersTable<TData, TValue>({ columns, data, onRefresh }: DataTabl
 
 	return (
 		<>
-			<div className='mb-2 mt-4 flex justify-between'>
+			<div className='mb-2 mt-4 flex justify-between flex-col md:flex-row gap-2'>
 				<div className='flex gap-2'>
 					<Button onClick={onRefresh}>
 						<RefreshCcw /> Refresh

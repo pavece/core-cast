@@ -19,7 +19,7 @@ export const coreApiClient = axios.create({
 });
 
 const serversideCoreApiClient = axios.create({
-	baseURL: 'http://traefik:80/api' + '/core',
+	baseURL: process.env.SERVER_SIDE_API + '/core',
 	withCredentials: true,
 	headers: {
 		'Content-Type': 'application/json',

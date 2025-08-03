@@ -15,8 +15,6 @@ export default async function Home() {
 			</div>
 		);
 	} catch (error) {
-		console.log(error);
-
 		return (
 			<div className='w-full h-[50vh] flex items-center justify-center'>
 				<h1 className='text-xl font-semibold'>No videos</h1>

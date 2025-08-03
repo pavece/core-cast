@@ -33,7 +33,7 @@ export function VideosTable<TData, TValue>({ columns, data, onRefresh }: DataTab
 
 	return (
 		<>
-			<div className='mb-2 mt-4 flex justify-between'>
+			<div className='mb-2 mt-4 flex justify-between flex-col gap-2 md:flex-row'>
 				<div className='flex gap-2'>
 					<Button onClick={onRefresh}>
 						<RefreshCcw /> Refresh
