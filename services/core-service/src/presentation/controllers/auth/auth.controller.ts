@@ -20,7 +20,7 @@ export class AuthController {
 			.then(r => {
 				res.cookie('session_token', r.session, {
 					httpOnly: true,
-					secure: true,
+					secure: process.env.NODE_ENV == 'production',
 					sameSite: 'strict',
 					expires: new Date(new Date().getTime() + 15 * 24 * 60 * 60 * 1000), //In 15 days
 				});
@@ -47,7 +47,7 @@ export class AuthController {
 
 				res.cookie('session_token', r.session, {
 					httpOnly: true,
-					secure: true,
+					secure: process.env.NODE_ENV == 'production',
 					sameSite: 'strict',
 					expires: new Date(new Date().getTime() + 15 * 24 * 60 * 60 * 1000), //In 15 days
 				});
@@ -88,7 +88,7 @@ export class AuthController {
 			.then(r => {
 				res.cookie('session_token', r, {
 					httpOnly: true,
-					secure: true,
+					secure: process.env.NODE_ENV == 'production',
 					sameSite: 'strict',
 					expires: new Date(new Date().getTime() + 15 * 24 * 60 * 60 * 1000), //In 15 days
 				});
@@ -118,7 +118,7 @@ export class AuthController {
 			.then(() => {
 				res.cookie('session_token', '', {
 					httpOnly: true,
-					secure: true,
+					secure: process.env.NODE_ENV == 'production',
 					sameSite: 'strict',
 					expires: new Date(),
 				});

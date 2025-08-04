@@ -41,7 +41,7 @@ async function setupServices() {
 	}
 
 	try {
-		ObjectStore.getInstance().connect(objectStoreConfig);
+		await ObjectStore.getInstance().connect(objectStoreConfig);
 		logger.info('Connected to object store');
 	} catch (error) {
 		logger.error({ message: 'Failed to connect to object store', error });
@@ -63,7 +63,7 @@ async function setupServices() {
 
 	try {
 		await Qdrant.getInstance().connect(process.env.QDRANT_URL || '');
-		logger.info('Connected to Qdrant')		
+		logger.info('Connected to Qdrant');
 	} catch (error) {
 		logger.error({ message: 'Failed to connect to Qdrant', error });
 	}

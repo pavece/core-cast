@@ -42,7 +42,7 @@ export const VideoInformationContainer = ({
 				>
 					<Avatar className='w-10 h-10 ring-2 ring-transparent group-hover:ring-primary/20 transition-all duration-300'>
 						<AvatarImage src={creatorAvatar} className='object-cover' />
-						<AvatarFallback className='bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold'>
+						<AvatarFallback className='bg-card text-white font-semibold'>
 							{creatorName.slice(0, 2).toUpperCase()}
 						</AvatarFallback>
 					</Avatar>

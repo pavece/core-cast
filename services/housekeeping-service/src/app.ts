@@ -41,7 +41,7 @@ async function setupServices() {
 	}
 
 	try {
-		ObjectStore.getInstance().connect(objectStoreConfig);
+		await ObjectStore.getInstance().connect(objectStoreConfig);
 		logger.info('Connected to object store');
 	} catch (error) {
 		logger.error({ message: 'Failed to connect to object store', error });
