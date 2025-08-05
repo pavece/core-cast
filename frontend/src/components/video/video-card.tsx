@@ -3,7 +3,7 @@
 import { cutString } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import React, { useRef, useState } from 'react';
-import { User } from 'lucide-react';
+import { Dot, User } from 'lucide-react';
 
 type Props = {
 	title: string;
@@ -12,10 +12,9 @@ type Props = {
 	previewClip: string;
 	username?: string;
 	className?: string;
-	skipCreator?: boolean;
 };
 
-export const VideoCard = ({ thumbnail, title, username, id, previewClip, className, skipCreator }: Props) => {
+export const VideoCard = ({ thumbnail, title, username, id, previewClip, className }: Props) => {
 	const videoRef = useRef<HTMLVideoElement | null>(null);
 	const [shouldLoad, setShouldLoad] = useState(false);
 	const [isHovered, setIsHovered] = useState(false);
@@ -45,12 +44,14 @@ export const VideoCard = ({ thumbnail, title, username, id, previewClip, classNa
 
 	return (
 		<article
-			className={`group flex flex-col w-full cursor-pointer ${className}`}
+			className={`group flex flex-col w-full cursor-pointer border rounded-md bg-card ${className}`}
 			onClick={() => router.push(`/video/${id}`)}
 			onMouseEnter={handleMouseEnter}
 			onMouseLeave={handleMouseLeave}
 		>
-			<div className='relative w-full aspect-video rounded-md overflow-hidden'>
+			<div className='relative w-full aspect-video rounded-t-md overflow-hidden'>
+				<div className='absolute inset-0 bg-black/20 z-30 hover:opacity-0 transition-all duration-200' />
+
 				<div
 					className='absolute inset-0 bg-cover bg-center bg-no-repeat'
 					style={{ backgroundImage: `url(${thumbnail})` }}
@@ -70,22 +71,12 @@ export const VideoCard = ({ thumbnail, title, username, id, previewClip, classNa
 				/>
 			</div>
 
-			<div className='flex gap-3 mt-4'>
-				{!skipCreator && (
-					<div className='flex-shrink-0'>
-						<div className='w-10 h-10 rounded-full bg-card flex items-center justify-center shadow-md'>
-							<User className='w-5 h-5 text-white' />
-						</div>
-					</div>
-				)}
+			<div className='px-4 py-4 flex gap-1 flex-col'>
+				<h3 className='text-foreground text-md line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-200 capitalize'>
+					{cutString(title, 30)}
+				</h3>
 
-				<div className='flex-1 min-w-0'>
-					<h3 className='font-semibold text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-200'>
-						{cutString(title, 30)}
-					</h3>
-
-					{!skipCreator && <p className='text-sm text-muted-foreground mt-1'>{username}</p>}
-				</div>
+				<span className='text-sm text-muted-foreground'>{username}</span>
 			</div>
 		</article>
 	);

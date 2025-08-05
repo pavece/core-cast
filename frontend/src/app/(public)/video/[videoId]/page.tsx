@@ -38,8 +38,8 @@ export default async function VideoPage({ params }: Props) {
 		if (!getVideoResponse.video.hlsMaterList) return notFound();
 
 		return (
-			<section className='grid grid-cols-1 md:grid-cols-10 gap-4'>
-				<div className='col-span-7'>
+			<section className='grid grid-cols-1 lg:grid-cols-11 gap-4'>
+				<div className='col-span-7 lg:col-span-8'>
 					<VideoPlayer hlsMasterList={getVideoResponse.video.hlsMaterList!} videoId={getVideoResponse.video.id} />
 					<VideoInformationContainer
 						videoId={videoId}
@@ -52,7 +52,7 @@ export default async function VideoPage({ params }: Props) {
 						creatorId={getVideoResponse.video.uploadedBy.id}
 					/>
 				</div>
-				<div className='col-span-3 flex gap-4 flex-col'>
+				<div className='col-span-4 lg:col-span-3 flex gap-2 flex-col w-full'>
 					{getSimilarResponse.videos.map(v => {
 						if (v.id !== getVideoResponse.video.id) {
 							return <RecommendationVideoCard key={v.id} {...v} />;
@@ -62,6 +62,6 @@ export default async function VideoPage({ params }: Props) {
 			</section>
 		);
 	} catch (error) {
-		notFound(); //TODO: Add video does not exist fallback
+		notFound();
 	}
 }
