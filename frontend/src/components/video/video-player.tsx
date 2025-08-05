@@ -119,7 +119,7 @@ export const VideoPlayer = ({ hlsMasterList, videoId }: Props) => {
 					tabIndex={-1}
 				/>
 
-				<MediaControlBar className='gap-2  p-2 px-4 bg-card/90 backdrop-blur-sm rounded-full w-[95%] mx-auto mb-2'>
+				<MediaControlBar className='gap-2 px-4 py-1 bg-card border rounded-md backdrop-blur-sm  w-[95%] mx-auto mb-4'>
 					<MediaPlayButton className='bg-transparent' />
 					<MediaTimeDisplay className='bg-transparent' />
 					<MediaMuteButton className='bg-transparent' />

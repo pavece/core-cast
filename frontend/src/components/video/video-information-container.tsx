@@ -37,7 +37,7 @@ export const VideoInformationContainer = ({
 
 			<div className='flex items-center justify-between gap-4'>
 				<div
-					className='group flex items-center gap-3 bg-card hover:bg-muted/50 border border-border hover:border-primary/20 rounded-full px-4 py-3 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md flex-1 max-w-sm'
+					className='group flex items-center gap-3 bg-card hover:bg-muted/50 border border-border hover:border-primary/20 rounded-md px-4 py-3 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md flex-1 max-w-sm'
 					onClick={() => router.push(`/channel/${creatorId}`)}
 				>
 					<Avatar className='w-10 h-10 ring-2 ring-transparent group-hover:ring-primary/20 transition-all duration-300'>

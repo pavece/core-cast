@@ -37,7 +37,7 @@ export const LikeButton = ({ likes, videoId }: Props) => {
 	return (
 		<button
 			className={`group bg-card hover:bg-muted/50 border border-border hover:border-primary/20 
-				flex items-center gap-3 rounded-full px-5 py-3 font-medium transition-all duration-300 
+				flex items-center gap-3 rounded-md px-5 py-3 font-medium transition-all duration-300 
 				shadow-sm hover:shadow-md cursor-pointer
 				${liked ? 'bg-primary/5 border-primary/20' : ''}
 			`}
