@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { LikeButton } from './like-button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useRouter } from 'next/navigation';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Dot } from 'lucide-react';
 
 type Props = {
 	title: string;
@@ -15,6 +15,7 @@ type Props = {
 	creatorName: string;
 	creatorAvatar: string;
 	creatorId: string;
+	createdAt: Date;
 };
 
 export const VideoInformationContainer = ({
@@ -26,6 +27,7 @@ export const VideoInformationContainer = ({
 	creatorId,
 	creatorAvatar,
 	creatorName,
+	createdAt,
 }: Props) => {
 	const router = useRouter();
 
@@ -60,16 +62,18 @@ export const VideoInformationContainer = ({
 			</div>
 
 			<div className='bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300'>
-				<div className='flex items-center gap-2 mb-4'>
+				<div className='flex items-center gap-2 mb-2 text-muted-foreground'>
 					<div className='flex items-center gap-1'>
-						<span className='font-bold text-lg text-foreground'>{views}</span>
-						<span className='text-muted-foreground font-medium'>views</span>
+						<span className='text-foreground'>{new Date(createdAt).toLocaleDateString()}</span>
+						<Dot />
+						<div className='flex gap-1 items-center'>
+							<span className='font-medium text-foreground'>{views}</span>
+							<span className='text-muted-foreground'>views</span>
+						</div>
 					</div>
 				</div>
 
-				<div className='space-y-3'>
-					<div className='text-muted-foreground leading-relaxed transition-all duration-300'>{description}</div>
-				</div>
+				<div className='text-muted-foreground leading-relaxed transition-all duration-300'>{description}</div>
 			</div>
 		</div>
 	);

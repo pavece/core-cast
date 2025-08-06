@@ -17,6 +17,7 @@ const SearchContent = () => {
 		queryFn: () => searchVideos(query || ''),
 		queryKey: ['search', query],
 		enabled: !!query,
+		retry: false,
 	});
 
 	if (isLoading) {

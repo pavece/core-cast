@@ -39,7 +39,7 @@ export default async function VideoPage({ params }: Props) {
 
 		return (
 			<section className='grid grid-cols-1 lg:grid-cols-11 gap-4'>
-				<div className='col-span-7 lg:col-span-8'>
+				<div className='col-span-1 md:col-span-7 lg:col-span-8'>
 					<VideoPlayer hlsMasterList={getVideoResponse.video.hlsMaterList!} videoId={getVideoResponse.video.id} />
 					<VideoInformationContainer
 						videoId={videoId}
@@ -50,9 +50,10 @@ export default async function VideoPage({ params }: Props) {
 						creatorAvatar={getVideoResponse.video.uploadedBy.avatar || ''}
 						creatorName={getVideoResponse.video.uploadedBy.username}
 						creatorId={getVideoResponse.video.uploadedBy.id}
+						createdAt={getVideoResponse.video.createdAt}
 					/>
 				</div>
-				<div className='col-span-4 lg:col-span-3 flex gap-2 flex-col w-full'>
+				<div className='col-span-1 md:col-span-4 lg:col-span-3 flex gap-3 flex-col w-full '>
 					{getSimilarResponse.videos.map(v => {
 						if (v.id !== getVideoResponse.video.id) {
 							return <RecommendationVideoCard key={v.id} {...v} />;
