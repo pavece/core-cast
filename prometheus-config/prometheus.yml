@@ -9,3 +9,6 @@ scrape_configs:
   - job_name: 'transcoding-service'
     static_configs:
       - targets: ['transcoding:8081']
+  - job_name: 'housekeeping-service'
+    static_configs:
+      - targets: ['housekeeping:8081']
