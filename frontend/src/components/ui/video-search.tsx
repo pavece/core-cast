@@ -16,7 +16,7 @@ export const VideoSearch = () => {
 	};
 
 	return (
-		<form onSubmit={onSearch} className='flex w-full max-w-[550px]'>
+		<form onSubmit={onSearch} className='flex w-full max-w-[550px] rounded-md bg-background'>
 			<Input
 				placeholder='Search videos'
 				className='w-full rounded-tr-none rounded-br-none h-10'

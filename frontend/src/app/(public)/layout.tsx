@@ -27,7 +27,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 				<div>
 					<Navbar userProfile={userProfile} />
 					<main className='p-4 w-full flex justify-center'>
-						<div className='w-full max-w-[1800px]'>{children}</div>
+						<div className='w-full max-w-[1700px]'>{children}</div>
 					</main>
 				</div>
 				<Footer />
