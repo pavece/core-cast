@@ -33,24 +33,24 @@ services:
       - main-net
 
   # Corecast frontend
-  # frontend:
-  #   build:
-  #     context: .
-  #     target: frontend
-  #   depends_on:
-  #     - core
-  #   environment:
-  #     - SERVER_SIDE_API=http://traefik:80/api #Used by server components
-  #   ports:
-  #     - '3000:3000'
-  #   labels:
-  #     - 'traefik.enable=true'
-  #     - 'traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`)'
-  #     - 'traefik.http.routers.frontend.entrypoints=web'
-  #     - 'traefik.http.routers.frontend.priority=10'
-  #     - 'traefik.http.services.frontend.loadbalancer.server.port=3000'
-  #   networks:
-  #     - main-net
+  frontend:
+    build:
+      context: .
+      target: frontend
+    depends_on:
+      - core
+    environment:
+      - SERVER_SIDE_API=http://traefik:80/api #Used by server components
+    ports:
+      - '3000:3000'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`)'
+      - 'traefik.http.routers.frontend.entrypoints=web'
+      - 'traefik.http.routers.frontend.priority=10'
+      - 'traefik.http.services.frontend.loadbalancer.server.port=3000'
+    networks:
+      - main-net
 
   # Corecast services
   core:

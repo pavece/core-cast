@@ -32,7 +32,7 @@ const ChannelPage = async ({ params }: Props) => {
 			<ChannelHeader {...data.user} />
 			<section className='mt-8 grid grid-cols-1 md:grid-cols-[repeat(auto-fit,_minmax(250px,_350px))] justify-center gap-4'>
 				{data.videos.map(v => (
-					<VideoCard {...v} thumbnail={v.thumbnail || ''} previewClip={v.previewClip || ''} key={v.id} skipCreator />
+					<VideoCard {...v} thumbnail={v.thumbnail || ''} previewClip={v.previewClip || ''} key={v.id} />
 				))}
 			</section>
 		</>
