@@ -57,7 +57,7 @@ export const SidebarUserProfile = ({ username, role }: Props) => {
 					</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem>
-						<Link href='/auth/settings'>Settings</Link>
+						<Link href='/creator-pannel/settings'>Settings</Link>
 					</DropdownMenuItem>
 					<DropdownMenuItem
 						className='cursor-pointer text-red-400 hover:text-red-500 hover:bg-red-400/25'

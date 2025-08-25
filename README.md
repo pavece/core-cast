@@ -4,8 +4,8 @@
 
 Video-sharing platform built on a microservices architecture. Features a custom video processing pipeline, embedding-based recommendations, full-text search and bath analytics.
 
-> [!WARNING] > **Core Cast is a learning project.**  
-> It is complex, lacks many production features, and while documentation for self-hosting is provided, it is **not intended for easy or complete self-hosting**.
+> [!WARNING]
+> Core Cast is a learning project. It lacks many features and is a relatively complex system composed of multiple services. While basic documentation for self-hosting will be provided, it is not intended for easy or full self-hosting.
 
 ---
 
@@ -28,11 +28,11 @@ The frontend UI is modified to match my blog, but the backend remains the same.
 ## System architecture overview
 ![System diagram](https://static.pavece.com/public-files/corecast/basic-diagram.png)
 
-This is a general overview of the system components. While not every service uses every database, they are shown together here for simplicity.
+This is a general overview of the system components. While not every service uses every database, they are shown together here for simplicity. (Some components are not present in the diagram)
 
 ---
 
-## Setup and Running Core Cast
+## Running Core Cast
 
 A Docker Compose setup (`compose.prod.yml`) is included for demo/testing. This setup is **not production-optimized**. Use only for experimentation.
 
