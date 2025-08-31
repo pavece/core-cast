@@ -20,12 +20,10 @@ Video-sharing platform built on a microservices architecture. Features a custom 
 
 ## Demo
 
-A customized version is deployed here: [https://videos.pavece.com](https://videos.pavece.com).  
-The frontend UI is modified to match my blog, but the backend remains the same.
-
-[Watch the demo video here]()
+A customized version (diferent UI) is deployed here: [https://vault.pavece.com](https://vault.pavece.com). It's hosted in my [homelab](https://blog.pavece.com/post/the-joy-of-homelabbing) so **I won't guarantee any uptime on this demo**. You can also [watch the demo video](https://www.youtube.com/watch?v=UQHk6LAA6i0).
 
 ## System architecture overview
+
 ![System diagram](https://static.pavece.com/public-files/corecast/basic-diagram.png)
 
 This is a general overview of the system components. While not every service uses every database, they are shown together here for simplicity. (Some components are not present in the diagram)
@@ -65,3 +63,8 @@ If deploying with the provided Compose file (**not recommended**) please remembe
 You can use [Minio](https://www.min.io/) or [S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html) as object storage solution. S3 is recommended for production environments.
 
 Remember to make the CDN bucket files publicly accessible but without allowing directory listing.
+
+## Attribution
+
+This project uses [FFmpeg](https://ffmpeg.org) for media processing.
+You can obtain the FFmpeg source code at [https://ffmpeg.org/download.html](https://ffmpeg.org/download.html).
